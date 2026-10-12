@@ -44,7 +44,7 @@ class ContributorDataSource(
             )
         }
 
-        return@withContext majorContributors + contributors.sortedByDescending { it.contributions }
+        return@withContext contributors.sortedByDescending { it.contributions } + majorContributors
     }
 
     private fun parseFile(): String {
