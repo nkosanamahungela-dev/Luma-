@@ -23,12 +23,21 @@ class LatestNewsRepository @Inject constructor(
     }
 
     suspend fun hasUpdate(): Boolean {
-        val latestVersion = dataSource.getLatestVersion()
-            ?.replace("v", "")
-            ?.replace(".", "")
-            ?.toLong()
-            ?: 0
+        val latestVersion = dataSource.getLatestVersion() ?: return false
+        return compareVersions(versionProvider.getCurrentVersionString(), latestVersion) < 0
+    }
 
-        return versionProvider.getCurrentVersionCode() < latestVersion
+    private fun compareVersions(current: String, latest: String): Int {
+        val currentParts = current.removePrefix("v").substringBefore("-")
+            .split(".").map { it.toIntOrNull() ?: 0 }
+        val latestParts = latest.removePrefix("v").substringBefore("-")
+            .split(".").map { it.toIntOrNull() ?: 0 }
+
+        for (index in 0 until maxOf(currentParts.size, latestParts.size)) {
+            val currentPart = currentParts.getOrElse(index) { 0 }
+            val latestPart = latestParts.getOrElse(index) { 0 }
+            if (currentPart != latestPart) return currentPart.compareTo(latestPart)
+        }
+        return 0
     }
 }
