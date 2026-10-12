@@ -13,6 +13,11 @@ val majorContributors: List<ContributorItem>
             title = ContributorItem.Contributor.Title.Maintainer,
             avatarUrl = null,
             contributions = null,
-            socials = emptyList()
+            socials = listOf(
+                SocialButton(
+                    link = "https://github.com/nkosanamahungela-dev",
+                    icon = SocialButton.Icon.Github
+                )
+            )
         )
     )
