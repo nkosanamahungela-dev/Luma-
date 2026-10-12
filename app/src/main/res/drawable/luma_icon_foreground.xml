@@ -4,12 +4,8 @@
     android:height="108dp"
     android:viewportWidth="512"
     android:viewportHeight="512">
-    <path android:fillColor="#FFB7C4FF" android:pathData="M256,92 C243,109 234,128 229,149 C239,156 249,166 256,178 C264,166 274,156 283,149 C278,128 269,109 256,92 Z"/>
-    <path android:fillColor="#FFB7C4FF" android:pathData="M238,205 C203,201 179,177 174,141 C209,145 233,169 238,205 Z"/>
-    <path android:fillColor="#FFB7C4FF" android:pathData="M274,205 C309,201 333,177 338,141 C303,145 279,169 274,205 Z"/>
-    <path android:fillColor="#FFB7C4FF" android:pathData="M238,279 C195,274 165,245 159,201 C202,206 232,235 238,279 Z"/>
-    <path android:fillColor="#FFB7C4FF" android:pathData="M274,279 C317,274 347,245 353,201 C310,206 280,235 274,279 Z"/>
-    <path android:fillColor="#FFB7C4FF" android:pathData="M238,354 C195,349 165,320 159,276 C202,281 232,310 238,354 Z"/>
-    <path android:fillColor="#FFB7C4FF" android:pathData="M274,354 C317,349 347,320 353,276 C310,281 280,310 274,354 Z"/>
-    <path android:fillColor="#FFB7C4FF" android:pathData="M250,350 C253,392 271,422 308,441 C315,445 323,442 326,435 C329,428 326,420 319,417 C291,403 279,381 276,349 Z"/>
+    <path android:fillColor="#FFFFD36B" android:pathData="M256,86 C216,108 177,145 169,190 C162,231 197,268 256,307 C315,268 350,231 343,190 C335,145 296,108 256,86 Z"/>
+    <path android:fillColor="#FFF04B91" android:pathData="M128,202 C99,235 94,285 119,326 C146,370 202,382 256,361 C278,353 293,334 300,313 C306,293 299,269 282,247 C251,207 204,188 163,195 C149,196 137,198 128,202 Z"/>
+    <path android:fillColor="#FF60A5FA" android:pathData="M384,202 C413,235 418,285 393,326 C366,370 310,382 256,361 C234,353 219,334 212,313 C206,293 213,269 230,247 C261,207 308,188 349,195 C363,196 375,198 384,202 Z"/>
+    <path android:fillColor="#FF9B55D5" android:fillAlpha="0.72" android:pathData="M256,258 C222,226 191,210 163,195 C204,188 251,207 282,247 C299,269 306,293 300,313 C293,334 278,353 256,361 C234,353 219,334 212,313 C206,293 213,269 230,247 C239,235 247,246 256,258 Z"/>
 </vector>
