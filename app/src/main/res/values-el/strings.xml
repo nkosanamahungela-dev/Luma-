@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Φωτογραφίες</string>
+    <string name="app_name">Luma</string>
     <string name="albums">Συλλογές</string>
     <string name="finding_albums_on_device">Εύρεση συλλογών…</string>
     <string name="albums_found">Βρέθηκαν όλες οι συλλογές!</string>
@@ -32,7 +32,7 @@
     <string name="albums_add_failed">Η προσθήκη των συλλογών :&lt; απέτυχε</string>
     <string name="tabs">Καρτέλες</string>
     <string name="tabs_default">Προεπιλεγμένη καρτέλα</string>
-    <string name="tabs_default_desc">Το Lavender Photos θα ανοίγει αυτόματα αυτή την καρτέλα κατά την εκκίνηση</string>
+    <string name="tabs_default_desc">Το Luma θα ανοίγει αυτόματα αυτή την καρτέλα κατά την εκκίνηση</string>
     <string name="tabs_customize">Εξατομίκευση καρτελών</string>
     <string name="tabs_customize_desc">Αλλαγή των καρτελών που είναι διαθέσιμες στην κάτω γραμμή</string>
     <string name="tabs_navigate_to">Πλοήγηση στην %1$s σελίδα</string>
