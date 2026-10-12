@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Basic -->
-    <string name="app_name">Photos</string>
+    <string name="app_name">Luma</string>
 
     <!-- Albums -->
     <string name="albums">Albums</string>
@@ -50,7 +50,7 @@
     <!-- Tabs -->
     <string name="tabs">Tabs</string>
     <string name="tabs_default">Default Tab</string>
-    <string name="tabs_default_desc">Lavender Photos will auto-open this tab at startup</string>
+    <string name="tabs_default_desc">Luma will auto-open this tab at startup</string>
     <string name="tabs_customize">Customize Tabs</string>
     <string name="tabs_customize_desc">Change what tabs are available in the bottom bar</string>
     <string name="tabs_navigate_to">Navigate to %1$s page</string>
@@ -76,12 +76,12 @@
     <string name="navigation_tap_to_nav_desc">Tap the very left or right sides of the screen to navigate back and forth between media</string>
 
     <!-- App -->
-    <string name="app_name_full">Lavender Photos</string>
-    <string name="app_description">Privacy-first, performant, and stylish open-source gallery app</string>
+    <string name="app_name_full">Luma</string>
+    <string name="app_description">A beautiful, modern gallery for all your photos and videos. Every moment, beautifully kept.</string>
     <string name="app_version">Version %1$s</string>
     <string name="app_repo">App\'s Repository</string>
     <string name="privacy_policy_title">Privacy Policy</string>
-    <string name="privacy_policy">There isn\'t one! None of your data goes anywhere but this device. No AI is trained on it, no algorithms to harvest information, nothing. Lavender Photos has and always will be a privacy focused gallery app.</string>
+    <string name="privacy_policy">There isn\'t one! None of your data goes anywhere but this device. No AI is trained on it, no algorithms to harvest information, nothing. Luma has and always will be a privacy focused gallery app.</string>
     <string name="support">Support &amp; Donations</string>
     <string name="translation">Translation</string>
     <string name="licenses">Licenses</string>
@@ -102,7 +102,7 @@
 
                 <br><br>The builds hosted on GitHub are always signed, checked, and verified by the developer (kaii-lb), but it is up to you whether you want to use them or not.
 
-                <br><br>Lavender Photos never does auto-updates, and only ever updates with explicit user consent.
+                <br><br>Luma never does auto-updates, and only ever updates with explicit user consent.
             </p>
         ]]>
     </string>
@@ -163,13 +163,13 @@ As a precaution, a copy of your secured photos is now present in an export folde
     <string name="favourites_remove_this">Remove from favourites?</string>
     <string name="favourites_migration">Favourites has been renewed!</string>
     <string name="favourites_migration_notice">Favourites</string>
-    <string name="favourites_migration_desc">This is a way to keep track of your best moments; With Lavender Photos that means favourites that sync across all apps that support it, with flawless management, and a highly performant system!\n\nIf you\'re coming from a previous version of Lavender Photos, all of your previous favourited items will be migrated to the new system.\n\nPlease keep your phone on and this app open.</string>
+    <string name="favourites_migration_desc">This is a way to keep track of your best moments; With Luma that means favourites that sync across all apps that support it, with flawless management, and a highly performant system!\n\nIf you\'re coming from a previous version of Luma, all of your previous favourited items will be migrated to the new system.\n\nPlease keep your phone on and this app open.</string>
     <string name="favourites_migration_started">Migration started!</string>
     <string name="favourites_migration_none">No items to migrate</string>
     <string name="favourites_migration_in_progress_short">In Progress</string>
     <string name="favourites_migration_done">Migration Done!</string>
     <string name="favourites_migration_declined">Permissions Declined!</string>
-    <string name="favourites_migration_declined_desc">Lavender Photos cannot transfer your favourites from the old version if you don\'t allow it permissions to do so! This means you\'ll lose your previously favourited items.</string>
+    <string name="favourites_migration_declined_desc">Luma cannot transfer your favourites from the old version if you don\'t allow it permissions to do so! This means you\'ll lose your previously favourited items.</string>
 
     <!-- Debugging -->
     <string name="debugging">Debugging</string>
@@ -382,11 +382,11 @@ As a precaution, a copy of your secured photos is now present in an export folde
     <string name="permissions_allow_secure_folder_screen_capture">Allow screen capture in Secure Folder</string>
     <string name="permissions_allow_secure_folder_screen_capture_desc">Allow screenshots, screen recording and screen sharing while the Secure Folder is open. Secure content may also appear in the recent apps preview. Leave off to keep it protected</string>
     <string name="permissions_read_images">Read Images</string>
-    <string name="permissions_read_images_desc">Allow Lavender Photos to discover photos on the device</string>
+    <string name="permissions_read_images_desc">Allow Luma to discover photos on the device</string>
     <string name="permissions_read_videos">Read Videos</string>
-    <string name="permissions_read_videos_desc">Allow Lavender Photos to discover videos on the device</string>
+    <string name="permissions_read_videos_desc">Allow Luma to discover videos on the device</string>
     <string name="permissions_read_external_storage">Read External Storage</string>
-    <string name="permissions_read_external_storage_desc">Allow Lavender Photos to discover photos and videos on the device</string>
+    <string name="permissions_read_external_storage_desc">Allow Luma to discover photos and videos on the device</string>
     <string name="permissions_manage_media">Manage Media</string>
     <string name="permissions_manage_media_desc">Optional permission. Is used for faster trash/delete functionality</string>
     <string name="permissions_continue">Continue</string>
@@ -395,8 +395,8 @@ As a precaution, a copy of your secured photos is now present in an export folde
     <string name="permissions_grant_permissions">Grant Permissions</string>
     <string name="permissions_why">Why?</string>
     <string name="permissions_dismiss">Dismiss</string>
-    <string name="permissions_read_media_explanation">This permission is needed to find photos and videos on the device. Lavender Photos is very strict with what files it reads, and never shares or exploits this info.</string>
-    <string name="permissions_manage_media_explanation">This permission is optional, but is highly recommended. Manage Media permission allows Lavender Photos to use Android\'s Content Resolver API to trash/delete/move/copy media, which makes the process much smoother and more interoperable with other apps.</string>
+    <string name="permissions_read_media_explanation">This permission is needed to find photos and videos on the device. Luma is very strict with what files it reads, and never shares or exploits this info.</string>
+    <string name="permissions_manage_media_explanation">This permission is optional, but is highly recommended. Manage Media permission allows Luma to use Android\'s Content Resolver API to trash/delete/move/copy media, which makes the process much smoother and more interoperable with other apps.</string>
     <string name="permissions_explanation">Permission Explanation</string>
 
     <!-- Media -->
@@ -458,7 +458,7 @@ As a precaution, a copy of your secured photos is now present in an export folde
     <string name="search_nothing_found">Nothing found</string>
 
     <!-- Explanations -->
-    <string name="edit_desc">Lavender Photos edited file at %1$s</string>
+    <string name="edit_desc">Luma edited file at %1$s</string>
     <string name="custom_album_remove_media">Remove</string>
     <string name="custom_album_remove_media_desc">Remove these items from the album?</string>
     <string name="action_cannot_be_undone">This action cannot be undone!</string>
@@ -480,7 +480,7 @@ As a precaution, a copy of your secured photos is now present in an export folde
     <string name="apply">Apply</string>
     <string name="close">Close</string>
     <string name="changelog_name">Changelog</string>
-    <string name="drag_and_drop_data">Lavender Photos Drag-And-Drop Data</string>
+    <string name="drag_and_drop_data">Luma Drag-And-Drop Data</string>
     <string name="management">Management</string>
     <string name="next">Next</string>
     <string name="error">Error!</string>
@@ -632,7 +632,7 @@ As a precaution, a copy of your secured photos is now present in an export folde
             <h3 style="text-align:center;">How to Use?<h3/>
             <ul>
                 <li>Self-host an <a href="https://immich.app/">Immich Server</a></li>
-                <li>Specify server address in Lavender Photos</li>
+                <li>Specify server address in Luma</li>
                 <li>Login using Immich user account</li>
                 <li>In the dashboard page, click \'Backup Options\'</li>
                 <li>Select the albums you want backed up and click the confirm button</li>
@@ -674,7 +674,7 @@ As a precaution, a copy of your secured photos is now present in an export folde
     <string name="immich_backup_option_changes_unsaved">Unsaved changes</string>
     <string name="immich_backup_option_changes_unsaved_desc">Refreshing will undo all your changes</string>
     <string name="immich_backup_sync">Sync Items</string>
-    <string name="immich_backup_sync_desc">Reconcile changes between Lavender Photos and the Immich server</string>
+    <string name="immich_backup_sync_desc">Reconcile changes between Luma and the Immich server</string>
     <string name="immich_backup_sync_running">Syncing items…</string>
     <string name="immich_backup_sync_count">Syncing %1$d out of %2$d items</string>
     <string name="immich_share_album">Share Album</string>
@@ -727,7 +727,7 @@ As a precaution, a copy of your secured photos is now present in an export folde
     <string name="startup_processing_info">This is a one-time operation.</string>
     <string name="startup_processing_progress">Done: %s</string>
     <string name="startup_processing_explanation">Why the wait?</string>
-    <string name="startup_processing_explanation_desc">Lavender Photos indexes media on your device to provide accurate dates, faster loading times, and better features. This is a <b>one-time</b> operation, and should take around <i>30s to 2mins</i> depending on how many items there are on your device. If you interrupt the processes, it will resume on the next launch.</string>
+    <string name="startup_processing_explanation_desc">Luma indexes media on your device to provide accurate dates, faster loading times, and better features. This is a <b>one-time</b> operation, and should take around <i>30s to 2mins</i> depending on how many items there are on your device. If you interrupt the processes, it will resume on the next launch.</string>
     <string name="startup_processing_skip">Skip</string>
 
     <!--  Main Dialog  -->
