@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">الصور</string>
+    <string name="app_name">Luma</string>
     <string name="albums">الألبومات</string>
     <string name="finding_albums_on_device">جارٍ البحث عن الألبومات…</string>
     <string name="albums_found">تم العثور على جميع الألبومات!</string>
@@ -27,7 +27,7 @@
     <string name="albums_add_failed">تعذرت إضافة الألبومات :&lt;</string>
     <string name="tabs">علامات التبويب</string>
     <string name="tabs_default">علامة التبويب الافتراضية</string>
-    <string name="tabs_default_desc">سيفتح Lavender Photos علامة التبويب هذه تلقائيًا عند بدء التشغيل</string>
+    <string name="tabs_default_desc">سيفتح Luma علامة التبويب هذه تلقائيًا عند بدء التشغيل</string>
     <string name="tabs_customize">تخصيص علامات التبويب</string>
     <string name="tabs_customize_desc">تغيير علامات التبويب المتاحة في الشريط السفلي</string>
     <string name="tabs_navigate_to">الانتقال إلى صفحة %1$s</string>
@@ -39,9 +39,9 @@
     <string name="tabs_max_reached">لا يمكن إضافة أكثر من 16 علامة تبويب</string>
     <string name="tabs_min_reached">يجب وجود علامة تبويب واحدة على الأقل</string>
     <string name="return_to_previous_page">العودة إلى الصفحة السابقة</string>
-    <string name="app_name_full">Lavender Photos</string>
+    <string name="app_name_full">Luma</string>
     <string name="privacy_policy_title">سياسة الخصوصية</string>
-    <string name="privacy_policy">لا توجد سياسة لأن بياناتك لا تغادر هذا الجهاز مطلقًا! لا يُدرّب عليها أي ذكاء اصطناعي، ولا تُستخدم خوارزميات لجمع المعلومات، ولا يحدث أي شيء من هذا القبيل. كان Lavender Photos وسيظل دائمًا تطبيق معرض صور يركز على الخصوصية.</string>
+    <string name="privacy_policy">لا توجد سياسة لأن بياناتك لا تغادر هذا الجهاز مطلقًا! لا يُدرّب عليها أي ذكاء اصطناعي، ولا تُستخدم خوارزميات لجمع المعلومات، ولا يحدث أي شيء من هذا القبيل. كان Luma وسيظل دائمًا تطبيق معرض صور يركز على الخصوصية.</string>
     <string name="support">الدعم والتبرعات</string>
     <string name="updates">التحديثات</string>
     <string name="updates_check">التحقق من وجود تحديثات</string>
@@ -173,7 +173,7 @@
     <string name="media_confirm">تأكيد</string>
     <string name="media_okay">حسنًا</string>
     <string name="search_photo_name">البحث عن صورة</string>
-    <string name="edit_desc">حرر Lavender Photos الملف في %1$s</string>
+    <string name="edit_desc">حرر Luma الملف في %1$s</string>
     <string name="custom_album_remove_media">إزالة</string>
     <string name="custom_album_remove_media_desc">هل تريد إزالة هذه العناصر من الألبوم؟</string>
     <string name="action_cannot_be_undone">لا يمكن التراجع عن هذا الإجراء!</string>
@@ -233,13 +233,13 @@
     <string name="favourites_remove_this">هل تريد الإزالة من المفضلة؟</string>
     <string name="favourites_migration">تم تجديد نظام المفضلة!</string>
     <string name="favourites_migration_notice">المفضلة</string>
-    <string name="favourites_migration_desc">هذه طريقة للاحتفاظ بأفضل لحظاتك. في Lavender Photos، تعني المفضلة مزامنة عناصرك عبر جميع التطبيقات التي تدعمها، مع إدارة سلسة ونظام عالي الأداء!\n\nإذا كنت تستخدم إصدارًا سابقًا من Lavender Photos، فستُرحّل جميع عناصرك المفضلة السابقة إلى النظام الجديد.\n\nيرجى إبقاء هاتفك قيد التشغيل والتطبيق مفتوحًا.</string>
+    <string name="favourites_migration_desc">هذه طريقة للاحتفاظ بأفضل لحظاتك. في Luma، تعني المفضلة مزامنة عناصرك عبر جميع التطبيقات التي تدعمها، مع إدارة سلسة ونظام عالي الأداء!\n\nإذا كنت تستخدم إصدارًا سابقًا من Luma، فستُرحّل جميع عناصرك المفضلة السابقة إلى النظام الجديد.\n\nيرجى إبقاء هاتفك قيد التشغيل والتطبيق مفتوحًا.</string>
     <string name="favourites_migration_started">بدأ الترحيل!</string>
     <string name="favourites_migration_none">لا توجد عناصر لترحيلها</string>
     <string name="favourites_migration_in_progress_short">قيد التنفيذ</string>
     <string name="favourites_migration_done">اكتمل الترحيل!</string>
     <string name="favourites_migration_declined">رُفضت الأذونات!</string>
-    <string name="favourites_migration_declined_desc">لا يستطيع Lavender Photos نقل مفضلتك من الإصدار القديم إذا لم تمنحه الأذونات اللازمة! يعني هذا أنك ستفقد العناصر التي أضفتها سابقًا إلى المفضلة.</string>
+    <string name="favourites_migration_declined_desc">لا يستطيع Luma نقل مفضلتك من الإصدار القديم إذا لم تمنحه الأذونات اللازمة! يعني هذا أنك ستفقد العناصر التي أضفتها سابقًا إلى المفضلة.</string>
     <string name="video_open_externally">فتح في مشغل خارجي</string>
     <string name="video_open_externally_desc">السؤال عن التطبيق المستخدم لفتح الفيديو عند النقر عليه من الشبكة</string>
     <string name="editing_more">المزيد</string>
@@ -268,7 +268,7 @@
     <string name="app_description">تطبيق معرض صور مفتوح المصدر، أنيق وسريع، يضع الخصوصية أولًا</string>
     <string name="app_version">الإصدار %1$s</string>
     <string name="app_repo">مستودع التطبيق</string>
-    <string name="updates_notice_desc"><![CDATA["<p>لا ينزّل محدّث التطبيق هذا ملفات APK. فهو يضع رابطًا إلى <a href=\"https://github.com/kaii-lb/LavenderPhotos/releases\">إصدارات GitHub</a> فقط. وهذا\n                يعني أن ملفات APK هذه لا تخضع للفحص والاختبار الإضافيين اللذين تجريهما IzzyOnDroid أو F-Droid أو جهات أخرى.\n\n                <br><br>تكون الإصدارات المستضافة على GitHub دائمًا موقعة ومفحوصة ومتحققًا منها بواسطة المطور (kaii-lb)، لكن قرار استخدامها يعود إليك.\n\n                <br><br>لا يجري Lavender Photos تحديثات تلقائية مطلقًا، ولا يُحدّث إلا بعد موافقة صريحة من المستخدم.\n            </p>"]]></string>
+    <string name="updates_notice_desc"><![CDATA["<p>لا ينزّل محدّث التطبيق هذا ملفات APK. فهو يضع رابطًا إلى <a href=\"https://github.com/kaii-lb/LavenderPhotos/releases\">إصدارات GitHub</a> فقط. وهذا\n                يعني أن ملفات APK هذه لا تخضع للفحص والاختبار الإضافيين اللذين تجريهما IzzyOnDroid أو F-Droid أو جهات أخرى.\n\n                <br><br>تكون الإصدارات المستضافة على GitHub دائمًا موقعة ومفحوصة ومتحققًا منها بواسطة المطور (kaii-lb)، لكن قرار استخدامها يعود إليك.\n\n                <br><br>لا يجري Luma تحديثات تلقائية مطلقًا، ولا يُحدّث إلا بعد موافقة صريحة من المستخدم.\n            </p>"]]></string>
     <string name="secure_migrating_notice">إشعار الترحيل</string>
     <string name="secure_restore_failed">تعذرت استعادة الوسائط</string>
     <string name="debugging_development">التطوير</string>
@@ -362,11 +362,11 @@
     <string name="permissions_allow_secure_folder_screen_capture">السماح بالتقاط الشاشة في المجلد الآمن</string>
     <string name="permissions_allow_secure_folder_screen_capture_desc">السماح بلقطات الشاشة وتسجيلها ومشاركتها أثناء فتح المجلد الآمن. قد يظهر المحتوى الآمن أيضًا في معاينة التطبيقات الأخيرة. اترك هذا الخيار معطلًا للحفاظ على حمايته</string>
     <string name="permissions_read_images">قراءة الصور</string>
-    <string name="permissions_read_images_desc">السماح لـ Lavender Photos باكتشاف الصور الموجودة على الجهاز</string>
+    <string name="permissions_read_images_desc">السماح لـ Luma باكتشاف الصور الموجودة على الجهاز</string>
     <string name="permissions_read_videos">قراءة مقاطع الفيديو</string>
-    <string name="permissions_read_videos_desc">السماح لـ Lavender Photos باكتشاف مقاطع الفيديو الموجودة على الجهاز</string>
+    <string name="permissions_read_videos_desc">السماح لـ Luma باكتشاف مقاطع الفيديو الموجودة على الجهاز</string>
     <string name="permissions_read_external_storage">قراءة وحدة التخزين الخارجية</string>
-    <string name="permissions_read_external_storage_desc">السماح لـ Lavender Photos باكتشاف الصور ومقاطع الفيديو على الجهاز</string>
+    <string name="permissions_read_external_storage_desc">السماح لـ Luma باكتشاف الصور ومقاطع الفيديو على الجهاز</string>
     <string name="permissions_manage_media">إدارة الوسائط</string>
     <string name="permissions_manage_media_desc">إذن اختياري يُستخدم لتسريع النقل إلى المهملات والحذف</string>
     <string name="permissions_continue">متابعة</string>
@@ -375,8 +375,8 @@
     <string name="permissions_grant_permissions">منح الأذونات</string>
     <string name="permissions_why">لماذا؟</string>
     <string name="permissions_dismiss">تجاهل</string>
-    <string name="permissions_read_media_explanation">هذا الإذن مطلوب للعثور على الصور ومقاطع الفيديو الموجودة على الجهاز. يلتزم Lavender Photos بقيود صارمة بشأن الملفات التي يقرأها، ولا يشارك هذه المعلومات أو يستغلها مطلقًا.</string>
-    <string name="permissions_manage_media_explanation">هذا الإذن اختياري، لكنه موصى به بشدة. يسمح إذن إدارة الوسائط لـ Lavender Photos باستخدام واجهة Content Resolver في Android لنقل الوسائط إلى المهملات أو حذفها أو نقلها أو نسخها، مما يجعل العملية أكثر سلاسة وتوافقًا مع التطبيقات الأخرى.</string>
+    <string name="permissions_read_media_explanation">هذا الإذن مطلوب للعثور على الصور ومقاطع الفيديو الموجودة على الجهاز. يلتزم Luma بقيود صارمة بشأن الملفات التي يقرأها، ولا يشارك هذه المعلومات أو يستغلها مطلقًا.</string>
+    <string name="permissions_manage_media_explanation">هذا الإذن اختياري، لكنه موصى به بشدة. يسمح إذن إدارة الوسائط لـ Luma باستخدام واجهة Content Resolver في Android لنقل الوسائط إلى المهملات أو حذفها أو نقلها أو نسخها، مما يجعل العملية أكثر سلاسة وتوافقًا مع التطبيقات الأخرى.</string>
     <string name="permissions_explanation">توضيح الإذن</string>
     <string name="media_snackbar_operation_failed">تعذرت المزامنة!</string>
     <string name="media_copy_snackbar_title">جارٍ نسخ العناصر…</string>
@@ -406,7 +406,7 @@
     <string name="apply">تطبيق</string>
     <string name="close">إغلاق</string>
     <string name="changelog_name">سجل التغييرات</string>
-    <string name="drag_and_drop_data">بيانات السحب والإفلات في Lavender Photos</string>
+    <string name="drag_and_drop_data">بيانات السحب والإفلات في Luma</string>
     <string name="management">الإدارة</string>
     <string name="next">التالي</string>
     <string name="error">خطأ!</string>
@@ -524,7 +524,7 @@
     <string name="immich_server">خادم Immich</string>
     <string name="immich_help_general">ما هذا؟</string>
     <string name="immich_help_general_desc">يسمح بنسخ الوسائط احتياطيًا إلى خادم Immich على مستوى الألبوم</string>
-    <string name="immich_help_detailed_desc"><![CDATA["\"<p><a href=\"https://immich.app/\">Immich</a> هو حل مستضاف ذاتيًا لإدارة الصور ومقاطع الفيديو،\n            ويتيح لأي شخص استضافة خادم النسخ الاحتياطي السحابي الخاص به.\n            </p>\n            <h3 style=\"text-align:center;\">كيفية الاستخدام؟<h3/>\n            <ul>\n                <li>استضف <a href=\"https://immich.app/\">خادم Immich</a> بنفسك</li>\n                <li>حدد عنوان الخادم في Lavender Photos</li>\n                <li>سجل الدخول باستخدام حساب مستخدم Immich</li>\n                <li>انتقل إلى أي ألبوم وانقر على أيقونة السحابة</li>\n                <li>ابدأ نسخ صورك احتياطيًا!</li>\n            </ul>\""]]></string>
+    <string name="immich_help_detailed_desc"><![CDATA["\"<p><a href=\"https://immich.app/\">Immich</a> هو حل مستضاف ذاتيًا لإدارة الصور ومقاطع الفيديو،\n            ويتيح لأي شخص استضافة خادم النسخ الاحتياطي السحابي الخاص به.\n            </p>\n            <h3 style=\"text-align:center;\">كيفية الاستخدام؟<h3/>\n            <ul>\n                <li>استضف <a href=\"https://immich.app/\">خادم Immich</a> بنفسك</li>\n                <li>حدد عنوان الخادم في Luma</li>\n                <li>سجل الدخول باستخدام حساب مستخدم Immich</li>\n                <li>انتقل إلى أي ألبوم وانقر على أيقونة السحابة</li>\n                <li>ابدأ نسخ صورك احتياطيًا!</li>\n            </ul>\""]]></string>
     <string name="immich_server_url_invalid">عنوان URL غير صالح!</string>
     <string name="immich_misc">متفرقات</string>
     <string name="immich_server_online">متصل</string>
@@ -559,7 +559,7 @@
     <string name="immich_backup_option_changes_unsaved">تغييرات غير محفوظة</string>
     <string name="immich_backup_option_changes_unsaved_desc">سيؤدي التحديث إلى التراجع عن جميع تغييراتك</string>
     <string name="immich_backup_sync">مزامنة العناصر</string>
-    <string name="immich_backup_sync_desc">مطابقة التغييرات بين Lavender Photos وخادم Immich</string>
+    <string name="immich_backup_sync_desc">مطابقة التغييرات بين Luma وخادم Immich</string>
     <string name="immich_backup_sync_running">جارٍ مزامنة العناصر…</string>
     <string name="immich_backup_sync_count">جارٍ مزامنة %1$d من أصل %2$d من العناصر</string>
     <string name="immich_share_album">مشاركة الألبوم</string>
@@ -603,7 +603,7 @@
     <string name="startup_processing_info">هذه عملية تُجرى مرة واحدة.</string>
     <string name="startup_processing_progress">اكتمل: %s</string>
     <string name="startup_processing_explanation">لماذا الانتظار؟</string>
-    <string name="startup_processing_explanation_desc">يفهرس Lavender Photos الوسائط الموجودة على جهازك لتوفير تواريخ دقيقة وأوقات تحميل أسرع وميزات أفضل. هذه عملية تُجرى <b>مرة واحدة</b>، ويُفترض أن تستغرق نحو <i>30 ثانية إلى دقيقتين</i> حسب عدد العناصر الموجودة على جهازك. إذا قاطعت العملية، فستُستأنف عند التشغيل التالي.</string>
+    <string name="startup_processing_explanation_desc">يفهرس Luma الوسائط الموجودة على جهازك لتوفير تواريخ دقيقة وأوقات تحميل أسرع وميزات أفضل. هذه عملية تُجرى <b>مرة واحدة</b>، ويُفترض أن تستغرق نحو <i>30 ثانية إلى دقيقتين</i> حسب عدد العناصر الموجودة على جهازك. إذا قاطعت العملية، فستُستأنف عند التشغيل التالي.</string>
     <string name="startup_processing_skip">تخطي</string>
     <string name="main_dialog_greeting">مرحبًا، %s!</string>
     <string name="tags_add">إضافة وسم!</string>
