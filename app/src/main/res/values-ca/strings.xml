@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Fotos</string>
+    <string name="app_name">Luma</string>
     <string name="albums">Àlbums</string>
     <string name="finding_albums_on_device">Buscant àlbums…</string>
     <string name="albums_found">S\'han trobat tots els àlbums!</string>
@@ -45,7 +45,7 @@
     <string name="albums_search_for">Cerca un àlbum</string>
     <string name="tabs">Pestanyes</string>
     <string name="tabs_default">Pestanya per defecte</string>
-    <string name="tabs_default_desc">Lavender Photos obrirà automàticament aquesta pestanya a l\'inici</string>
+    <string name="tabs_default_desc">Luma obrirà automàticament aquesta pestanya a l\'inici</string>
     <string name="tabs_customize">Personalitza les pestanyes</string>
     <string name="tabs_customize_desc">Modifica quines pestanyes hi ha disponibles a la barra inferior</string>
     <string name="tabs_navigate_to">Vés la pàgina %1$s</string>
@@ -67,7 +67,7 @@
     <string name="navigation_away">Vés a una altra pàgina</string>
     <string name="navigation_tap_to_nav">Toca per anar a una altra pàgina</string>
     <string name="navigation_tap_to_nav_desc">Toqueu els extrems esquerre o dret de la pantalla per anar endavant i enrere entre els continguts multimèdia</string>
-    <string name="app_name_full">Lavender Photos</string>
+    <string name="app_name_full">Luma</string>
     <string name="updates_new_version_available">Actualització disponible!</string>
     <string name="updates_latest">Actualitzat</string>
     <string name="secure_processing">Espereu mentre es processa aquest contingut multimèdia</string>
@@ -84,7 +84,7 @@
     <string name="app_version">Versió %1$s</string>
     <string name="app_repo">Repositori de l\'app</string>
     <string name="privacy_policy_title">Política de Privacitat</string>
-    <string name="privacy_policy">No n\'hi ha! Cap de les teves dades va més enllà d\'aquest dispositiu. No entrenen cap AI, no hi ha algoritmes per recopilar informació, res. Lavender Photos és, i serà sempre, una aplicació de galeria enfocada en la privacitat.</string>
+    <string name="privacy_policy">No n\'hi ha! Cap de les teves dades va més enllà d\'aquest dispositiu. No entrenen cap AI, no hi ha algoritmes per recopilar informació, res. Luma és, i serà sempre, una aplicació de galeria enfocada en la privacitat.</string>
     <string name="support">Suport i donacions</string>
     <string name="translation">Traducció</string>
     <string name="licenses">Llicències</string>
@@ -251,11 +251,11 @@
 
             Les compilacions allotjades a GitHub estan sempre signades, comprovades i verificades pel desenvolupador (kaii-lb), però utilitzar-les depèn de tu.
 
-            Lavender Photos no mai s\'actualitza automàticament, i només s\'actualitza amb el consentiment explícit de l\'usuari.
+            Luma no mai s\'actualitza automàticament, i només s\'actualitza amb el consentiment explícit de l\'usuari.
             </p>
         ]]>
     </string>
-    <string name="favourites_migration_declined_desc">Lavender Photos no pot transferir els teus preferits des de la versió antiga si no li dones els permisos per fer-ho! Això significa que perdràs els elements que s\'havien marcat com a preferits.</string>
+    <string name="favourites_migration_declined_desc">Luma no pot transferir els teus preferits des de la versió antiga si no li dones els permisos per fer-ho! Això significa que perdràs els elements que s\'havien marcat com a preferits.</string>
     <string name="debugging">Depuració</string>
     <string name="debugging_development">Desenvolupament</string>
     <string name="logs">Registres</string>
@@ -335,11 +335,11 @@
     <string name="permissions_allow_secure_folder_screen_capture">Permetre captures de pantalla al directori protegit</string>
     <string name="permissions_allow_secure_folder_screen_capture_desc">Permet captures de pantalla, gravació de pantalla i compartició de pantalla quan hi ha obert el directori protegit. El contingut protegit pot aparèixer també a la vista preliminar de les aplicacions recents. Deixa-ho desactivat per mantenir-ho protegit</string>
     <string name="permissions_read_images">Llegeix imatges</string>
-    <string name="permissions_read_images_desc">Permet a Lavender Photos descobrir fotografies al dispositiu</string>
+    <string name="permissions_read_images_desc">Permet a Luma descobrir fotografies al dispositiu</string>
     <string name="permissions_read_videos">Llegeix vídeos</string>
-    <string name="permissions_read_videos_desc">Permet a Lavender Photos descobrir vídeos al dispositiu</string>
+    <string name="permissions_read_videos_desc">Permet a Luma descobrir vídeos al dispositiu</string>
     <string name="permissions_read_external_storage">Llegeix l\'emmagatzematge extern</string>
-    <string name="permissions_read_external_storage_desc">Permet a Lavender Photos descobrir fotografies i vídeos a l\'emmagatzematge extern</string>
+    <string name="permissions_read_external_storage_desc">Permet a Luma descobrir fotografies i vídeos a l\'emmagatzematge extern</string>
     <string name="permissions_manage_media">Gestionar contingut multimèdia</string>
     <string name="permissions_continue">Continua</string>
     <string name="permissions_necessary">Permís necessari</string>
@@ -353,7 +353,7 @@
     <string name="permissions_grant_permissions">Concedir permisos</string>
     <string name="permissions_why">Per què?</string>
     <string name="permissions_dismiss">Descarta</string>
-    <string name="favourites_migration_desc">És una manera de fer un seguiment dels teus millors moments. Amb Lavender Photos, això significa que els preferits es sincronitzen a través de totes les aplicacions que ho admetin, amb una gestió sense fallades, i un sistema d\'alt rendiment.\n\nSi vens d\'una versió anterior de Lavender Photos, tots els teus elements preferits anteriorment migraran al nou sistema.\n\nSi us plau, deixa el teu telèfon encès amb l\'aplicació oberta.</string>
+    <string name="favourites_migration_desc">És una manera de fer un seguiment dels teus millors moments. Amb Luma, això significa que els preferits es sincronitzen a través de totes les aplicacions que ho admetin, amb una gestió sense fallades, i un sistema d\'alt rendiment.\n\nSi vens d\'una versió anterior de Luma, tots els teus elements preferits anteriorment migraran al nou sistema.\n\nSi us plau, deixa el teu telèfon encès amb l\'aplicació oberta.</string>
     <string name="settings_behaviour_loop_always_desc">Tots els vídeos, independentment de la seva durada, estaran en bucle de manera indefinida</string>
     <string name="settings_sort_mode_date_taken">Data de captura</string>
     <string name="settings_sort_mode_date_modified">Darrera modificació</string>
@@ -390,7 +390,7 @@
     <string name="search_no_tags_found">Encara no s\'han afegit etiquetes…</string>
     <string name="search">Cerca</string>
     <string name="search_nothing_found">No s\'ha trobat res</string>
-    <string name="edit_desc">Lavender Photos ha editat el fitxer a %1$s</string>
+    <string name="edit_desc">Luma ha editat el fitxer a %1$s</string>
     <string name="custom_album_remove_media">Elimina</string>
     <string name="custom_album_remove_media_desc">Vols eliminar aquests elements de l\'àlbum?</string>
     <string name="action_cannot_be_undone">Aquesta acció no es pot desfer!</string>
@@ -489,7 +489,7 @@
     <string name="settings_behaviour_loop_never_desc">La reproducció del vídeo s\'atura en arribar al final</string>
     <string name="settings_behaviour_loop_under_30_desc">Tots els vídeos de menys de 30 segons es reproduiran en bucle infinit</string>
     <string name="permissions_necessary_desc">Aquest permís és necessari per a la funcionalitat de l\'aplicació</string>
-    <string name="permissions_read_media_explanation">Aquest permís és necessari per trobar fotos i vídeos al dispositiu. Lavender Photos és molt estricte amb quins fitxers llegeix, i mai comparteix ni aprofita aquesta informació.</string>
+    <string name="permissions_read_media_explanation">Aquest permís és necessari per trobar fotos i vídeos al dispositiu. Luma és molt estricte amb quins fitxers llegeix, i mai comparteix ni aprofita aquesta informació.</string>
     <string name="permissions_explanation">Explicació dels permisos</string>
     <string name="media">Contingut multimèdia</string>
     <string name="sort_indicator">Ordenar per indicador</string>
@@ -498,7 +498,7 @@
     <string name="sort_custom">Personalitzat</string>
     <string name="media_non_existent">Aquest contingut multimèdia no existeix!</string>
     <string name="wallpaper_scrollable">Desplaçable</string>
-    <string name="drag_and_drop_data">Dades d\'arrossegar i deixar de Lavender Photos</string>
+    <string name="drag_and_drop_data">Dades d\'arrossegar i deixar de Luma</string>
     <string name="media_picker_processing_items">Processant elements…</string>
     <string name="media_picker_processing_items_body">Processant %1$d de %2$d</string>
     <string name="app_lock">Bloqueig de l\'aplicació</string>
@@ -525,7 +525,7 @@
     <string name="app_lock_submit">Envia el PIN per comprovar</string>
     <string name="debugging_reset_scan_generation_desc">Examina tot el contingut multimèdia del dispositiu i l\'afegeix a la base de dades de l\'aplicació. Utilitza-ho si algunes imatges no apareixen</string>
     <string name="permissions_media_manager_desc">Accions llençar a la paperera/eliminar/copiar/moure més ràpides i millors</string>
-    <string name="permissions_manage_media_explanation">Aquest permís és opcional, però altament recomanat. Gestionar permisos del contingut multimèdia permet a Lavender Photos utilitzar l\'API de resolució de continguts d\'Android per llençar a la paperera/eliminar/moure/copiar els continguts, que fa el procés molt més fluït i transversal amb altres aplicacions.</string>
+    <string name="permissions_manage_media_explanation">Aquest permís és opcional, però altament recomanat. Gestionar permisos del contingut multimèdia permet a Luma utilitzar l\'API de resolució de continguts d\'Android per llençar a la paperera/eliminar/moure/copiar els continguts, que fa el procés molt més fluït i transversal amb altres aplicacions.</string>
     <string name="media_share_failed">Ha fallat la compartició del contingut multimèdia!</string>
     <string name="media_secure_snackbar_title">Protegint elements…</string>
     <string name="media_restore_snackbar_title">Restaurant elements…</string>
@@ -601,7 +601,7 @@
             <h3 style="text-align:center;">Com s\'utilitza?<h3/>
             <ul>
                 <li>Autoallotja un <a href="https://immich.app/">servidor Immich</a></li>
-                <li>Especifica l\'adreça del servidor a Lavender Photos</li>
+                <li>Especifica l\'adreça del servidor a Luma</li>
                 <li>Inicia sessió utilitzant un compte d\'usuari d\'Immich</li>
                 <li>A la pàgina del tauler de control, clica \'Opcions de les còpies de recolzament\'
                 <li>Escull els àlbums dels quals vols tenir còpies de recolzament, i clica el botó per confirmar-ho</li>
@@ -643,7 +643,7 @@
     <string name="immich_backup_option_changes_unsaved">Canvis sense desar</string>
     <string name="immich_backup_option_changes_unsaved_desc">Recarregar desfarà tots els teus canvis</string>
     <string name="immich_backup_sync">Sincronitza elements</string>
-    <string name="immich_backup_sync_desc">Reconciliar canvis entre Lavender Photos i el servidor Immich</string>
+    <string name="immich_backup_sync_desc">Reconciliar canvis entre Luma i el servidor Immich</string>
     <string name="immich_backup_sync_running">Sincronitzant elements…</string>
     <string name="immich_backup_sync_count">Sincronitzant %1$d de %2$d elements</string>
     <string name="immich_share_album">Compartir àlbum</string>
@@ -681,7 +681,7 @@
     <string name="startup_processing_indexing">Descobrint…</string>
     <string name="startup_processing_info">És una operació que només es fa un cop.</string>
     <string name="startup_processing_progress">Fet: %s</string>
-    <string name="startup_processing_explanation_desc">Lavender Photos indexa el contingut multimèdia del teu dispositiu, per proporcionar dates acurades, temps de càrrega més ràpids, i millors funcions. És una operació <b>d\'un sol cop</b>, i hauria de trigar entre <i>30 segons i 2 minuts</i> depenent de quants elements hi hagi al teu dispositiu. Si interromps els processos, continuarà al proper inici.</string>
+    <string name="startup_processing_explanation_desc">Luma indexa el contingut multimèdia del teu dispositiu, per proporcionar dates acurades, temps de càrrega més ràpids, i millors funcions. És una operació <b>d\'un sol cop</b>, i hauria de trigar entre <i>30 segons i 2 minuts</i> depenent de quants elements hi hagi al teu dispositiu. Si interromps els processos, continuarà al proper inici.</string>
     <string name="startup_processing_skip">Saltar</string>
     <string name="main_dialog_greeting">Hola, %s!</string>
     <string name="tags_add">Afegeix una etiqueta!</string>
