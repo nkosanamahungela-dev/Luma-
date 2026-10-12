@@ -100,28 +100,6 @@ fun AboutPage(
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                var showNews by remember { mutableStateOf(false) }
-                if (showNews) {
-                    ComponentViewModelScope(key = "News Section") {
-                        NewsPopup(
-                            viewModel = viewModel(
-                                factory = NewsViewModelFactory(context = context),
-                                viewModelStoreOwner = LocalViewModelStoreOwner.current!!
-                            ),
-                            onDismiss = { showNews = false }
-                        )
-                    }
-                }
-
-                AppAboutItem(
-                    version = appVersion,
-                    showNews = {
-                        showNews = true
-                    }
-                )
-            }
-
             items(
                 count = contributors.size,
                 key = {
@@ -158,6 +136,28 @@ fun AboutPage(
                         )
                     }
                 }
+            }
+
+            item {
+                var showNews by remember { mutableStateOf(false) }
+                if (showNews) {
+                    ComponentViewModelScope(key = "News Section") {
+                        NewsPopup(
+                            viewModel = viewModel(
+                                factory = NewsViewModelFactory(context = context),
+                                viewModelStoreOwner = LocalViewModelStoreOwner.current!!
+                            ),
+                            onDismiss = { showNews = false }
+                        )
+                    }
+                }
+
+                AppAboutItem(
+                    version = appVersion,
+                    showNews = {
+                        showNews = true
+                    }
+                )
             }
         }
     }
