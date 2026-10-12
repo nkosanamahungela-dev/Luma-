@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Fotos</string>
+    <string name="app_name">Luma</string>
     <string name="albums">Alben</string>
     <string name="finding_albums_on_device">Suche Alben…</string>
     <string name="albums_found">Alle Alben gefunden!</string>
@@ -27,7 +27,7 @@
     <string name="albums_add_failed">Alben konnten nicht hinzugefügt werden :&lt;</string>
     <string name="tabs">Tabs</string>
     <string name="tabs_default">Standard Tab</string>
-    <string name="tabs_default_desc">Dieser Tab wird beim Starten von Lavender Photos automatisch geöffnet</string>
+    <string name="tabs_default_desc">Dieser Tab wird beim Starten von Luma automatisch geöffnet</string>
     <string name="tabs_customize">Tabs bearbeiten</string>
     <string name="tabs_customize_desc">Anpassen, welche Tabs in der Navigationsleiste verfügbar sind</string>
     <string name="tabs_navigate_to">Zu %1$s Seite navigieren</string>
@@ -39,9 +39,9 @@
     <string name="tabs_max_reached">Nicht mehr als 18 Tabs möglich</string>
     <string name="tabs_min_reached">Mindestens ein Tab benötigt</string>
     <string name="return_to_previous_page">Zu vorheriger Seite zurückkehren</string>
-    <string name="app_name_full">Lavender Photos</string>
+    <string name="app_name_full">Luma</string>
     <string name="privacy_policy_title">Datenschutzerklärung</string>
-    <string name="privacy_policy">Es gibt keine! Die Daten bleiben alle auf Deinem Gerät. Es wird keine KI darauf trainiert, keine Algorithmen zum Sammeln von Informationen, nichts. Lavender Photos ist und bleibt eine auf Datenschutz ausgerichtete Galerie-App.</string>
+    <string name="privacy_policy">Es gibt keine! Die Daten bleiben alle auf Deinem Gerät. Es wird keine KI darauf trainiert, keine Algorithmen zum Sammeln von Informationen, nichts. Luma ist und bleibt eine auf Datenschutz ausgerichtete Galerie-App.</string>
     <string name="support">Unterstützen &amp; Spenden</string>
     <string name="updates">Aktualisierungen</string>
     <string name="updates_check">Auf Updates überprüfen</string>
@@ -83,7 +83,7 @@
 
                 <br><br>Die herausgegebenen Builds, welche auf GitHub gehostet sind, sind immer signiert, überprüft und verifiziert durch den Entwickler (kaii-lb). Es ist Ihre Entscheidung sie zu benutzen oder nicht.
 
-                <br><br>Lavender Photos führt keine automatischen Updates durch. Und wenn nur durch die ausdrückliche Erlaubnis des Benutzers. 
+                <br><br>Luma führt keine automatischen Updates durch. Und wenn nur durch die ausdrückliche Erlaubnis des Benutzers. 
             </p>
         ]]></string>
     <string name="secure_getting_file_info">Dateiinformationen abrufen…</string>
@@ -134,12 +134,12 @@
     <string name="favourites_remove_this">Aus Favoriten entfernen?</string>
     <string name="favourites_migration">Favoriten wurden erneuert!</string>
     <string name="favourites_migration_notice">Favoriten</string>
-    <string name="favourites_migration_desc">Auf diese Weise kannst du deine schönsten Momente festhalten. Bei Lavender Photos bedeutet das, dass deine Favoriten mit allen Apps synchronisiert werden, die dies unterstützen, und das mit einer einwandfreien Verwaltung und einem leistungsstarken System!\n\nWenn du eine frühere Version von Lavender Photos verwendest, werden alle deine bisherigen Favoriten in das neue System übertragen.\n\nBitte lass dein Telefon eingeschaltet und diese App geöffnet.</string>
+    <string name="favourites_migration_desc">Auf diese Weise kannst du deine schönsten Momente festhalten. Bei Luma bedeutet das, dass deine Favoriten mit allen Apps synchronisiert werden, die dies unterstützen, und das mit einer einwandfreien Verwaltung und einem leistungsstarken System!\n\nWenn du eine frühere Version von Luma verwendest, werden alle deine bisherigen Favoriten in das neue System übertragen.\n\nBitte lass dein Telefon eingeschaltet und diese App geöffnet.</string>
     <string name="favourites_migration_started">Migration gestartet!</string>
     <string name="favourites_migration_none">Keine Objekte zu übertragen</string>
     <string name="favourites_migration_done">Migration abgeschlossen!</string>
     <string name="favourites_migration_declined">Berechtigungen abgeleht!</string>
-    <string name="favourites_migration_declined_desc">Lavender Photos kann deine Favoriten aus der alten Version nicht übertragen, wenn du die entsprechenden Berechtigungen nicht erteilest! Das bedeutet, dass du deine zuvor als Favoriten markierten Elemente verlierst.</string>
+    <string name="favourites_migration_declined_desc">Luma kann deine Favoriten aus der alten Version nicht übertragen, wenn du die entsprechenden Berechtigungen nicht erteilest! Das bedeutet, dass du deine zuvor als Favoriten markierten Elemente verlierst.</string>
     <string name="album_add_path_placeholder">Downloads/Videos</string>
     <string name="video_seek_icon_desc">Zeigt an, in welche Richtung der Benutzer spult</string>
     <string name="edit">Bearbeiten</string>
@@ -255,7 +255,7 @@
     <string name="apply">Anwenden</string>
     <string name="close">Schließen</string>
     <string name="changelog_name">Aktualisierungsverlauf</string>
-    <string name="drag_and_drop_data">Lavender Photos Drag-Und-Drop Daten</string>
+    <string name="drag_and_drop_data">Luma Drag-Und-Drop Daten</string>
     <string name="management">Management</string>
     <string name="next">Nächstes</string>
     <string name="error">Fehler!</string>
@@ -301,7 +301,7 @@
     <string name="permissions_do_not_trash">Den Papierkorb nicht verwenden</string>
     <string name="permissions_do_not_trash_desc">Löscht Medien sofort und unwiderruflich ohne sie in den Papierkorb zu verschieben</string>
     <string name="permissions_read_external_storage">Externen Speicher auslesen</string>
-    <string name="permissions_read_external_storage_desc">Erlaubt Lavender Photos, Videos und Bilder auf diesem Gerät zu entdecken</string>
+    <string name="permissions_read_external_storage_desc">Erlaubt Luma, Videos und Bilder auf diesem Gerät zu entdecken</string>
     <string name="permissions_manage_media">Medien verwalten</string>
     <string name="permissions_manage_media_desc">Optionale Berechtigung. Wird fürs schnellere in den Papierkorb verschieben und Löschen benutzt</string>
     <string name="media_is_raw">Dies ist ein RAW Bild</string>
