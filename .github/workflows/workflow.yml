@@ -4,56 +4,107 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v7
+      - name: Checkout Repository
+        uses: actions/checkout@v7
 
-    - name: Set up JDK 21
-      uses: actions/setup-java@v5
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        cache: 'gradle'
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v4
-    - run: sdkmanager "build-tools;37.0.0"
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
 
-    - name: Grant execute permission to gradlew
-      run: chmod +x gradlew
+      - name: Install Android build tools
+        run: sdkmanager "build-tools;37.0.0"
 
-    - name: Build Release APK
-      run: ./gradlew assembleRelease
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
 
-    - name: Decode Signing Key
-      run: echo "${{ secrets.KEYSTORE_KEY }}" | base64 --decode > app/release.keystore
+      - name: Build Release APKs
+        run: ./gradlew assembleRelease
 
-    - name: Sign Arm v8a APK
-      run: |
-        /usr/local/lib/android/sdk/build-tools/37.0.0/zipalign -v -f -P 16 4 app/build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk app/build/outputs/apk/release/app-arm64-v8a-release-unsigned-aligned.apk
-        /usr/local/lib/android/sdk/build-tools/37.0.0/apksigner sign --alignment-preserved --ks app/release.keystore --ks-key-alias "${{ secrets.KEYSTORE_ALIAS }}" --ks-pass pass:"${{ secrets.KEYSTORE_PASS }}" --in app/build/outputs/apk/release/app-arm64-v8a-release-unsigned-aligned.apk --out photos_signed_release_arm64-v8a.apk
+      - name: Decode and validate signing keystore
+        env:
+          KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${KEYSTORE_KEY}" || -z "${KEYSTORE_PASS}" ]]; then
+            echo "::error::Missing KEYSTORE_KEY or KEYSTORE_PASS repository secret. KEYSTORE_KEY must be the Base64 encoding of the complete keystore file."
+            exit 1
+          fi
+          printf '%s' "${KEYSTORE_KEY}" | base64 --decode > app/release.keystore
+          if [[ ! -s app/release.keystore ]]; then
+            echo "::error::Decoded keystore is empty. Re-create KEYSTORE_KEY from the actual keystore file."
+            exit 1
+          fi
+          if ! keytool -list -keystore app/release.keystore -storepass "${KEYSTORE_PASS}" >/dev/null 2>&1; then
+            echo "::error::Keystore validation failed. KEYSTORE_KEY must be Base64 of the original .jks/.keystore file, and KEYSTORE_PASS must be its store password. Do not paste either secret into logs or chat."
+            exit 1
+          fi
+          echo "Keystore file and store password validated."
 
-    - name: Sign ARM v7a APK
-      run: |
-        /usr/local/lib/android/sdk/build-tools/37.0.0/zipalign -v -f -P 16 4 app/build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk app/build/outputs/apk/release/app-armeabi-v7a-release-unsigned-aligned.apk
-        /usr/local/lib/android/sdk/build-tools/37.0.0/apksigner sign --alignment-preserved --ks app/release.keystore --ks-key-alias "${{ secrets.KEYSTORE_ALIAS }}" --ks-pass pass:"${{ secrets.KEYSTORE_PASS }}" --in app/build/outputs/apk/release/app-armeabi-v7a-release-unsigned-aligned.apk --out photos_signed_release_armeabi-v7a.apk
+      - name: Sign ARM64 APK
+        env:
+          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${KEYSTORE_ALIAS}" ]]; then
+            echo "::error::Missing KEYSTORE_ALIAS repository secret."
+            exit 1
+          fi
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/37.0.0"
+          APK="app/build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk"
+          "${BUILD_TOOLS}/zipalign" -v -f -P 16 4 "${APK}" app-arm64-v8a-aligned.apk
+          "${BUILD_TOOLS}/apksigner" sign --alignment-preserved --ks app/release.keystore --ks-key-alias "${KEYSTORE_ALIAS}" --ks-pass env:KEYSTORE_PASS --in app-arm64-v8a-aligned.apk --out luma-release-arm64-v8a.apk
+          "${BUILD_TOOLS}/apksigner" verify --verbose luma-release-arm64-v8a.apk
 
-    - name: Clean Up
-      run: shred -u app/release.keystore
+      - name: Sign ARMv7 APK
+        env:
+          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/37.0.0"
+          APK="app/build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk"
+          "${BUILD_TOOLS}/zipalign" -v -f -P 16 4 "${APK}" app-armeabi-v7a-aligned.apk
+          "${BUILD_TOOLS}/apksigner" sign --alignment-preserved --ks app/release.keystore --ks-key-alias "${KEYSTORE_ALIAS}" --ks-pass env:KEYSTORE_PASS --in app-armeabi-v7a-aligned.apk --out luma-release-armeabi-v7a.apk
+          "${BUILD_TOOLS}/apksigner" verify --verbose luma-release-armeabi-v7a.apk
 
-    - name: Upload Arm v8a APK as Artifact
-      uses: actions/upload-artifact@v7
-      with:
-        name: lavender-photos-nightly-signed-arm-v8a.apk
-        path: photos_signed_release_arm64-v8a.apk
+      - name: Remove signing files
+        if: always()
+        run: |
+          rm -f app/release.keystore app-arm64-v8a-aligned.apk app-armeabi-v7a-aligned.apk
 
-    - name: Upload Arm v7a APK as Artifact
-      uses: actions/upload-artifact@v7
-      with:
-        name: lavender-photos-nightly-signed-arm-v7a.apk
-        path: photos_signed_release_armeabi-v7a.apk
+      - name: Upload ARM64 APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: luma-0.1.0-beta-arm64-v8a
+          path: luma-release-arm64-v8a.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload ARMv7 APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: luma-0.1.0-beta-armeabi-v7a
+          path: luma-release-armeabi-v7a.apk
+          if-no-files-found: error
+          retention-days: 14
