@@ -11,7 +11,7 @@ val majorContributors: List<ContributorItem>
             name = "Smelokuhle (MAHUNGELA)",
             description = R.string.contributor_kaii_desc,
             title = ContributorItem.Contributor.Title.Maintainer,
-            avatarUrl = null,
+            avatarUrl = R.drawable.luma_developer_avatar,
             contributions = null,
             socials = listOf(
                 SocialButton(
