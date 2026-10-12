@@ -12,6 +12,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -26,7 +27,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,12 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -213,7 +208,6 @@ fun ProcessingPage(startupManager: StartupManager) {
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            val color = MaterialTheme.colorScheme.primary
             val iconSize = 160.dp
 
             Text(
@@ -222,29 +216,10 @@ fun ProcessingPage(startupManager: StartupManager) {
                 fontSize = TextStylingConstants.EXTRA_LARGE_TEXT_SIZE.sp
             )
 
-            val painter = painterResource(id = R.drawable.lavender_no_padding)
-            Icon(
-                painter = painter,
-                contentDescription = "",
-                tint = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier
-                    .size(iconSize)
-                    .graphicsLayer(
-                        compositingStrategy = CompositingStrategy.Offscreen
-                    )
-                    .drawWithContent {
-                        drawContent()
-
-                        drawRect(
-                            color = color,
-                            blendMode = BlendMode.SrcIn,
-                            topLeft = Offset(
-                                x = 0f,
-                                y = size.height - size.height * animatedFill
-                            ),
-                            size = size.copy(height = size.height * animatedFill)
-                        )
-                    }
+            Image(
+                painter = painterResource(id = R.drawable.luma_icon_foreground),
+                contentDescription = "Luma logo",
+                modifier = Modifier.size(iconSize)
             )
 
             AnimatedContent(
