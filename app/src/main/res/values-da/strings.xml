@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Photos</string>
+    <string name="app_name">Luma</string>
     <string name="albums">Album</string>
     <string name="finding_albums_on_device">Finder album…</string>
     <string name="albums_found">Fandt alle album!</string>
@@ -27,7 +27,7 @@
     <string name="albums_add_failed">Kunne ikke tilføje album :&lt;</string>
     <string name="tabs">Faneblade</string>
     <string name="tabs_default">Standard Faneblad</string>
-    <string name="tabs_default_desc">Lavender Photos vil automatisk åbne dette faneblad ved opstart</string>
+    <string name="tabs_default_desc">Luma vil automatisk åbne dette faneblad ved opstart</string>
     <string name="tabs_customize">Tilpas Faneblade</string>
     <string name="tabs_customize_desc">Lav om på hvilket faneblade er tilgængelige i navigationsbaren</string>
     <string name="tabs_navigate_to">Navigér til %s$1 side</string>
@@ -39,9 +39,9 @@
     <string name="tabs_max_reached">Kan ikke tilføje mere end 5 faneblade</string>
     <string name="tabs_min_reached">Der skal være mindst ét faneblad</string>
     <string name="return_to_previous_page">Returnér til forrige side</string>
-    <string name="app_name_full">Lavender Photos</string>
+    <string name="app_name_full">Luma</string>
     <string name="privacy_policy_title">Privatlivspolitik</string>
-    <string name="privacy_policy">Der er ikke en! Intet af dit data forlader din enhed. Ingen AI trænes på det, ingen algoritmer høster din information, intet. Lavender Photos har altid været og vil altid være en privatlivs-fokuseret galleri app.</string>
+    <string name="privacy_policy">Der er ikke en! Intet af dit data forlader din enhed. Ingen AI trænes på det, ingen algoritmer høster din information, intet. Luma har altid været og vil altid være en privatlivs-fokuseret galleri app.</string>
     <string name="support">Støtte &amp; Donationer</string>
     <string name="updates">Opdateringer</string>
     <string name="updates_check">Tjek om der er opdateringer</string>
@@ -54,7 +54,7 @@
 
                 <br><br>Versionerne hosted på GitHub er altid signeret, tjekket, og verificeret af udvikleren (kaii-lb), men det er dit valg om du vil bruge dem eller ej.
 
-                <br><br>Lavender Photos vil aldrig opdatere automatisk, og opdaterer kun med udtrykkelig samtykke fra brugeren.
+                <br><br>Luma vil aldrig opdatere automatisk, og opdaterer kun med udtrykkelig samtykke fra brugeren.
             </p>
         ]]></string>
     <string name="updates_new_version_available">Ny version tilgængelig!</string>
