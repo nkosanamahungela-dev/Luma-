@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/assets/images/Banner.png" alt="Luma" width="100%">
+  <img src="assets/images/luma-logo.svg" alt="Luma logo" width="180">
 </p>
 
 <h1 align="center">Luma</h1>
