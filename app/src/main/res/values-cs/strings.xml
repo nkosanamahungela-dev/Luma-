@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Fotky</string>
+    <string name="app_name">Luma</string>
     <string name="albums">Alba</string>
     <string name="finding_albums_on_device">Hledání alb v zařízení…</string>
     <string name="albums_found">Všechna alba nalezena!</string>
@@ -40,7 +40,7 @@
     <string name="albums_search_for">Hledat album</string>
     <string name="tabs">Karty</string>
     <string name="tabs_default">Výchozí karta</string>
-    <string name="tabs_default_desc">Lavender Photos tuto kartu automaticky otevře při spuštění</string>
+    <string name="tabs_default_desc">Luma tuto kartu automaticky otevře při spuštění</string>
     <string name="tabs_customize">Přizpůsobit karty</string>
     <string name="tabs_customize_desc">Změnit dostupné karty ve spodní liště</string>
     <string name="tabs_navigate_to">Přejít na stránku %1$s</string>
@@ -62,12 +62,12 @@
     <string name="navigation_away">Přejde na jinou stránku</string>
     <string name="navigation_tap_to_nav">Klepnutím navigujete</string>
     <string name="navigation_tap_to_nav_desc">Klepnutím na zcela levý nebo pravý okraj obrazovky přejdete mezi médii tam a zpět</string>
-    <string name="app_name_full">Lavender Photos</string>
+    <string name="app_name_full">Luma</string>
     <string name="app_description">Výkonná a stylová open-source galerie zaměřená na soukromí</string>
     <string name="app_version">Verze %1$s</string>
     <string name="app_repo">Repozitář aplikace</string>
     <string name="privacy_policy_title">Zásady ochrany soukromí</string>
-    <string name="privacy_policy">Žádné nejsou! Žádná vaše data neopouštějí toto zařízení. Netrénuje se na nich žádná umělá inteligence, nesbírají se informace a nic dalšího. Lavender Photos vždy byla a vždy bude galerie zaměřená na ochranu soukromí.</string>
+    <string name="privacy_policy">Žádné nejsou! Žádná vaše data neopouštějí toto zařízení. Netrénuje se na nich žádná umělá inteligence, nesbírají se informace a nic dalšího. Luma vždy byla a vždy bude galerie zaměřená na ochranu soukromí.</string>
     <string name="support">Podpora a dary</string>
     <string name="translation">Překlad</string>
     <string name="licenses">Licence</string>
@@ -85,7 +85,7 @@
 
                 <br><br>Sestavení hostovaná na GitHubu jsou vždy podepsaná, zkontrolovaná a ověřená vývojářem (kaii-lb), ale je na vás, zda je chcete používat.
 
-                <br><br>Lavender Photos se nikdy neaktualizuje automaticky a aktualizuje se pouze s výslovným souhlasem uživatele.
+                <br><br>Luma se nikdy neaktualizuje automaticky a aktualizuje se pouze s výslovným souhlasem uživatele.
             </p>
         ]]></string>
     <string name="updates_new_version_available">Je dostupná aktualizace!</string>
@@ -136,13 +136,13 @@
     <string name="favourites_remove_this">Odebrat z oblíbených?</string>
     <string name="favourites_migration">Oblíbené byly obnoveny!</string>
     <string name="favourites_migration_notice">Oblíbené</string>
-    <string name="favourites_migration_desc">Toto slouží ke sledování vašich nejlepších vzpomínek. V Lavender Photos to znamená oblíbené položky synchronizované mezi všemi aplikacemi, které to podporují, s bezchybnou správou a vysoce výkonným systémem!\n\nPokud přecházíte z předchozí verze Lavender Photos, všechny dříve oblíbené položky budou převedeny do nového systému.\n\nNechte telefon zapnutý a tuto aplikaci otevřenou.</string>
+    <string name="favourites_migration_desc">Toto slouží ke sledování vašich nejlepších vzpomínek. V Luma to znamená oblíbené položky synchronizované mezi všemi aplikacemi, které to podporují, s bezchybnou správou a vysoce výkonným systémem!\n\nPokud přecházíte z předchozí verze Luma, všechny dříve oblíbené položky budou převedeny do nového systému.\n\nNechte telefon zapnutý a tuto aplikaci otevřenou.</string>
     <string name="favourites_migration_started">Migrace zahájena!</string>
     <string name="favourites_migration_none">Žádné položky k migraci</string>
     <string name="favourites_migration_in_progress_short">Probíhá</string>
     <string name="favourites_migration_done">Migrace dokončena!</string>
     <string name="favourites_migration_declined">Oprávnění zamítnuta!</string>
-    <string name="favourites_migration_declined_desc">Lavender Photos nemůže převést oblíbené položky ze staré verze, pokud k tomu nepovolíte oprávnění. To znamená, že přijdete o dříve oblíbené položky.</string>
+    <string name="favourites_migration_declined_desc">Luma nemůže převést oblíbené položky ze staré verze, pokud k tomu nepovolíte oprávnění. To znamená, že přijdete o dříve oblíbené položky.</string>
     <string name="debugging">Ladění</string>
     <string name="debugging_development">Vývoj</string>
     <string name="logs">Protokoly</string>
@@ -333,11 +333,11 @@
     <string name="permissions_allow_secure_folder_screen_capture">Povolit snímání obrazovky v zabezpečené složce</string>
     <string name="permissions_allow_secure_folder_screen_capture_desc">Povolit snímky obrazovky, nahrávání obrazovky a sdílení obrazovky při otevřené zabezpečené složce. Zabezpečený obsah se může zobrazit také v náhledu posledních aplikací. Nechte vypnuté, aby zůstal chráněný</string>
     <string name="permissions_read_images">Číst obrázky</string>
-    <string name="permissions_read_images_desc">Povolit aplikaci Lavender Photos vyhledávat fotografie v zařízení</string>
+    <string name="permissions_read_images_desc">Povolit aplikaci Luma vyhledávat fotografie v zařízení</string>
     <string name="permissions_read_videos">Číst videa</string>
-    <string name="permissions_read_videos_desc">Povolit aplikaci Lavender Photos vyhledávat videa v zařízení</string>
+    <string name="permissions_read_videos_desc">Povolit aplikaci Luma vyhledávat videa v zařízení</string>
     <string name="permissions_read_external_storage">Číst externí úložiště</string>
-    <string name="permissions_read_external_storage_desc">Povolit aplikaci Lavender Photos vyhledávat fotografie a videa v zařízení</string>
+    <string name="permissions_read_external_storage_desc">Povolit aplikaci Luma vyhledávat fotografie a videa v zařízení</string>
     <string name="permissions_manage_media">Spravovat média</string>
     <string name="permissions_manage_media_desc">Volitelné oprávnění používané pro rychlejší přesouvání do koše a mazání</string>
     <string name="permissions_continue">Pokračovat</string>
@@ -346,8 +346,8 @@
     <string name="permissions_grant_permissions">Udělit oprávnění</string>
     <string name="permissions_why">Proč?</string>
     <string name="permissions_dismiss">Zavřít</string>
-    <string name="permissions_read_media_explanation">Toto oprávnění je nutné k nalezení fotografií a videí v zařízení. Lavender Photos přísně omezuje soubory, které čte, a tyto informace nikdy nesdílí ani nezneužívá.</string>
-    <string name="permissions_manage_media_explanation">Toto oprávnění je volitelné, ale důrazně doporučené. Oprávnění ke správě médií umožňuje aplikaci Lavender Photos používat Android API Content Resolver k přesouvání médií do koše, jejich mazání, přesouvání a kopírování, díky čemuž je proces plynulejší a lépe spolupracuje s ostatními aplikacemi.</string>
+    <string name="permissions_read_media_explanation">Toto oprávnění je nutné k nalezení fotografií a videí v zařízení. Luma přísně omezuje soubory, které čte, a tyto informace nikdy nesdílí ani nezneužívá.</string>
+    <string name="permissions_manage_media_explanation">Toto oprávnění je volitelné, ale důrazně doporučené. Oprávnění ke správě médií umožňuje aplikaci Luma používat Android API Content Resolver k přesouvání médií do koše, jejich mazání, přesouvání a kopírování, díky čemuž je proces plynulejší a lépe spolupracuje s ostatními aplikacemi.</string>
     <string name="permissions_explanation">Vysvětlení oprávnění</string>
     <string name="media">Média</string>
     <string name="sort_indicator">Řadit podle indikátoru</string>
@@ -395,7 +395,7 @@
     <string name="search_no_tags_found">Zatím nebyly přidány žádné štítky…</string>
     <string name="search">Hledat</string>
     <string name="search_nothing_found">Nic nenalezeno</string>
-    <string name="edit_desc">Soubor upravený aplikací Lavender Photos v %1$s</string>
+    <string name="edit_desc">Soubor upravený aplikací Luma v %1$s</string>
     <string name="custom_album_remove_media">Odstranit</string>
     <string name="custom_album_remove_media_desc">Odstranit tyto položky z alba?</string>
     <string name="action_cannot_be_undone">Tuto akci nelze vrátit!</string>
@@ -414,7 +414,7 @@
     <string name="apply">Použít</string>
     <string name="close">Zavřít</string>
     <string name="changelog_name">Seznam změn</string>
-    <string name="drag_and_drop_data">Data přetažení Lavender Photos</string>
+    <string name="drag_and_drop_data">Data přetažení Luma</string>
     <string name="management">Správa</string>
     <string name="next">Další</string>
     <string name="error">Chyba!</string>
@@ -552,7 +552,7 @@
             <h3 style="text-align:center;">Jak ho používat?<h3/>
             <ul>
                 <li>Provozujte vlastní <a href="https://immich.app/">server Immich</a></li>
-                <li>V aplikaci Lavender Photos zadejte adresu serveru</li>
+                <li>V aplikaci Luma zadejte adresu serveru</li>
                 <li>Přihlaste se pomocí uživatelského účtu Immich</li>
                 <li>Přejděte do libovolného alba a klepněte na ikonu cloudu</li>
                 <li>Začněte zálohovat své fotografie!</li>
@@ -592,7 +592,7 @@
     <string name="immich_backup_option_changes_unsaved">Neuložené změny</string>
     <string name="immich_backup_option_changes_unsaved_desc">Obnovení vrátí všechny vaše změny</string>
     <string name="immich_backup_sync">Synchronizovat položky</string>
-    <string name="immich_backup_sync_desc">Sladí změny mezi aplikací Lavender Photos a serverem Immich</string>
+    <string name="immich_backup_sync_desc">Sladí změny mezi aplikací Luma a serverem Immich</string>
     <string name="immich_backup_sync_running">Synchronizace položek…</string>
     <string name="immich_backup_sync_count">Synchronizace %1$d z %2$d položek</string>
     <string name="immich_share_album">Sdílet album</string>
@@ -636,7 +636,7 @@
     <string name="startup_processing_info">Tato operace proběhne pouze jednou.</string>
     <string name="startup_processing_progress">Hotovo: %s</string>
     <string name="startup_processing_explanation">Proč to trvá?</string>
-    <string name="startup_processing_explanation_desc">Lavender Photos indexuje média v zařízení, aby poskytla přesná data, rychlejší načítání a lepší funkce. Tato operace proběhne <b>pouze jednou</b> a podle počtu položek v zařízení by měla trvat přibližně <i>30 sekund až 2 minuty</i>. Pokud proces přerušíte, bude pokračovat při příštím spuštění.</string>
+    <string name="startup_processing_explanation_desc">Luma indexuje média v zařízení, aby poskytla přesná data, rychlejší načítání a lepší funkce. Tato operace proběhne <b>pouze jednou</b> a podle počtu položek v zařízení by měla trvat přibližně <i>30 sekund až 2 minuty</i>. Pokud proces přerušíte, bude pokračovat při příštím spuštění.</string>
     <string name="startup_processing_skip">Přeskočit</string>
     <string name="main_dialog_greeting">Ahoj, %s!</string>
     <string name="tags_add">Přidat štítek!</string>
