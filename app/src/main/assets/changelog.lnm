@@ -1,11 +1,18 @@
 // A line starting with '//' indicates a comment
+
 // A line starting with '#' indicates a section, with format: # version=vX.Y.Z[-beta|-hotfix] date=DD-MM-YYYY [status=None|Broken|Latest]
 // A line starting with '!' indicates a note, with format: ! urgency=Normal|Critical info=VARIABLE_LENGTH_STRING
 // A line starting with '+' indicates a category, with format: + category=Features|Fixes|Improvements
 // A line starting with '-' indicates an item, with format: - [issueNumber=0_PADDED_6_DIGIT_NUMBER] title=VARIABLE_LENGTH_STRING
 //      note that issueNumber is not mandatory, but if found it needs to be at the start
 
-# version=v2.1.4 date=29-08-2026 status=Latest
+# version=v0.1.0 date=12-10-2026 status=Latest
+    + category=Features
+        - title=First Luma beta release
+    + category=Improvements
+        - title=Rebranded the app as Luma
+
+# version=v2.1.4 date=29-08-2026
     + category=Features
         - issueNumber=000315 title=Add filtering options to album group 'Add Albums' dialog
         - title=Add support for nested SAF display
