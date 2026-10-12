@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Fotoj</string>
+    <string name="app_name">Luma</string>
     <string name="albums">Albumoj</string>
     <string name="finding_albums_on_device">Trovante albumojn…</string>
     <string name="albums_main_list_desc_1">Montri dosierojn el la elektitaj albumoj</string>
@@ -28,7 +28,7 @@
     <string name="tabs_add">Aldoni langeton</string>
     <string name="tabs_name">Langetonomo</string>
     <string name="tabs_albums_incl">Albumoj Inkluditaj</string>
-    <string name="app_name_full">Lavendaj Fotoj</string>
+    <string name="app_name_full">Luma</string>
     <string name="privacy_policy_title">Regularo pri Privateco</string>
     <string name="navigation_photos">Fotoj</string>
     <string name="navigation_secure">Sekura</string>
