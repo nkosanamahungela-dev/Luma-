@@ -6,6 +6,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -120,10 +121,9 @@ fun MainDialog(
                                 verticalArrangement = Arrangement.spacedBy(space = 16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.lavender_no_padding),
+                                Image(
+                                    painter = painterResource(id = R.drawable.luma_icon_foreground),
                                     contentDescription = stringResource(id = R.string.app_name_full),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
                                     modifier = Modifier
                                         .size(72.dp)
                                         .clip(CircleShape)
