@@ -126,7 +126,7 @@
             android:name=".compose.MediaPicker"
             android:configChanges="orientation|screenSize"
             android:exported="true"
-            android:label="Lavender Photos"
+            android:label="Luma"
             android:theme="@style/Theme.Photos">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -155,7 +155,7 @@
             android:name=".compose.pages.WallpaperSetter"
             android:configChanges="orientation|screenSize"
             android:exported="true"
-            android:label="Lavender Photos"
+            android:label="Luma"
             android:theme="@style/Theme.Photos">
             <intent-filter>
                 <action android:name="android.intent.action.SET_WALLPAPER" />
