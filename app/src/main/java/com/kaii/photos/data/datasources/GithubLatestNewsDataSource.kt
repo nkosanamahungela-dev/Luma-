@@ -15,7 +15,7 @@ interface LatestNewsDataSource {
 class GithubLatestNewsDataSource @Inject constructor() : LatestNewsDataSource {
     companion object {
         private val TAG = GithubLatestNewsDataSource::class.qualifiedName
-        private const val RELEASE_URL = "https://api.github.com/repos/kaii-lb/LavenderPhotos/releases/latest"
+        private const val RELEASE_URL = "https://api.github.com/repos/nkosanamahungela-dev/Luma-/releases/latest"
     }
 
     override suspend fun fetch(): String? = withContext(Dispatchers.IO) {
@@ -23,11 +23,9 @@ class GithubLatestNewsDataSource @Inject constructor() : LatestNewsDataSource {
             success = { result ->
                 result.obj()
             },
-
             failure = { error ->
                 Log.e(TAG, "Failed to fetch latest news. ${error.message}")
                 error.printStackTrace()
-
                 return@withContext null
             }
         )
@@ -35,7 +33,6 @@ class GithubLatestNewsDataSource @Inject constructor() : LatestNewsDataSource {
         val title = info.getString("name")
         val date = info.getString("created_at").substringBefore("T")
         val body = info.getString("body")
-
         return@withContext "$title $date\n$body"
     }
 
@@ -44,11 +41,9 @@ class GithubLatestNewsDataSource @Inject constructor() : LatestNewsDataSource {
             success = { result ->
                 result.obj().getString("tag_name")
             },
-
             failure = { error ->
                 Log.e(TAG, "Failed to fetch latest version. ${error.message}")
                 error.printStackTrace()
-
                 return@withContext null
             }
         )
