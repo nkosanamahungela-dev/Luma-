@@ -82,11 +82,9 @@ fun AppAboutItem(
             )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.lavender_no_padding),
+                painter = painterResource(id = R.drawable.luma_icon_foreground),
                 contentDescription = stringResource(id = R.string.app_name_full),
-                colorFilter = ColorFilter.tint(
-                    color = MaterialTheme.colorScheme.onPrimary
-                ),
+                
                 modifier = Modifier
                     .size(64.dp)
                     .clip(CircleShape)
@@ -161,7 +159,7 @@ fun AppAboutItem(
                 onClick = {
                     val intent = Intent().apply {
                         action = Intent.ACTION_VIEW
-                        data = "https://github.com/kaii-lb/LavenderPhotos/".toUri()
+                        data = "https://github.com/nkosanamahungela-dev/Luma-/".toUri()
                     }
 
                     context.startActivity(intent)
