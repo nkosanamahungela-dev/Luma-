@@ -6,7 +6,14 @@
 // A line starting with '-' indicates an item, with format: - [issueNumber=0_PADDED_6_DIGIT_NUMBER] title=VARIABLE_LENGTH_STRING
 //      note that issueNumber is not mandatory, but if found it needs to be at the start
 
-# version=v0.1.0 date=12-10-2026 status=Latest
+# version=v0.1.1 date=12-10-2026 status=Latest
+    + category=Fixes
+        - title=Use Luma's own release feed instead of the original app's updates
+        - title=Correct version comparison for update checks
+    + category=Improvements
+        - title=Add maintainer GitHub profile to About
+
+# version=v0.1.0 date=12-10-2026
     + category=Features
         - title=First Luma beta release
     + category=Improvements
