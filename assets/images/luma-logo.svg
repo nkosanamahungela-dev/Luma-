@@ -1,6 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Luma three-petal logo">
-  <path fill="#FFD36B" d="M256 86C216 108 177 145 169 190c-7 41 28 78 87 117 59-39 94-76 87-117-8-45-47-82-87-104Z"/>
-  <path fill="#F04B91" d="M128 202c-29 33-34 83-9 124 27 44 83 56 137 35 22-8 37-27 44-48 6-20-1-44-18-66-31-40-78-59-119-52-14 1-26 3-35 7Z"/>
-  <path fill="#60A5FA" d="M384 202c29 33 34 83 9 124-27 44-83 56-137 35-22-8-37-27-44-48-6-20 1-44 18-66 31-40 78-59 119-52 14 1 26 3 35 7Z"/>
-  <path fill="#9B55D5" fill-opacity=".68" d="M256 258c-34-32-65-48-93-63 41-7 88 12 119 52 17 22 24 46 18 66-7 21-22 40-44 48-22-8-37-27-44-48-6-20 1-44 18-66 9-12 17-1 26 11Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Luma logo">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffdfa"/><stop offset="1" stop-color="#f5f2ed"/></linearGradient>
+    <linearGradient id="petalTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe07a"/><stop offset="1" stop-color="#ffad42"/></linearGradient>
+    <linearGradient id="petalLeft" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7e9f"/><stop offset="1" stop-color="#d72da8"/></linearGradient>
+    <linearGradient id="petalRight" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7ac9ff"/><stop offset="1" stop-color="#4268e9"/></linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="104" fill="url(#tile)"/>
+  <path d="M256 84 C211 108 177 151 177 199 C177 242 214 276 256 307 C298 276 335 242 335 199 C335 151 301 108 256 84Z" fill="url(#petalTop)" opacity=".94"/>
+  <path d="M125 199 C89 225 75 274 91 319 C108 366 156 392 208 380 C244 372 267 347 274 315 C281 281 258 247 225 222 C194 198 156 189 125 199Z" fill="url(#petalLeft)" opacity=".91"/>
+  <path d="M387 199 C423 225 437 274 421 319 C404 366 356 392 304 380 C268 372 245 347 238 315 C231 281 254 247 287 222 C318 198 356 189 387 199Z" fill="url(#petalRight)" opacity=".91"/>
+  <path d="M256 257 C232 231 207 212 177 204 C211 198 247 215 271 240 C295 265 306 291 300 318 C294 343 278 364 256 375 C234 364 218 343 212 318 C206 291 217 265 241 240Z" fill="#8a48d5" opacity=".42"/>
 </svg>
