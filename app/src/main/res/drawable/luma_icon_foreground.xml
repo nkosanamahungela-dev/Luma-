@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="512"
-    android:viewportHeight="512">
-    <path android:fillColor="#FFFFD36B" android:pathData="M256,86 C216,108 177,145 169,190 C162,231 197,268 256,307 C315,268 350,231 343,190 C335,145 296,108 256,86 Z"/>
-    <path android:fillColor="#FFF04B91" android:pathData="M128,202 C99,235 94,285 119,326 C146,370 202,382 256,361 C278,353 293,334 300,313 C306,293 299,269 282,247 C251,207 204,188 163,195 C149,196 137,198 128,202 Z"/>
-    <path android:fillColor="#FF60A5FA" android:pathData="M384,202 C413,235 418,285 393,326 C366,370 310,382 256,361 C234,353 219,334 212,313 C206,293 213,269 230,247 C261,207 308,188 349,195 C363,196 375,198 384,202 Z"/>
-    <path android:fillColor="#FF9B55D5" android:fillAlpha="0.72" android:pathData="M256,258 C222,226 191,210 163,195 C204,188 251,207 282,247 C299,269 306,293 300,313 C293,334 278,353 256,361 C234,353 219,334 212,313 C206,293 213,269 230,247 C239,235 247,246 256,258 Z"/>
-</vector>
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/luma_logo"
+    android:gravity="center" />
