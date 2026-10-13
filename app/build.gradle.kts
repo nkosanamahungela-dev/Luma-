@@ -51,6 +51,9 @@ android {
 
     buildTypes {
         release {
+            // Personal release build: use the local debug signing key until a private release keystore is configured.
+            signingConfig = signingConfigs.getByName("debug")
+            isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
 
