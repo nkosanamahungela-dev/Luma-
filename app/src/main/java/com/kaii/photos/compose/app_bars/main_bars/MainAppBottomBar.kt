@@ -10,6 +10,8 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalDensity
@@ -119,8 +122,23 @@ fun MainAppBottomBar(
                 .offset(y = (-12).dp)
                 .align(Alignment.Center)
                 .windowInsetsPadding(WindowInsets.systemBars)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.28f),
+                            Color.White.copy(alpha = 0.12f),
+                            Color.White.copy(alpha = 0.20f)
+                        )
+                    ),
+                    shape = CircleShape
+                )
+                .border(
+                    width = 1.dp,
+                    color = Color.White.copy(alpha = 0.48f),
+                    shape = CircleShape
+                )
                 .shadow(
-                    elevation = 12.dp,
+                    elevation = 18.dp,
                     shape = CircleShape,
                     clip = false,
                     ambientColor = animatedShadowColor,
