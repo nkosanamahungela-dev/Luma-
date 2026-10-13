@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
@@ -172,6 +173,10 @@ fun MainAppBottomBar(
                         x = 0,
                         y = scrollBehaviour.state.offset.roundToInt()
                     )
+                }
+                .graphicsLayer {
+                    // Restore the original floating-toolbar hide/fade behavior while scrolling.
+                    alpha = (1f + (scrollBehaviour.state.offset / 64f)).coerceIn(0f, 1f)
                 },
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
