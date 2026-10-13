@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.spacedBy
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -139,7 +138,7 @@ fun MainAppBottomBar(
     val isSelecting by selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
 
     LaunchedEffect(currentTab, visibleTabs) {
-        val visibleIndex = visibleTabs.indexOf(currentTab)
+        val visibleIndex = currentTab?.let(visibleTabs::indexOf) ?: -1
         if (visibleIndex >= 0) {
             listState.animateScrollToItem(visibleIndex)
         }
