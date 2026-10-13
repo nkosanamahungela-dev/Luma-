@@ -441,7 +441,7 @@ fun AnimatedLoginIcon(
                     contentDescription = stringResource(id = R.string.settings),
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(28.dp)
                 )
             }
         }
