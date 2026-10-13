@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -121,9 +122,9 @@ fun MainDialog(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.lavender_no_padding),
+                                    painter = painterResource(id = R.drawable.luma_icon_foreground),
                                     contentDescription = stringResource(id = R.string.app_name_full),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    tint = Color.Unspecified,
                                     modifier = Modifier
                                         .size(72.dp)
                                         .clip(CircleShape)
