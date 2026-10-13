@@ -39,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -49,6 +50,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -131,7 +133,9 @@ fun MainAppBottomBar(
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    val windowWidth = LocalWindowInfo.current.containerSize.width.toFloat()
+    val windowInfo = LocalWindowInfo.current
+    val localDensity = LocalDensity.current
+    val windowWidth = windowInfo.containerSize.width.toFloat()
     val currentTab = tabs.getOrNull(pagerState.currentPage)
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
     val visibleTabs = tabs.filter { it != DefaultTabs.TabTypes.search }
@@ -168,7 +172,7 @@ fun MainAppBottomBar(
                 .align(Alignment.Center)
                 .windowInsetsPadding(WindowInsets.systemBars)
                 .offset(y = (-12).dp)
-                .widthIn(max = LocalWindowInfo.current.containerSize.width.dp * 0.9f)
+                .widthIn(max = with(localDensity) { windowInfo.containerSize.width.toDp() * 0.9f })
                 .height(64.dp),
             content = {
                 Row(
