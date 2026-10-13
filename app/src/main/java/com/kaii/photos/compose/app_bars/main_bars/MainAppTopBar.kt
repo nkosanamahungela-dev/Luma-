@@ -133,7 +133,7 @@ fun MainAppTopBar(
                     val navController = LocalNavController.current
                     Box(
                         modifier = Modifier
-                            .padding(end = 4.dp)
+                            .padding(end = 16.dp)
                             .size(48.dp)
                             .shadow(
                                 elevation = 14.dp,
