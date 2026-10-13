@@ -2,8 +2,7 @@
 <resources>
     <style name="Theme.Photos.Splashscreen" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/Theme.Photos</item>
-
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_adaptive</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/luma_icon_foreground</item>
         <item name="windowSplashScreenIconBackgroundColor">?attr/colorPrimary</item>
         <item name="windowSplashScreenBackground">?attr/backgroundColor</item>
     </style>
