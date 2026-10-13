@@ -30,15 +30,13 @@ jobs:
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
 
-      # Temporary test build: Android Gradle Plugin signs debug APKs automatically.
-      # This avoids release-keystore secrets while the release signing setup is fixed.
-      - name: Build installable debug APKs
-        run: ./gradlew assembleDebug
+      - name: Build non-debug release APKs
+        run: ./gradlew assembleRelease
 
-      - name: Upload debug APKs
+      - name: Upload release APKs
         uses: actions/upload-artifact@v7
         with:
-          name: luma-0.1.0-beta-debug-apks
-          path: app/build/outputs/apk/debug/*.apk
+          name: luma-0.1.1-personal-release-apks
+          path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 30
