@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Photos" parent="Theme.Material3.DynamicColors.DayNight">
-		<item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
 
     <style name="Theme.Photos.Splashscreen" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/Theme.Photos</item>
-
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_adaptive</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/luma_icon_foreground</item>
         <item name="windowSplashScreenIconBackgroundColor">?attr/backgroundColor</item>
         <item name="windowSplashScreenBackground">?attr/backgroundColor</item>
     </style>
