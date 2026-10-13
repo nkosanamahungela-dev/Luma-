@@ -34,6 +34,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarScrollBehavior
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -166,6 +167,10 @@ fun MainAppBottomBar(
             expanded = false,
             collapsedShadowElevation = 0.dp,
             expandedShadowElevation = 0.dp,
+            colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                toolbarContainerColor = Color.Transparent,
+                toolbarContentColor = Color.White
+            ),
             scrollBehavior = scrollBehaviour,
             modifier = Modifier
                 .align(Alignment.Center)
