@@ -4,10 +4,14 @@ import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,6 +23,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -122,8 +130,54 @@ fun MainAppTopBar(
 
                 if (!isFromMediaPicker) {
                     val navController = LocalNavController.current
-                    AnimatedLoginIcon(immichInfo = immichInfo) {
-                        navController.navigate(Screens.MainPages.MainGrid.SettingsDialog)
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 4.dp)
+                            .size(48.dp)
+                            .shadow(
+                                elevation = 14.dp,
+                                shape = CircleShape,
+                                clip = false,
+                                ambientColor = Color.Black.copy(alpha = 0.40f),
+                                spotColor = Color.Black.copy(alpha = 0.40f)
+                            )
+                            .clip(CircleShape)
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.24f),
+                                        Color.White.copy(alpha = 0.04f),
+                                        Color.White.copy(alpha = 0.10f)
+                                    )
+                                ),
+                                CircleShape
+                            )
+                            .background(
+                                Brush.linearGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.12f),
+                                        Color.Transparent,
+                                        Color.White.copy(alpha = 0.035f)
+                                    )
+                                ),
+                                CircleShape
+                            )
+                            .border(
+                                width = 0.5.dp,
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.88f),
+                                        Color.White.copy(alpha = 0.20f),
+                                        Color.White.copy(alpha = 0.48f)
+                                    )
+                                ),
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AnimatedLoginIcon(immichInfo = immichInfo) {
+                            navController.navigate(Screens.MainPages.MainGrid.SettingsDialog)
+                        }
                     }
                 } else {
                     val context = LocalContext.current
