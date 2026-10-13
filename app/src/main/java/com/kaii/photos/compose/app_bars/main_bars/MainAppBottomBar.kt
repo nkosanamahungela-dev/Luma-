@@ -37,12 +37,7 @@ import androidx.compose.material3.FloatingToolbarScrollBehavior
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +46,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
@@ -59,7 +53,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.testTag
@@ -73,8 +66,6 @@ import com.kaii.photos.domain.files.FileOperationAction
 import com.kaii.photos.helpers.AnimationConstants
 import com.kaii.photos.helpers.grid_management.SelectionManager
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlin.math.roundToInt
 
 private val LumaGlassWhite = Color.White
 private val LumaActiveBlue = Color(0xFF7CB4FF)
@@ -143,19 +134,6 @@ fun MainAppBottomBar(
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
     val visibleTabs = tabs.filter { it != DefaultTabs.TabTypes.search }
     val isSelecting by selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
-    var isScrollingUp by remember { mutableStateOf(false) }
-
-    LaunchedEffect(scrollBehaviour.state) {
-        var previousOffset = scrollBehaviour.state.offset
-        snapshotFlow { scrollBehaviour.state.offset }
-            .distinctUntilChanged()
-            .collect { offset ->
-                // Reveal the bar on the first upward scroll delta, not after reaching the top.
-                isScrollingUp = offset > previousOffset
-                previousOffset = offset
-            }
-    }
-
     LaunchedEffect(currentTab, visibleTabs) {
         val visibleIndex = currentTab?.let(visibleTabs::indexOf) ?: -1
         if (visibleIndex >= 0) {
@@ -179,26 +157,25 @@ fun MainAppBottomBar(
             .wrapContentHeight()
             .fillMaxWidth()
     ) {
-        Row(
+        HorizontalFloatingToolbar(
+            expanded = false,
+            collapsedShadowElevation = 0.dp,
+            expandedShadowElevation = 0.dp,
+            scrollBehavior = scrollBehaviour,
             modifier = Modifier
-                .fillMaxWidth()
+                .align(Alignment.Center)
                 .windowInsetsPadding(WindowInsets.systemBars)
-                .padding(horizontal = 16.dp)
                 .offset(y = (-12).dp)
-                .offset {
-                    IntOffset(
-                        x = 0,
-                        y = if (isScrollingUp) 0 else scrollBehaviour.state.offset.roundToInt()
-                    )
-                }
-                .graphicsLayer {
-                    // Fade while scrolling down; show immediately when the user scrolls upward.
-                    alpha = if (isScrollingUp) 1f
-                    else (1f + (scrollBehaviour.state.offset / 64f)).coerceIn(0f, 1f)
-                },
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+                .widthIn(max = LocalWindowInfo.current.containerSize.width.dp * 0.9f)
+                .height(64.dp),
+            content = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -331,6 +308,8 @@ fun MainAppBottomBar(
                         tint = Color.White,
                         modifier = Modifier.size(26.dp)
                     )
+                }
+            }
                 }
             }
         }
