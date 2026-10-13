@@ -39,6 +39,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,6 +72,8 @@ import com.kaii.photos.domain.files.FileOperationAction
 import com.kaii.photos.helpers.AnimationConstants
 import com.kaii.photos.helpers.grid_management.SelectionManager
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.snapshotFlow
 import kotlin.math.roundToInt
 
 private val LumaGlassWhite = Color.White
@@ -138,6 +143,18 @@ fun MainAppBottomBar(
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
     val visibleTabs = tabs.filter { it != DefaultTabs.TabTypes.search }
     val isSelecting by selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
+    var isScrollingUp by remember { mutableStateOf(false) }
+
+    LaunchedEffect(scrollBehaviour.state) {
+        var previousOffset = scrollBehaviour.state.offset
+        snapshotFlow { scrollBehaviour.state.offset }
+            .distinctUntilChanged()
+            .collect { offset ->
+                // Reveal the bar on the first upward scroll delta, not after reaching the top.
+                isScrollingUp = offset > previousOffset
+                previousOffset = offset
+            }
+    }
 
     LaunchedEffect(currentTab, visibleTabs) {
         val visibleIndex = currentTab?.let(visibleTabs::indexOf) ?: -1
@@ -171,12 +188,13 @@ fun MainAppBottomBar(
                 .offset {
                     IntOffset(
                         x = 0,
-                        y = scrollBehaviour.state.offset.roundToInt()
+                        y = if (isScrollingUp) 0 else scrollBehaviour.state.offset.roundToInt()
                     )
                 }
                 .graphicsLayer {
-                    // Restore the original floating-toolbar hide/fade behavior while scrolling.
-                    alpha = (1f + (scrollBehaviour.state.offset / 64f)).coerceIn(0f, 1f)
+                    // Fade while scrolling down; show immediately when the user scrolls upward.
+                    alpha = if (isScrollingUp) 1f
+                    else (1f + (scrollBehaviour.state.offset / 64f)).coerceIn(0f, 1f)
                 },
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
