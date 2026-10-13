@@ -6,7 +6,7 @@
 
     <style name="Theme.Photos.Splashscreen" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/Theme.Photos</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/luma_icon_foreground</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/luma_logo</item>
         <item name="windowSplashScreenIconBackgroundColor">?attr/backgroundColor</item>
         <item name="windowSplashScreenBackground">?attr/backgroundColor</item>
     </style>

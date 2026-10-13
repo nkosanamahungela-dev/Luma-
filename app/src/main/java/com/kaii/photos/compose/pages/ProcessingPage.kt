@@ -218,7 +218,7 @@ fun ProcessingPage(startupManager: StartupManager) {
             )
 
             Image(
-                painter = painterResource(id = R.drawable.luma_icon_foreground),
+                painter = painterResource(id = R.drawable.luma_logo),
                 contentDescription = "Luma logo",
                 modifier = Modifier.size(iconSize)
             )
