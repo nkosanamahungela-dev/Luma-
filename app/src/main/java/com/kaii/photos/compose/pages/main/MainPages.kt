@@ -61,6 +61,8 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberBackdrop
 import com.kaii.photos.R
 import com.kaii.photos.compose.FolderIsEmpty
 import com.kaii.photos.compose.MediaPickerConfirmButton
@@ -115,6 +117,8 @@ fun MainPages(
     val mainPhotosPaths by viewModel.mainPhotosAlbums.collectAsStateWithLifecycle()
     val confirmToDelete by viewModel.confirmToDelete.collectAsStateWithLifecycle()
     val doNotTrash by viewModel.doNotTrash.collectAsStateWithLifecycle()
+
+    val liquidGlassBackdrop = rememberBackdrop()
 
     val pagerState = rememberPagerState(
         initialPage = tabList.indices.first
@@ -243,7 +247,8 @@ fun MainPages(
                     scrollBehaviour = scrollBehaviour,
                     confirmToDelete = { confirmToDelete },
                     doNotTrash = { doNotTrash },
-                    runAction = viewModel::runAction
+                    runAction = viewModel::runAction,
+                    liquidGlassBackdrop = liquidGlassBackdrop
                 )
             }
         },
@@ -415,6 +420,7 @@ fun MainPages(
                 userScrollEnabled = !isSelecting,
                 beyondViewportPageCount = 1,
                 modifier = Modifier
+                    .layerBackdrop(liquidGlassBackdrop)
                     .padding(
                         start = safeDrawingPadding.first,
                         top = padding.calculateTopPadding(),
