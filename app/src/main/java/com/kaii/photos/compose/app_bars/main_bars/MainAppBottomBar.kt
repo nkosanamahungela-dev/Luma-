@@ -135,6 +135,9 @@ fun MainAppBottomBar(
     val coroutineScope = rememberCoroutineScope()
     val windowInfo = LocalWindowInfo.current
     val localDensity = LocalDensity.current
+    val screenWidthDp = with(localDensity) { windowInfo.containerSize.width.toDp() }
+    val tabPillWidth = (screenWidthDp - 104.dp).coerceAtMost(286.dp)
+    val tabItemWidth = tabPillWidth / visibleTabs.size.coerceAtLeast(1)
     val windowWidth = windowInfo.containerSize.width.toFloat()
     val currentTab = tabs.getOrNull(pagerState.currentPage)
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
@@ -176,13 +179,11 @@ fun MainAppBottomBar(
                 .align(Alignment.Center)
                 .windowInsetsPadding(WindowInsets.systemBars)
                 .offset(y = (-12).dp)
-                .widthIn(max = with(localDensity) { windowInfo.containerSize.width.toDp() * 0.9f })
+                .widthIn(max = (screenWidthDp - 32.dp).coerceAtLeast(0.dp))
                 .height(64.dp),
             content = {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -240,7 +241,7 @@ fun MainAppBottomBar(
                                 val selected = currentTab == tab
                                 Column(
                                     modifier = Modifier
-                                        .width(95.dp)
+                                        .width(tabItemWidth)
                                         .height(58.dp)
                                         .padding(horizontal = 3.dp)
                                         .clip(CircleShape)
