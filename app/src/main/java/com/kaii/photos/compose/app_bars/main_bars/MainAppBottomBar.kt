@@ -20,17 +20,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingToolbarScrollBehavior
-import androidx.compose.material3.FloatingToolbarDefaults
-import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,13 +61,11 @@ import kotlinx.coroutines.launch
 
 private val LumaActiveBlue = Color(0xFF7CB4FF)
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MainAppBottomBar(
     pagerState: PagerState,
     tabs: List<BottomBarTab>,
     selectionManager: SelectionManager,
-    scrollBehaviour: FloatingToolbarScrollBehavior,
     confirmToDelete: () -> Boolean,
     doNotTrash: () -> Boolean,
     runAction: (action: FileOperationAction) -> Unit,
@@ -103,23 +95,16 @@ fun MainAppBottomBar(
             .wrapContentHeight()
             .fillMaxWidth()
     ) {
-        HorizontalFloatingToolbar(
-            expanded = false,
-            collapsedShadowElevation = 0.dp,
-            expandedShadowElevation = 0.dp,
-            colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                toolbarContainerColor = Color.Transparent,
-                toolbarContentColor = Color.White
-            ),
-            scrollBehavior = scrollBehaviour,
+        // Fresh custom layout: no Material floating-toolbar container or legacy geometry.
+        Box(
             modifier = Modifier
-                .align(Alignment.Center)
-                .windowInsetsPadding(WindowInsets.systemBars)
-                .offset(y = (-6).dp)
-                .widthIn(max = (screenWidthDp - 32.dp).coerceAtLeast(0.dp))
-                .height(64.dp),
-            content = {
-                Row(
+                .fillMaxWidth()
+                .height(112.dp)
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -249,8 +234,7 @@ fun MainAppBottomBar(
                     )
                 }
             }
-                }
             }
-        )
+        }
     }
 }
