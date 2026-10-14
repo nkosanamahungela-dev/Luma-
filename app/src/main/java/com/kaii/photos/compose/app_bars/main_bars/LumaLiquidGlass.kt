@@ -24,7 +24,7 @@ fun Modifier.lumaLiquidGlassSurface(
     backdrop: Backdrop,
     shape: Shape,
     fillAlpha: Float = 0.07f,
-    blurRadius: Dp = 22.dp,
+    blurRadius: Dp = 8.dp,
     lensWidth: Dp = 18.dp,
     lensHeight: Dp = 24.dp
 ): Modifier = drawBackdrop(
