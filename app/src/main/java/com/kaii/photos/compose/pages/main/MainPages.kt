@@ -562,6 +562,7 @@ fun MainPages(
                                 confirmToDelete = { confirmToDelete },
                                 doNotTrash = { doNotTrash },
                                 runAction = viewModel::runAction,
+                                scrollBehaviour = scrollBehaviour,
                                 liquidGlassBackdrop = liquidGlassBackdrop
                             )
                         }
