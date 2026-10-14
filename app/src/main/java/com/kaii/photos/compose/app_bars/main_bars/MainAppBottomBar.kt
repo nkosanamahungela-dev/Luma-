@@ -203,6 +203,35 @@ fun MainAppBottomBar(
                                     val tabWidthDp = with(density) { tabWidthPx.toDp() }
                                     val combinedBackdrop = rememberCombinedBackdrop(liquidGlassBackdrop, tabsBackdrop)
 
+                                    // Draw the lens first so the icons and labels stay crisp above it.
+                                    Box(
+                                        Modifier
+                                            .padding(vertical = 4.dp)
+                                            .width(tabWidthDp)
+                                            .fillMaxHeight()
+                                            .offset(x = with(density) { (padPx + lensPosition.value * tabWidthPx).toDp() })
+                                            .drawBackdrop(
+                                                backdrop = combinedBackdrop,
+                                                shape = { CircleShape },
+                                                effects = {
+                                                    vibrancy()
+                                                    lens(
+                                                        with(density) { (5 + 4 * lensPressed.value).dp.toPx() },
+                                                        with(density) { (10 + 12 * lensPressed.value).dp.toPx() },
+                                                    )
+                                                },
+                                                layerBlock = {
+                                                    val scale = 1f + 0.05f * lensPressed.value
+                                                    scaleX = scale
+                                                    scaleY = scale
+                                                },
+                                                onDrawSurface = {
+                                                    drawRect(Color.White.copy(alpha = 0.025f + 0.055f * (1f - lensPressed.value)))
+                                                }
+                                            )
+                                    )
+
+
                                     // Record tab labels and icons separately; the moving lens reads this layer too.
                                     Row(
                                         Modifier.fillMaxSize().padding(horizontal = 4.dp).layerBackdrop(tabsBackdrop),
@@ -236,34 +265,6 @@ fun MainAppBottomBar(
                                             }
                                         }
                                     }
-
-                                    // The lens is a separate sibling above the recorded tab row.
-                                    Box(
-                                        Modifier
-                                            .padding(vertical = 4.dp)
-                                            .width(tabWidthDp)
-                                            .fillMaxHeight()
-                                            .offset(x = with(density) { (padPx + lensPosition.value * tabWidthPx).toDp() })
-                                            .drawBackdrop(
-                                                backdrop = combinedBackdrop,
-                                                shape = { CircleShape },
-                                                effects = {
-                                                    vibrancy()
-                                                    lens(
-                                                        with(density) { (8 + 10 * lensPressed.value).dp.toPx() },
-                                                        with(density) { (14 + 26 * lensPressed.value).dp.toPx() },
-                                                    )
-                                                },
-                                                layerBlock = {
-                                                    val scale = 1f + 0.18f * lensPressed.value
-                                                    scaleX = scale
-                                                    scaleY = scale
-                                                },
-                                                onDrawSurface = {
-                                                    drawRect(Color.White.copy(alpha = 0.04f + 0.12f * (1f - lensPressed.value)))
-                                                }
-                                            )
-                                    )
 
                                     // Drag on the pill to move the lens; release snaps to the nearest tab.
                                     Box(
