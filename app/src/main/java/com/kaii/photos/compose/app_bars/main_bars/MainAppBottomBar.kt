@@ -27,9 +27,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -131,7 +128,6 @@ fun MainAppBottomBar(
     doNotTrash: () -> Boolean,
     runAction: (action: FileOperationAction) -> Unit
 ) {
-    val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val windowInfo = LocalWindowInfo.current
     val localDensity = LocalDensity.current
@@ -143,13 +139,6 @@ fun MainAppBottomBar(
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
     val visibleTabs = tabs.filter { it != DefaultTabs.TabTypes.search }
     val isSelecting by selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
-    LaunchedEffect(currentTab, visibleTabs) {
-        val visibleIndex = currentTab?.let(visibleTabs::indexOf) ?: -1
-        if (visibleIndex >= 0) {
-            listState.animateScrollToItem(visibleIndex)
-        }
-    }
-
     fun navigateToTab(index: Int) {
         if (index !in tabs.indices) return
         coroutineScope.launch {
@@ -232,12 +221,11 @@ fun MainAppBottomBar(
                             }
                         }
                     } else {
-                        LazyRow(
-                            state = listState,
+                        Row(
                             modifier = Modifier.fillMaxSize(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            items(items = visibleTabs) { tab ->
+                            visibleTabs.forEach { tab ->
                                 val selected = currentTab == tab
                                 Column(
                                     modifier = Modifier
