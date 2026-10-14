@@ -132,8 +132,6 @@ fun MainAppBottomBar(
     val windowInfo = LocalWindowInfo.current
     val localDensity = LocalDensity.current
     val screenWidthDp = with(localDensity) { windowInfo.containerSize.width.toDp() }
-    val tabPillWidth = (screenWidthDp - 104.dp).coerceAtMost(286.dp)
-    val tabItemWidth = tabPillWidth / visibleTabs.size.coerceAtLeast(1)
     val windowWidth = windowInfo.containerSize.width.toFloat()
     val currentTab = tabs.getOrNull(pagerState.currentPage)
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
@@ -229,9 +227,9 @@ fun MainAppBottomBar(
                                 val selected = currentTab == tab
                                 Column(
                                     modifier = Modifier
-                                        .width(tabItemWidth)
+                                        .weight(1f)
                                         .height(58.dp)
-                                        .padding(horizontal = 3.dp)
+                                        .padding(horizontal = 2.dp)
                                         .clip(CircleShape)
                                         .then(
                                             if (selected) {
