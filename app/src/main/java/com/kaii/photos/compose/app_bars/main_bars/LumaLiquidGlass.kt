@@ -40,7 +40,7 @@ fun Modifier.lumaLiquidGlassSurface(
             width = 0.8.dp,
             blurRadius = 1.2.dp,
             alpha = 1f,
-            style = HighlightStyle.Default.copy(
+            style = HighlightStyle.Default(
                 color = Color.White.copy(alpha = 0.44f),
                 angle = 135f,
                 falloff = 0.85f

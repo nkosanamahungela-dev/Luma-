@@ -19,8 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,64 +68,6 @@ fun MainAppTopBar(
     addAlbum: (album: AlbumType) -> Unit,
     addGroup: (name: String) -> Unit
 ) {
-    if (isHome && !alternate()) {
-        val split = stringResource(id = R.string.app_name_full).split(" ")
-        val navController = LocalNavController.current
-
-        TopAppBar(
-            title = {
-                Row(
-                    modifier = Modifier.wrapContentHeight(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Text(
-                        text = "${split.first()} ",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = TextUnit(22f, TextUnitType.Sp)
-                    )
-                    Text(
-                        text = if (split.size >= 2) split[1] else "",
-                        fontWeight = FontWeight.Normal,
-                        fontSize = TextUnit(22f, TextUnitType.Sp)
-                    )
-                }
-            },
-            actions = {
-                Box(
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .size(46.dp)
-                        .lumaLiquidGlassSurface(liquidGlassBackdrop, CircleShape)
-                        .clip(CircleShape)
-                        .clickable {
-                            navController.navigate(Screens.MainPages.MainGrid.SettingsDialog)
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.settings),
-                        contentDescription = "Settings",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent,
-                scrolledContainerColor = Color.Transparent
-            ),
-            modifier = Modifier.background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.background.copy(alpha = 0.98f),
-                        MaterialTheme.colorScheme.background.copy(alpha = 0.62f),
-                        Color.Transparent
-                    )
-                )
-            )
-        )
-    } else {
     DualFunctionTopAppBar(
         alternated = alternate(),
         title = {
@@ -194,54 +134,76 @@ fun MainAppTopBar(
                 }
 
                 if (!isFromMediaPicker) {
-                    val navController = LocalNavController.current
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .size(48.dp)
-                            .shadow(
-                                elevation = 14.dp,
-                                shape = CircleShape,
-                                clip = false,
-                                ambientColor = Color.Black.copy(alpha = 0.40f),
-                                spotColor = Color.Black.copy(alpha = 0.40f)
+                    if (isHome) {
+                        val navController = LocalNavController.current
+                        Box(
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .size(46.dp)
+                                .lumaLiquidGlassSurface(liquidGlassBackdrop, CircleShape)
+                                .clip(CircleShape)
+                                .clickable {
+                                    navController.navigate(Screens.MainPages.MainGrid.SettingsDialog)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.settings),
+                                contentDescription = "Settings",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(22.dp)
                             )
-                            .clip(CircleShape)
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.White.copy(alpha = 0.24f),
-                                        Color.White.copy(alpha = 0.04f),
-                                        Color.White.copy(alpha = 0.10f)
-                                    )
+                        }
+                    } else {
+                        val navController = LocalNavController.current
+                        Box(
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .size(48.dp)
+                                .shadow(
+                                    elevation = 14.dp,
+                                    shape = CircleShape,
+                                    clip = false,
+                                    ambientColor = Color.Black.copy(alpha = 0.40f),
+                                    spotColor = Color.Black.copy(alpha = 0.40f)
+                                )
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = 0.24f),
+                                            Color.White.copy(alpha = 0.04f),
+                                            Color.White.copy(alpha = 0.10f)
+                                        )
+                                    ),
+                                    CircleShape
+                                )
+                                .background(
+                                    Brush.linearGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = 0.12f),
+                                            Color.Transparent,
+                                            Color.White.copy(alpha = 0.035f)
+                                        )
+                                    ),
+                                    CircleShape
+                                )
+                                .border(
+                                    width = 0.5.dp,
+                                    brush = Brush.linearGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = 0.88f),
+                                            Color.White.copy(alpha = 0.20f),
+                                            Color.White.copy(alpha = 0.48f)
+                                        )
+                                    ),
+                                    shape = CircleShape
                                 ),
-                                CircleShape
-                            )
-                            .background(
-                                Brush.linearGradient(
-                                    colors = listOf(
-                                        Color.White.copy(alpha = 0.12f),
-                                        Color.Transparent,
-                                        Color.White.copy(alpha = 0.035f)
-                                    )
-                                ),
-                                CircleShape
-                            )
-                            .border(
-                                width = 0.5.dp,
-                                brush = Brush.linearGradient(
-                                    colors = listOf(
-                                        Color.White.copy(alpha = 0.88f),
-                                        Color.White.copy(alpha = 0.20f),
-                                        Color.White.copy(alpha = 0.48f)
-                                    )
-                                ),
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AnimatedLoginIcon(immichInfo = immichInfo) {
-                            navController.navigate(Screens.MainPages.MainGrid.SettingsDialog)
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AnimatedLoginIcon(immichInfo = immichInfo) {
+                                navController.navigate(Screens.MainPages.MainGrid.SettingsDialog)
+                            }
                         }
                     }
                 } else {
@@ -269,7 +231,18 @@ fun MainAppTopBar(
                 showTagDialog = showTagDialog,
                 setShowTagDialog = setShowTagDialog
             )
-        }
+        },
+        containerColor = if (isHome) Color.Transparent else MaterialTheme.colorScheme.background,
+        modifier = if (isHome) {
+            Modifier.background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.background.copy(alpha = 0.98f),
+                        MaterialTheme.colorScheme.background.copy(alpha = 0.62f),
+                        Color.Transparent
+                    )
+                )
+            )
+        } else Modifier
     )
-    }
 }

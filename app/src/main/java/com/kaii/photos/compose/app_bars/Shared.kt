@@ -173,11 +173,14 @@ fun DualFunctionTopAppBar(
     actions: @Composable RowScope.() -> Unit,
     alternateTitle: @Composable () -> Unit,
     alternateActions: @Composable () -> Unit,
-    navigationIcon: @Composable () -> Unit = @Composable {}
+    navigationIcon: @Composable () -> Unit = @Composable {},
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
+        modifier = modifier,
         colors = TopAppBarDefaults.topAppBarColors().copy(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = containerColor
         ),
         navigationIcon = navigationIcon,
         title = {
