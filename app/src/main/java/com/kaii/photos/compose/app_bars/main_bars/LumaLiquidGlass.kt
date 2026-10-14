@@ -15,6 +15,7 @@ import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.colorControls
 import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.highlight.Highlight
+import com.kyant.backdrop.highlight.HighlightStyle
 import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
 
@@ -36,9 +37,14 @@ fun Modifier.lumaLiquidGlassSurface(
     },
     highlight = {
         Highlight.Default.copy(
-            color = Color.White.copy(alpha = 0.44f),
-            angle = 135f,
-            falloff = 0.85f
+            width = 0.8.dp,
+            blurRadius = 1.2.dp,
+            alpha = 1f,
+            style = HighlightStyle.Default.copy(
+                color = Color.White.copy(alpha = 0.44f),
+                angle = 135f,
+                falloff = 0.85f
+            )
         )
     },
     shadow = {
