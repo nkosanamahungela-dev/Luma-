@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -129,6 +130,7 @@ fun MainAppBottomBar(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val windowInfo = LocalWindowInfo.current
+    val screenWidthDp = with(LocalDensity.current) { windowInfo.containerSize.width.toDp() }
     val windowWidth = windowInfo.containerSize.width.toFloat()
     val currentTab = tabs.getOrNull(pagerState.currentPage)
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
