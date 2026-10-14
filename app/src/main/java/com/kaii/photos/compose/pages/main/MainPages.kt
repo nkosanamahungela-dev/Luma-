@@ -549,7 +549,8 @@ fun MainPages(
                                 selectionManager = viewModel.selectionManager,
                                 confirmToDelete = { confirmToDelete },
                                 doNotTrash = { doNotTrash },
-                                runAction = viewModel::runAction
+                                runAction = viewModel::runAction,
+                                liquidGlassBackdrop = liquidGlassBackdrop
                             )
                         }
                     } else {
