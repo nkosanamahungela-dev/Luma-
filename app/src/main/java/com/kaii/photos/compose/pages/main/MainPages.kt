@@ -250,6 +250,7 @@ fun MainPages(
                     confirmToDelete = { confirmToDelete },
                     doNotTrash = { doNotTrash },
                     runAction = viewModel::runAction,
+                    scrollBehaviour = scrollBehaviour,
                     liquidGlassBackdrop = liquidGlassBackdrop
                 )
             }
@@ -422,7 +423,6 @@ fun MainPages(
                 userScrollEnabled = !isSelecting,
                 beyondViewportPageCount = 1,
                 modifier = Modifier
-                    .layerBackdrop(liquidGlassBackdrop)
                     .padding(
                         start = safeDrawingPadding.first,
                         end = safeDrawingPadding.second,
@@ -435,8 +435,11 @@ fun MainPages(
                     modifier = Modifier
                         .fillMaxSize()
                         .then(
-                            if (tab == DefaultTabs.TabTypes.photos && incomingIntent == null) Modifier
-                            else Modifier.padding(top = padding.calculateTopPadding())
+                            if (tab == DefaultTabs.TabTypes.photos && incomingIntent == null) {
+                                Modifier.layerBackdrop(liquidGlassBackdrop)
+                            } else {
+                                Modifier.padding(top = padding.calculateTopPadding())
+                            }
                         )
                 ) {
                 when {
