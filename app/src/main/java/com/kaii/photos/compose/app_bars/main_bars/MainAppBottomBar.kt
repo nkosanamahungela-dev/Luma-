@@ -42,7 +42,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -58,6 +57,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.effects.vibrancy
 import com.kaii.photos.R
 import com.kaii.photos.compose.app_bars.SelectingBottomBarItems
 import com.kaii.photos.datastore.AlbumType
@@ -71,51 +75,22 @@ import kotlinx.coroutines.launch
 private val LumaGlassWhite = Color.White
 private val LumaActiveBlue = Color(0xFF7CB4FF)
 
-/**
- * Translucent glassmorphism surface. This deliberately uses standard Compose layers:
- * it does not add a Liquid Glass dependency or alter photo-grid rendering.
- */
-private fun Modifier.lumaGlassSurface(shape: Shape): Modifier =
-    this
-        .shadow(
-            elevation = 18.dp,
-            shape = shape,
-            clip = false,
-            ambientColor = Color.Black.copy(alpha = 0.40f),
-            spotColor = Color.Black.copy(alpha = 0.40f)
-        )
-        .clip(shape)
-        .background(
-            brush = Brush.verticalGradient(
-                colors = listOf(
-                    LumaGlassWhite.copy(alpha = 0.24f),
-                    LumaGlassWhite.copy(alpha = 0.04f),
-                    LumaGlassWhite.copy(alpha = 0.10f)
-                )
-            ),
-            shape = shape
-        )
-        .background(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    LumaGlassWhite.copy(alpha = 0.12f),
-                    Color.Transparent,
-                    LumaGlassWhite.copy(alpha = 0.035f)
-                )
-            ),
-            shape = shape
-        )
-        .border(
-            width = 0.5.dp,
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    LumaGlassWhite.copy(alpha = 0.88f),
-                    LumaGlassWhite.copy(alpha = 0.20f),
-                    LumaGlassWhite.copy(alpha = 0.48f)
-                )
-            ),
-            shape = shape
-        )
+/** Liquid Glass surface backed by the live gallery content beneath the navigation. */
+private fun Modifier.lumaLiquidGlassSurface(
+    backdrop: Backdrop,
+    shape: Shape
+): Modifier = drawBackdrop(
+    backdrop = backdrop,
+    shape = { shape },
+    effects = {
+        vibrancy()
+        blur(8.dp.toPx())
+        lens(18.dp.toPx(), 24.dp.toPx())
+    },
+    onDrawSurface = {
+        drawRect(Color.White.copy(alpha = 0.12f))
+    }
+)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -126,7 +101,8 @@ fun MainAppBottomBar(
     scrollBehaviour: FloatingToolbarScrollBehavior,
     confirmToDelete: () -> Boolean,
     doNotTrash: () -> Boolean,
-    runAction: (action: FileOperationAction) -> Unit
+    runAction: (action: FileOperationAction) -> Unit,
+    liquidGlassBackdrop: Backdrop
 ) {
     val coroutineScope = rememberCoroutineScope()
     val windowInfo = LocalWindowInfo.current
@@ -178,7 +154,7 @@ fun MainAppBottomBar(
                     .weight(1f)
                     .widthIn(max = 286.dp)
                     .height(64.dp)
-                    .lumaGlassSurface(CircleShape)
+                    .lumaLiquidGlassSurface(liquidGlassBackdrop, CircleShape)
                     .clip(CircleShape)
             ) {
                 AnimatedContent(
