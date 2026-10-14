@@ -6,8 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +40,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
@@ -58,10 +55,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.backdrop.Backdrop
-import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
 import com.kaii.photos.R
 import com.kaii.photos.compose.app_bars.SelectingBottomBarItems
 import com.kaii.photos.datastore.AlbumType
@@ -72,25 +65,7 @@ import com.kaii.photos.helpers.AnimationConstants
 import com.kaii.photos.helpers.grid_management.SelectionManager
 import kotlinx.coroutines.launch
 
-private val LumaGlassWhite = Color.White
 private val LumaActiveBlue = Color(0xFF7CB4FF)
-
-/** Liquid Glass surface backed by the live gallery content beneath the navigation. */
-private fun Modifier.lumaLiquidGlassSurface(
-    backdrop: Backdrop,
-    shape: Shape
-): Modifier = drawBackdrop(
-    backdrop = backdrop,
-    shape = { shape },
-    effects = {
-        vibrancy()
-        blur(8.dp.toPx())
-        lens(18.dp.toPx(), 24.dp.toPx())
-    },
-    onDrawSurface = {
-        drawRect(Color.White.copy(alpha = 0.12f))
-    }
-)
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -140,7 +115,7 @@ fun MainAppBottomBar(
             modifier = Modifier
                 .align(Alignment.Center)
                 .windowInsetsPadding(WindowInsets.systemBars)
-                .offset(y = (-12).dp)
+                .offset(y = (-6).dp)
                 .widthIn(max = (screenWidthDp - 32.dp).coerceAtLeast(0.dp))
                 .height(64.dp),
             content = {
@@ -205,28 +180,20 @@ fun MainAppBottomBar(
                                         .weight(1f)
                                         .height(58.dp)
                                         .padding(horizontal = 2.dp)
-                                        .clip(CircleShape)
                                         .then(
                                             if (selected) {
-                                                Modifier
-                                                    .background(
-                                                        Brush.verticalGradient(
-                                                            colors = listOf(
-                                                                Color.White.copy(alpha = 0.38f),
-                                                                Color.White.copy(alpha = 0.20f)
-                                                            )
-                                                        ),
-                                                        CircleShape
-                                                    )
-                                                    .border(
-                                                        width = 0.5.dp,
-                                                        color = Color.White.copy(alpha = 0.50f),
-                                                        shape = CircleShape
-                                                    )
+                                                Modifier.lumaLiquidGlassSurface(
+                                                    backdrop = liquidGlassBackdrop,
+                                                    shape = CircleShape,
+                                                    fillAlpha = 0.17f,
+                                                    lensWidth = 12.dp,
+                                                    lensHeight = 18.dp
+                                                )
                                             } else {
                                                 Modifier
                                             }
                                         )
+                                        .clip(CircleShape)
                                         .clickable { navigateToTab(tabs.indexOf(tab)) }
                                         .testTag(tab.name)
                                         .padding(vertical = 4.dp),
@@ -277,7 +244,7 @@ fun MainAppBottomBar(
                     Icon(
                         painter = painterResource(id = R.drawable.search),
                         contentDescription = stringResource(id = R.string.navigation_search),
-                        tint = Color.White,
+                        tint = Color.White.copy(alpha = 0.88f),
                         modifier = Modifier.size(26.dp)
                     )
                 }

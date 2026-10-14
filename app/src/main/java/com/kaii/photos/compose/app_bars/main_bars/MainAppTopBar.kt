@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.kyant.backdrop.Backdrop
 import com.kaii.photos.LocalNavController
 import com.kaii.photos.R
 import com.kaii.photos.compose.app_bars.DualFunctionTopAppBar
@@ -59,11 +63,71 @@ fun MainAppTopBar(
     showAddAlbumButton: () -> Boolean,
     showTagDialog: () -> Boolean,
     isFromMediaPicker: Boolean,
+    isHome: Boolean,
+    liquidGlassBackdrop: Backdrop,
     groups: () -> List<AlbumGroup>,
     setShowTagDialog: (show: Boolean) -> Unit,
     addAlbum: (album: AlbumType) -> Unit,
     addGroup: (name: String) -> Unit
 ) {
+    if (isHome && !alternate()) {
+        val split = stringResource(id = R.string.app_name_full).split(" ")
+        val navController = LocalNavController.current
+
+        TopAppBar(
+            title = {
+                Row(
+                    modifier = Modifier.wrapContentHeight(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = "${split.first()} ",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = TextUnit(22f, TextUnitType.Sp)
+                    )
+                    Text(
+                        text = if (split.size >= 2) split[1] else "",
+                        fontWeight = FontWeight.Normal,
+                        fontSize = TextUnit(22f, TextUnitType.Sp)
+                    )
+                }
+            },
+            actions = {
+                Box(
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .size(46.dp)
+                        .lumaLiquidGlassSurface(liquidGlassBackdrop, CircleShape)
+                        .clip(CircleShape)
+                        .clickable {
+                            navController.navigate(Screens.MainPages.MainGrid.SettingsDialog)
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.settings),
+                        contentDescription = "Settings",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Transparent,
+                scrolledContainerColor = Color.Transparent
+            ),
+            modifier = Modifier.background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.background.copy(alpha = 0.98f),
+                        MaterialTheme.colorScheme.background.copy(alpha = 0.62f),
+                        Color.Transparent
+                    )
+                )
+            )
+        )
+    } else {
     DualFunctionTopAppBar(
         alternated = alternate(),
         title = {
@@ -207,4 +271,5 @@ fun MainAppTopBar(
             )
         }
     )
+    }
 }

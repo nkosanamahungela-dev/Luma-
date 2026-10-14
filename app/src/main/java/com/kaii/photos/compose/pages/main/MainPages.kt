@@ -62,7 +62,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kaii.photos.R
 import com.kaii.photos.compose.FolderIsEmpty
 import com.kaii.photos.compose.MediaPickerConfirmButton
@@ -118,7 +118,7 @@ fun MainPages(
     val confirmToDelete by viewModel.confirmToDelete.collectAsStateWithLifecycle()
     val doNotTrash by viewModel.doNotTrash.collectAsStateWithLifecycle()
 
-    val liquidGlassBackdrop = rememberBackdrop()
+    val liquidGlassBackdrop = rememberLayerBackdrop()
 
     val pagerState = rememberPagerState(
         initialPage = tabList.indices.first
@@ -220,6 +220,9 @@ fun MainPages(
                 },
                 showTagDialog = { showTagDialog },
                 isFromMediaPicker = incomingIntent != null,
+                isHome = tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.photos &&
+                    incomingIntent == null,
+                liquidGlassBackdrop = liquidGlassBackdrop,
                 groups = { groups },
                 setShowTagDialog = {
                     showTagDialog = true
@@ -423,13 +426,20 @@ fun MainPages(
                     .layerBackdrop(liquidGlassBackdrop)
                     .padding(
                         start = safeDrawingPadding.first,
-                        top = padding.calculateTopPadding(),
                         end = safeDrawingPadding.second,
                         bottom = 0.dp
                     )
             ) { index ->
                 val tab = tabList[index]
 
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(
+                            if (tab == DefaultTabs.TabTypes.photos && incomingIntent == null) Modifier
+                            else Modifier.padding(top = padding.calculateTopPadding())
+                        )
+                ) {
                 when {
                     tab.isCustom -> {
                         val columnSize by viewModel.columnSize.collectAsStateWithLifecycle()
@@ -522,6 +532,7 @@ fun MainPages(
                             backgroundColor = Color.Transparent
                         )
                     }
+                }
                 }
             }
 
