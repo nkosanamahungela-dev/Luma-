@@ -263,7 +263,7 @@ fun MainAppBottomBar(
                 Box(
                     modifier = Modifier
                         .size(62.dp)
-                        .lumaGlassSurface(CircleShape)
+                        .lumaLiquidGlassSurface(liquidGlassBackdrop, CircleShape)
                         .clip(CircleShape)
                         .clickable {
                             navigateToTab(searchIndex)
