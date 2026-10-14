@@ -13,6 +13,7 @@ import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.colorControls
+import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.highlight.HighlightStyle
@@ -24,13 +25,14 @@ fun Modifier.lumaLiquidGlassSurface(
     backdrop: Backdrop,
     shape: Shape,
     fillAlpha: Float = 0.07f,
-    blurRadius: Dp = 8.dp,
+    blurRadius: Dp = 3.dp,
     lensWidth: Dp = 18.dp,
     lensHeight: Dp = 24.dp
 ): Modifier = drawBackdrop(
     backdrop = backdrop,
     shape = { shape },
     effects = {
+        vibrancy()
         blur(blurRadius.toPx())
         colorControls(brightness = 0.15f, saturation = 2f)
         lens(lensWidth.toPx(), lensHeight.toPx())
