@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -253,7 +252,6 @@ fun MainAppBottomBar(
                                                     lens(
                                                         with(density) { (8 + 10 * lensPressed.value).dp.toPx() },
                                                         with(density) { (14 + 26 * lensPressed.value).dp.toPx() },
-                                                        hasDepthEffect = true
                                                     )
                                                 },
                                                 layerBlock = {
