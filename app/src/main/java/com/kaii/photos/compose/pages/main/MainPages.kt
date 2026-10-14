@@ -247,7 +247,6 @@ fun MainPages(
                     pagerState = pagerState,
                     selectionManager = viewModel.selectionManager,
                     tabs = tabList,
-                    scrollBehaviour = scrollBehaviour,
                     confirmToDelete = { confirmToDelete },
                     doNotTrash = { doNotTrash },
                     runAction = viewModel::runAction,
@@ -556,7 +555,6 @@ fun MainPages(
                             MainAppBottomBar(
                                 pagerState = pagerState,
                                 tabs = tabList,
-                                scrollBehaviour = scrollBehaviour,
                                 selectionManager = viewModel.selectionManager,
                                 confirmToDelete = { confirmToDelete },
                                 doNotTrash = { doNotTrash },
