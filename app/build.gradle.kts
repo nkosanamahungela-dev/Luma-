@@ -141,6 +141,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.ui.unit)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.kyant.backdrop)
 
     implementation(libs.google.zxing)
 
