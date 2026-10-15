@@ -77,6 +77,7 @@ import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
+import com.kyant.shapes.Capsule
 import com.kaii.photos.R
 import com.kaii.photos.compose.app_bars.SelectingBottomBarItems
 import com.kaii.photos.datastore.AlbumType
@@ -152,13 +153,12 @@ fun MainAppBottomBar(
                     .height(64.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
-                val barWidthPx = constraints.maxWidth.toFloat()
+                val barWidthPx = constraints.maxWidth.toFloat().coerceAtLeast(1f)
                 val tabsCount = visibleTabs.size.coerceAtLeast(1)
                 val tabsBackdrop = rememberLayerBackdrop()
                 val offsetAnimation = remember { Animatable(0f) }
-                val rawTabWidthPx = with(density) {
-                    (barWidthPx - 8.dp.toPx()) / tabsCount
-                }
+                val horizontalInsetPx = with(density) { 8.dp.toPx() }
+                val rawTabWidthPx = (barWidthPx - horizontalInsetPx) / tabsCount
                 val tabWidthPx = rawTabWidthPx.coerceAtLeast(1f)
                 val panelOffset by remember(density, barWidthPx) {
                     derivedStateOf {
@@ -302,7 +302,7 @@ fun MainAppBottomBar(
                                     .graphicsLayer { translationX = panelOffset }
                                     .drawBackdrop(
                                         backdrop = liquidGlassBackdrop,
-                                        shape = { CircleShape },
+                                        shape = { Capsule() },
                                         effects = {
                                             blur(3.dp.toPx())
                                             lens(16.dp.toPx(), 32.dp.toPx(), depthEffect = true)
