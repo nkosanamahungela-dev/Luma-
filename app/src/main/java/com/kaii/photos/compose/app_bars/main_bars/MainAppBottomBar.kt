@@ -336,7 +336,7 @@ fun MainAppBottomBar(
                                 .graphicsLayer { translationX = panelOffset }
                                 .drawBackdrop(
                                     backdrop = liquidGlassBackdrop,
-                                    shape = { Capsule() },
+                                    shape = { CircleShape },
                                     effects = {
                                         val progress = dragAnimation.pressProgress
                                         blur(3.dp.toPx())
@@ -375,7 +375,7 @@ fun MainAppBottomBar(
                                 .then(dragAnimation.modifier)
                                 .drawBackdrop(
                                     backdrop = rememberCombinedBackdrop(liquidGlassBackdrop, tabsBackdrop),
-                                    shape = { Capsule() },
+                                    shape = { CircleShape },
                                     effects = {
                                         val progress = dragAnimation.pressProgress
                                         lens(
