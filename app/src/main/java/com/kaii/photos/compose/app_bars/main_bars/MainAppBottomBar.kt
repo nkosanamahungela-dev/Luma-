@@ -76,7 +76,6 @@ import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
-import com.kyant.shapes.Capsule
 import com.kaii.photos.R
 import com.kaii.photos.compose.app_bars.SelectingBottomBarItems
 import com.kaii.photos.datastore.AlbumType
@@ -150,7 +149,8 @@ fun MainAppBottomBar(
                 modifier = Modifier
                     .weight(1f)
                     .widthIn(max = 286.dp)
-                    .height(64.dp)
+                    .height(64.dp),
+                contentAlignment = Alignment.CenterStart
             ) {
                 val barWidthPx = constraints.maxWidth.toFloat()
                 AnimatedContent(
@@ -303,7 +303,7 @@ fun MainAppBottomBar(
                                 .graphicsLayer { translationX = panelOffset }
                                 .drawBackdrop(
                                     backdrop = liquidGlassBackdrop,
-                                    shape = { Capsule() },
+                                    shape = { CircleShape },
                                     effects = {
                                         blur(3.dp.toPx())
                                         lens(16.dp.toPx(), 32.dp.toPx(), depthEffect = true)
