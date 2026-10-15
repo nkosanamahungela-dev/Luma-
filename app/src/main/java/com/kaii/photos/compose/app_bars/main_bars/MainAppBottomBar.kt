@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,7 +54,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -110,9 +110,7 @@ fun MainAppBottomBar(
 ) {
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
-    val windowInfo = LocalWindowInfo.current
-    val screenWidthDp = with(density) { windowInfo.containerSize.width.toDp() }
-    val windowWidth = windowInfo.containerSize.width.toFloat()
+    val windowWidth = with(density) { androidx.compose.ui.platform.LocalWindowInfo.current.containerSize.width.toFloat() }
     val currentTab = tabs.getOrNull(pagerState.currentPage)
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
     val visibleTabs = tabs.filter { it != DefaultTabs.TabTypes.search }
@@ -130,8 +128,6 @@ fun MainAppBottomBar(
         }
     }
 
-    val containerWidthDp = (screenWidthDp - 32.dp).coerceAtLeast(0.dp)
-
     // Use the scroll behavior's original offset animation without its clipped Material Surface.
     Box(
         modifier = Modifier
@@ -143,18 +139,18 @@ fun MainAppBottomBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = containerWidthDp)
                 .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(start = 16.dp, end = 16.dp, bottom = 30.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
+            BoxWithConstraints(
                 modifier = Modifier
                     .weight(1f)
                     .widthIn(max = 286.dp)
                     .height(64.dp)
             ) {
+                val barWidthPx = constraints.maxWidth.toFloat()
                 AnimatedContent(
                     targetState = isSelecting,
                     transitionSpec = {
@@ -192,12 +188,12 @@ fun MainAppBottomBar(
                         val tabsBackdrop = rememberLayerBackdrop()
                         val offsetAnimation = remember { Animatable(0f) }
                         val rawTabWidthPx = with(density) {
-                            (constraints.maxWidth.toFloat() - 8.dp.toPx()) / tabsCount
+                            (barWidthPx - 8.dp.toPx()) / tabsCount
                         }
                         val tabWidthPx = rawTabWidthPx.coerceAtLeast(1f)
-                        val panelOffset by remember(density, constraints.maxWidth) {
+                        val panelOffset by remember(density, barWidthPx) {
                             derivedStateOf {
-                                val fraction = (offsetAnimation.value / constraints.maxWidth.toFloat())
+                                val fraction = (offsetAnimation.value / barWidthPx)
                                     .coerceIn(-1f, 1f)
                                 with(density) {
                                     4.dp.toPx() * fraction.sign * EaseOut.transform(abs(fraction))
@@ -260,7 +256,7 @@ fun MainAppBottomBar(
                             )
                         }
 
-                        val tabsContent: @Composable Row.() -> Unit = {
+                        val tabsContent: @Composable RowScope.() -> Unit = {
                             visibleTabs.forEachIndexed { index, tab ->
                                 val active = index == currentIndex
                                 Column(
