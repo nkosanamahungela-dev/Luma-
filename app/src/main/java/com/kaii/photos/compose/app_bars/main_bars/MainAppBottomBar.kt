@@ -7,11 +7,12 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -23,42 +24,43 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.FloatingToolbarScrollBehavior
-import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChanged
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.testTag
@@ -68,8 +70,12 @@ import com.kyant.backdrop.backdrops.layerBackdrop
 import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
+import com.kyant.backdrop.highlight.Highlight
+import com.kyant.backdrop.shadow.InnerShadow
+import com.kyant.backdrop.shadow.Shadow
+import com.kyant.shapes.Capsule
 import com.kaii.photos.R
 import com.kaii.photos.compose.app_bars.SelectingBottomBarItems
 import com.kaii.photos.datastore.AlbumType
@@ -78,17 +84,22 @@ import com.kaii.photos.datastore.DefaultTabs
 import com.kaii.photos.domain.files.FileOperationAction
 import com.kaii.photos.helpers.AnimationConstants
 import com.kaii.photos.helpers.grid_management.SelectionManager
-import kotlin.math.abs
-import kotlin.math.roundToInt
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.sign
 
 private val LumaActiveBlue = Color(0xFF7CB4FF)
-private val LumaTabInk = Color.White.copy(alpha = 0.88f)
+private val LumaInactive = Color.White.copy(alpha = 0.58f)
+private val LumaGlassTint = Color.White.copy(alpha = 0.07f)
+private val LumaTabLayerTint = Color(0xFFCFD6E0)
 
+/** Luma adaptation of Kyant0 AndroidLiquidGlass 2.0.0 Catalog LiquidBottomTabs (Apache-2.0). */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MainAppBottomBar(
-    pagerState: PagerState,
+    pagerState: androidx.compose.foundation.pager.PagerState,
     tabs: List<BottomBarTab>,
     selectionManager: SelectionManager,
     scrollBehaviour: FloatingToolbarScrollBehavior,
@@ -97,9 +108,10 @@ fun MainAppBottomBar(
     runAction: (action: FileOperationAction) -> Unit,
     liquidGlassBackdrop: Backdrop
 ) {
-    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
+    val density = LocalDensity.current
     val windowInfo = LocalWindowInfo.current
-    val screenWidthDp = with(LocalDensity.current) { windowInfo.containerSize.width.toDp() }
+    val screenWidthDp = with(density) { windowInfo.containerSize.width.toDp() }
     val windowWidth = windowInfo.containerSize.width.toFloat()
     val currentTab = tabs.getOrNull(pagerState.currentPage)
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
@@ -109,7 +121,7 @@ fun MainAppBottomBar(
 
     fun navigateToTab(index: Int) {
         if (index !in tabs.indices) return
-        coroutineScope.launch {
+        scope.launch {
             pagerState.animateScrollBy(
                 value = windowWidth * -(pagerState.currentPage - index) -
                     pagerState.currentPageOffsetFraction * windowWidth,
@@ -118,216 +130,353 @@ fun MainAppBottomBar(
         }
     }
 
-    val lensPosition = remember { Animatable(currentVisibleIndex.toFloat()) }
-    val lensPressed = remember { Animatable(0f) }
-    val tabCount = visibleTabs.size
-    LaunchedEffect(currentVisibleIndex, isSelecting) {
-        if (!isSelecting && lensPressed.value == 0f && tabCount > 0) {
-            lensPosition.animateTo(
-                currentVisibleIndex.coerceIn(0, tabCount - 1).toFloat(),
-                spring(dampingRatio = 0.72f, stiffness = 360f)
-            )
-        }
-    }
+    val containerWidthDp = (screenWidthDp - 32.dp).coerceAtLeast(0.dp)
 
-    Box(Modifier.wrapContentHeight().fillMaxWidth()) {
-        HorizontalFloatingToolbar(
-            expanded = false,
-            collapsedShadowElevation = 0.dp,
-            expandedShadowElevation = 0.dp,
-            colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                toolbarContainerColor = Color.Transparent,
-                toolbarContentColor = Color.White
-            ),
-            scrollBehavior = scrollBehaviour,
+    // Use the scroll behavior's original offset animation without its clipped Material Surface.
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(scrollBehaviour.floatingScrollBehaviorModifier)
+            .wrapContentHeight(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Row(
             modifier = Modifier
-                .align(Alignment.Center)
-                .windowInsetsPadding(WindowInsets.systemBars)
-                .offset(y = (-6).dp)
-                .widthIn(max = (screenWidthDp - 32.dp).coerceAtLeast(0.dp))
-                .height(64.dp),
-            content = {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .widthIn(max = 286.dp)
-                            .height(64.dp)
-                            .lumaLiquidGlassSurface(liquidGlassBackdrop, CircleShape, blurRadius = 3.dp)
-                            .clip(CircleShape)
-                    ) {
-                        AnimatedContent(
-                            targetState = isSelecting,
-                            transitionSpec = {
-                                (slideInHorizontally() + fadeIn()).togetherWith(
-                                    scaleOut(transformOrigin = TransformOrigin(1f, 0.5f)) + fadeOut()
+                .fillMaxWidth()
+                .widthIn(max = containerWidthDp)
+                .windowInsetsPadding(WindowInsets.navigationBars)
+                .padding(start = 16.dp, end = 16.dp, bottom = 30.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .widthIn(max = 286.dp)
+                    .height(64.dp)
+            ) {
+                AnimatedContent(
+                    targetState = isSelecting,
+                    transitionSpec = {
+                        (slideInHorizontally() + fadeIn()).togetherWith(
+                            scaleOut(transformOrigin = TransformOrigin(1f, 0.5f)) + fadeOut()
+                        )
+                    },
+                    modifier = Modifier.fillMaxSize()
+                ) { selectionMode ->
+                    if (selectionMode) {
+                        Row(
+                            Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            val selectedTab = currentTab ?: tabs.firstOrNull()
+                            if (selectedTab != null) {
+                                SelectingBottomBarItems(
+                                    albumInfo = AlbumType.Folder(
+                                        id = selectedTab.id.toString(),
+                                        name = selectedTab.name,
+                                        paths = selectedTab.albumPaths,
+                                        pinned = false,
+                                        immichId = null
+                                    ),
+                                    selectionManager = selectionManager,
+                                    confirmToDelete = confirmToDelete,
+                                    doNotTrash = doNotTrash,
+                                    runAction = runAction
                                 )
-                            },
-                            modifier = Modifier.fillMaxSize()
-                        ) { selectionMode ->
-                            if (selectionMode) {
-                                Row(
-                                    Modifier.fillMaxWidth().height(64.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    val selectedTab = currentTab ?: tabs.firstOrNull()
-                                    if (selectedTab != null) {
-                                        SelectingBottomBarItems(
-                                            albumInfo = AlbumType.Folder(
-                                                id = selectedTab.id.toString(),
-                                                name = selectedTab.name,
-                                                paths = selectedTab.albumPaths,
-                                                pinned = false,
-                                                immichId = null
-                                            ),
-                                            selectionManager = selectionManager,
-                                            confirmToDelete = confirmToDelete,
-                                            doNotTrash = doNotTrash,
-                                            runAction = runAction
-                                        )
-                                    }
+                            }
+                        }
+                    } else if (visibleTabs.isNotEmpty()) {
+                        val tabsCount = visibleTabs.size
+                        val tabsBackdrop = rememberLayerBackdrop()
+                        val offsetAnimation = remember { Animatable(0f) }
+                        val rawTabWidthPx = with(density) {
+                            (constraints.maxWidth.toFloat() - 8.dp.toPx()) / tabsCount
+                        }
+                        val tabWidthPx = rawTabWidthPx.coerceAtLeast(1f)
+                        val panelOffset by remember(density, constraints.maxWidth) {
+                            derivedStateOf {
+                                val fraction = (offsetAnimation.value / constraints.maxWidth.toFloat())
+                                    .coerceIn(-1f, 1f)
+                                with(density) {
+                                    4.dp.toPx() * fraction.sign * EaseOut.transform(abs(fraction))
                                 }
-                            } else if (visibleTabs.isNotEmpty()) {
-                                val tabsBackdrop = rememberLayerBackdrop()
-                                BoxWithConstraints(Modifier.fillMaxSize()) {
-                                    val density = LocalDensity.current
-                                    val padPx = with(density) { 4.dp.toPx() }
-                                    val tabWidthPx = with(density) {
-                                        (maxWidth - 8.dp).toPx() / visibleTabs.size
-                                    }
-                                    val tabWidthDp = with(density) { tabWidthPx.toDp() }
-                                    val combinedBackdrop = rememberCombinedBackdrop(liquidGlassBackdrop, tabsBackdrop)
+                            }
+                        }
+                        val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+                        var currentIndex by remember { mutableIntStateOf(currentVisibleIndex.coerceIn(0, tabsCount - 1)) }
 
-                                    // Draw the lens first so the icons and labels stay crisp above it.
-                                    Box(
-                                        Modifier
-                                            .padding(vertical = 4.dp)
-                                            .width(tabWidthDp)
-                                            .fillMaxHeight()
-                                            .offset(x = with(density) { (padPx + lensPosition.value * tabWidthPx).toDp() })
-                                            .drawBackdrop(
-                                                backdrop = combinedBackdrop,
-                                                shape = { CircleShape },
-                                                effects = {
-                                                    vibrancy()
-                                                    lens(
-                                                        with(density) { (5 + 4 * lensPressed.value).dp.toPx() },
-                                                        with(density) { (10 + 12 * lensPressed.value).dp.toPx() },
-                                                    )
-                                                },
-                                                layerBlock = {
-                                                    val scale = 1f + 0.05f * lensPressed.value
-                                                    scaleX = scale
-                                                    scaleY = scale
-                                                },
-                                                onDrawSurface = {
-                                                    drawRect(Color.White.copy(alpha = 0.025f + 0.055f * (1f - lensPressed.value)))
-                                                }
-                                            )
+                        LaunchedEffect(currentVisibleIndex) {
+                            currentIndex = currentVisibleIndex.coerceIn(0, tabsCount - 1)
+                        }
+
+                        val dragAnimation = remember(scope, tabsCount) {
+                            DampedDragAnimation(
+                                animationScope = scope,
+                                initialValue = currentVisibleIndex.toFloat(),
+                                valueRange = 0f..(tabsCount - 1).toFloat(),
+                                visibilityThreshold = 0.001f,
+                                initialScale = 1f,
+                                pressedScale = 78f / 56f,
+                                onDragStarted = {},
+                                onDragStopped = {
+                                    val targetIndex = targetValue.roundToInt().coerceIn(0, tabsCount - 1)
+                                    currentIndex = targetIndex
+                                    animateToValue(targetIndex.toFloat())
+                                    scope.launch {
+                                        offsetAnimation.animateTo(0f, spring(1f, 300f, 0.5f))
+                                    }
+                                },
+                                onDrag = { _, dragAmount ->
+                                    updateValue(
+                                        (targetValue + dragAmount.x / tabWidthPx * if (isLtr) 1f else -1f)
+                                            .coerceIn(0f, (tabsCount - 1).toFloat())
                                     )
+                                    scope.launch { offsetAnimation.snapTo(offsetAnimation.value + dragAmount.x) }
+                                }
+                            )
+                        }
 
+                        LaunchedEffect(dragAnimation) {
+                            snapshotFlow { currentIndex }
+                                .drop(1)
+                                .collectLatest { index ->
+                                    dragAnimation.animateToValue(index.toFloat())
+                                    navigateToTab(tabs.indexOf(visibleTabs[index]))
+                                }
+                        }
 
-                                    // Record tab labels and icons separately; the moving lens reads this layer too.
-                                    Row(
-                                        Modifier.fillMaxSize().padding(horizontal = 4.dp).layerBackdrop(tabsBackdrop),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        visibleTabs.forEachIndexed { index, tab ->
-                                            val near = (1f - abs(lensPosition.value - index)).coerceIn(0f, 1f)
-                                            val tint = androidx.compose.ui.graphics.lerp(LumaTabInk, LumaActiveBlue, near)
-                                            Column(
-                                                Modifier.weight(1f).fillMaxHeight().clip(CircleShape),
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                Icon(
-                                                    painter = painterResource(id = tab.icon.nonFilled),
-                                                    contentDescription = stringResource(
-                                                        id = R.string.tabs_navigate_to,
-                                                        tab.name
-                                                    ),
-                                                    tint = tint,
-                                                    modifier = Modifier.size(24.dp)
-                                                )
-                                                Spacer(Modifier.height(2.dp))
-                                                Text(
-                                                    text = tab.name,
-                                                    color = tint,
-                                                    fontSize = 11.sp,
-                                                    fontWeight = FontWeight.Medium,
-                                                    maxLines = 1
-                                                )
-                                            }
-                                        }
-                                    }
+                        val interactiveHighlight = remember(scope, tabWidthPx) {
+                            InteractiveHighlight(
+                                animationScope = scope,
+                                position = { size, _ ->
+                                    Offset(
+                                        if (isLtr) (dragAnimation.value + 0.5f) * tabWidthPx + panelOffset
+                                        else size.width - (dragAnimation.value + 0.5f) * tabWidthPx + panelOffset,
+                                        size.height / 2f
+                                    )
+                                }
+                            )
+                        }
 
-                                    // Drag on the pill to move the lens; release snaps to the nearest tab.
-                                    Box(
-                                        Modifier
-                                            .matchParentSize()
-                                            .pointerInput(tabCount, tabWidthPx) {
-                                                awaitEachGesture {
-                                                    val down = awaitFirstDown()
-                                                    var lastX = down.position.x
-                                                    coroutineScope.launch {
-                                                        lensPressed.animateTo(1f, spring(dampingRatio = 0.62f, stiffness = 420f))
-                                                    }
-                                                    val startIndex = ((lastX - padPx) / tabWidthPx).roundToInt().coerceIn(0, visibleTabs.lastIndex)
-                                                    coroutineScope.launch {
-                                                        lensPosition.animateTo(startIndex.toFloat(), spring(dampingRatio = 0.7f, stiffness = 420f))
-                                                    }
-                                                    do {
-                                                        val event = awaitPointerEvent()
-                                                        val change = event.changes.first()
-                                                        if (change.positionChanged()) {
-                                                            lastX = change.position.x
-                                                            val value = ((lastX - padPx) / tabWidthPx - 0.5f)
-                                                                .coerceIn(0f, visibleTabs.lastIndex.toFloat())
-                                                            coroutineScope.launch { lensPosition.snapTo(value) }
-                                                            change.consume()
-                                                        }
-                                                    } while (event.changes.any { it.pressed })
-                                                    val target = ((lastX - padPx) / tabWidthPx)
-                                                        .roundToInt().coerceIn(0, visibleTabs.lastIndex)
-                                                    coroutineScope.launch {
-                                                        lensPressed.animateTo(0f, spring(dampingRatio = 0.72f, stiffness = 360f))
-                                                        lensPosition.animateTo(target.toFloat(), spring(dampingRatio = 0.58f, stiffness = 280f))
-                                                    }
-                                                    navigateToTab(tabs.indexOf(visibleTabs[target]))
-                                                }
-                                            }
+                        val tabsContent: @Composable Row.() -> Unit = {
+                            visibleTabs.forEachIndexed { index, tab ->
+                                val active = index == currentIndex
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxHeight()
+                                        .clickable(
+                                            interactionSource = null,
+                                            indication = null
+                                        ) { currentIndex = index }
+                                        .graphicsLayer {
+                                            val scale = 1f + 0.2f * dragAnimation.pressProgress
+                                            scaleX = scale
+                                            scaleY = scale
+                                        },
+                                    verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = if (active) tab.icon.filled else tab.icon.nonFilled),
+                                        contentDescription = stringResource(
+                                            id = R.string.tabs_navigate_to,
+                                            tab.name
+                                        ),
+                                        tint = if (active) Color.White else LumaInactive,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Text(
+                                        text = tab.name,
+                                        color = if (active) Color.White else LumaInactive,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        maxLines = 1
                                     )
                                 }
                             }
                         }
-                    }
 
-                    if (!isSelecting) {
-                        Box(
+                        // The visible pill samples the Home photo-grid backdrop; it is not clipped around the lens.
+                        Row(
                             modifier = Modifier
-                                .size(62.dp)
-                                .lumaLiquidGlassSurface(liquidGlassBackdrop, CircleShape, blurRadius = 3.dp)
-                                .clip(CircleShape)
-                                .clickable { navigateToTab(searchIndex) }
-                                .semantics { testTagsAsResourceId = true }
-                                .testTag("main_search_button"),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.search),
-                                contentDescription = stringResource(id = R.string.navigation_search),
-                                tint = LumaTabInk,
-                                modifier = Modifier.size(26.dp)
-                            )
-                        }
+                                .graphicsLayer { translationX = panelOffset }
+                                .drawBackdrop(
+                                    backdrop = liquidGlassBackdrop,
+                                    shape = { Capsule() },
+                                    effects = {
+                                        blur(3.dp.toPx())
+                                        lens(16.dp.toPx(), 32.dp.toPx(), depthEffect = true)
+                                    },
+                                    highlight = { Highlight.Default.copy(alpha = 0.72f) },
+                                    shadow = { Shadow(alpha = 0.28f) },
+                                    innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.14f) },
+                                    layerBlock = {
+                                        val progress = dragAnimation.pressProgress
+                                        val scale = 1f + 16.dp.toPx() / size.width * progress
+                                        scaleX = scale
+                                        scaleY = scale
+                                    },
+                                    onDrawSurface = { drawRect(LumaGlassTint) }
+                                )
+                                .then(interactiveHighlight.modifier)
+                                .height(64.dp)
+                                .fillMaxWidth()
+                                .padding(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = tabsContent
+                        )
+
+                        // The alpha-zero copy records only tab glyphs for the combined lens backdrop.
+                        Row(
+                            modifier = Modifier
+                                .clearAndSetSemantics {}
+                                .alpha(0f)
+                                .layerBackdrop(tabsBackdrop)
+                                .graphicsLayer { translationX = panelOffset }
+                                .drawBackdrop(
+                                    backdrop = liquidGlassBackdrop,
+                                    shape = { Capsule() },
+                                    effects = {
+                                        val progress = dragAnimation.pressProgress
+                                        blur(3.dp.toPx())
+                                        lens(
+                                            16.dp.toPx() * progress,
+                                            32.dp.toPx() * progress,
+                                            depthEffect = true
+                                        )
+                                    },
+                                    highlight = {
+                                        Highlight.Default.copy(alpha = dragAnimation.pressProgress)
+                                    },
+                                    onDrawSurface = { drawRect(LumaGlassTint) }
+                                )
+                                .then(interactiveHighlight.modifier)
+                                .height(56.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = 4.dp)
+                                .graphicsLayer(colorFilter = ColorFilter.tint(LumaTabLayerTint)),
+                            verticalAlignment = Alignment.CenterVertically,
+                            content = tabsContent
+                        )
+
+                        // The moving Catalog lens is a sibling of the pill, with unclipped vertical scale.
+                        Box(
+                            Modifier
+                                .padding(horizontal = 4.dp)
+                                .graphicsLayer {
+                                    translationX = if (isLtr) {
+                                        dragAnimation.value * tabWidthPx + panelOffset
+                                    } else {
+                                        size.width - (dragAnimation.value + 1f) * tabWidthPx + panelOffset
+                                    }
+                                }
+                                .then(interactiveHighlight.gestureModifier)
+                                .then(dragAnimation.modifier)
+                                .drawBackdrop(
+                                    backdrop = rememberCombinedBackdrop(liquidGlassBackdrop, tabsBackdrop),
+                                    shape = { Capsule() },
+                                    effects = {
+                                        val progress = dragAnimation.pressProgress
+                                        lens(
+                                            16.dp.toPx() * progress,
+                                            32.dp.toPx() * progress,
+                                            depthEffect = true,
+                                            chromaticAberration = true
+                                        )
+                                    },
+                                    highlight = {
+                                        Highlight.Default.copy(alpha = 0.22f + 0.78f * dragAnimation.pressProgress)
+                                    },
+                                    shadow = { Shadow(alpha = dragAnimation.pressProgress) },
+                                    innerShadow = {
+                                        InnerShadow(
+                                            radius = 8.dp * dragAnimation.pressProgress,
+                                            alpha = dragAnimation.pressProgress
+                                        )
+                                    },
+                                    layerBlock = {
+                                        scaleX = dragAnimation.scaleX
+                                        scaleY = dragAnimation.scaleY
+                                        val velocity = dragAnimation.velocity / 10f
+                                        scaleX /= 1f - (velocity * 0.75f).coerceIn(-0.2f, 0.2f)
+                                        scaleY *= 1f - (velocity * 0.25f).coerceIn(-0.2f, 0.2f)
+                                    },
+                                    onDrawSurface = {
+                                        val progress = dragAnimation.pressProgress
+                                        drawRect(Color.Black.copy(alpha = 0.10f), alpha = 1f - progress)
+                                        drawRect(Color.Black.copy(alpha = 0.03f * progress))
+                                    }
+                                )
+                                .height(56.dp)
+                                .fillMaxWidth(1f / tabsCount)
+                        )
                     }
                 }
             }
+
+            if (!isSelecting) {
+                SearchGlassButton(
+                    backdrop = liquidGlassBackdrop,
+                    onClick = { navigateToTab(searchIndex) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchGlassButton(
+    backdrop: Backdrop,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressedState by interactionSource.collectIsPressedAsState()
+    val pressed = remember { Animatable(0f) }
+    LaunchedEffect(pressedState) {
+        pressed.animateTo(
+            if (pressedState) 1f else 0f,
+            spring(dampingRatio = 0.6f, stiffness = 420f)
+        )
+    }
+
+    Box(
+        Modifier
+            .size(62.dp)
+            .graphicsLayer {
+                val scale = 1f + 0.12f * pressed.value
+                scaleX = scale
+                scaleY = scale
+            }
+            .drawBackdrop(
+                backdrop = backdrop,
+                shape = { CircleShape },
+                effects = {
+                    blur(3.dp.toPx())
+                    lens(
+                        16.dp.toPx() * (1f + 0.25f * pressed.value),
+                        32.dp.toPx() * (1f + 0.25f * pressed.value),
+                        depthEffect = true,
+                        chromaticAberration = true
+                    )
+                },
+                highlight = { Highlight.Default.copy(alpha = 0.35f + 0.4f * pressed.value) },
+                shadow = { Shadow(alpha = 0.3f) },
+                innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.16f) },
+                onDrawSurface = { drawRect(LumaGlassTint) }
+            )
+            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .semantics { testTagsAsResourceId = true }
+            .testTag("main_search_button"),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.search),
+            contentDescription = stringResource(id = R.string.navigation_search),
+            tint = Color.White.copy(alpha = 0.9f),
+            modifier = Modifier.size(26.dp)
         )
     }
 }
