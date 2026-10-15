@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarScrollBehavior
 import androidx.compose.material3.Icon
@@ -77,7 +78,6 @@ import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
-import com.kyant.shapes.Capsule
 import com.kaii.photos.R
 import com.kaii.photos.compose.app_bars.SelectingBottomBarItems
 import com.kaii.photos.datastore.AlbumType
@@ -302,7 +302,7 @@ fun MainAppBottomBar(
                                     .graphicsLayer { translationX = panelOffset }
                                     .drawBackdrop(
                                         backdrop = liquidGlassBackdrop,
-                                        shape = { Capsule() },
+                                        shape = { RoundedCornerShape(percent = 50) },
                                         effects = {
                                             blur(3.dp.toPx())
                                             lens(16.dp.toPx(), 32.dp.toPx(), depthEffect = true)
