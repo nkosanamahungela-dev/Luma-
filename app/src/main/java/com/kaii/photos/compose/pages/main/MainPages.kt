@@ -370,6 +370,7 @@ fun MainPages(
                                 },
                                 onSearchClose = { closeSearch() },
                                 onCollapsedTabClick = { closeSearch() },
+                                onBarPressedChanged = onBottomBarPressedChanged,
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
                                     .imePadding()
