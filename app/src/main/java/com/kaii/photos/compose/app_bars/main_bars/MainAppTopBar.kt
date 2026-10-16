@@ -108,18 +108,13 @@ fun MainAppTopBar(
                         }
                     }
 
-                    IconButton(
-                        onClick = {
-                            showAlbumTypeDialog = true
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.add),
-                            contentDescription = stringResource(id = R.string.album_add),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
+                    LiquidGlassIconButton(
+                        backdrop = liquidGlassBackdrop,
+                        icon = painterResource(R.drawable.add),
+                        contentDescription = stringResource(id = R.string.album_add),
+                        onClick = { showAlbumTypeDialog = true },
+                        modifier = Modifier.padding(end = 10.dp)
+                    )
                 }
 
                 if (!isFromMediaPicker) {
