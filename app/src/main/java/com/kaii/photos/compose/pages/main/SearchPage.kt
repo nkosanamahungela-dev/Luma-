@@ -56,7 +56,7 @@ fun SearchPage(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(top = 64.dp)
+                .padding(top = 0.dp)
         ) {
             val items = viewModel.gridMediaFlow.collectAsLazyPagingItems()
 
@@ -87,63 +87,5 @@ fun SearchPage(
             )
         }
 
-        // counter intuitively below the grid since it needs to display *above* it
-        val coroutineScope = rememberCoroutineScope()
-        val tags by viewModel.tags.collectAsStateWithLifecycle()
-
-        var currentTag by remember { mutableStateOf<Tag?>(null) }
-        var showDialog by remember { mutableStateOf(false) }
-
-        if (showDialog) {
-            ConfirmationDialog(
-                title = stringResource(id = R.string.tags_delete, currentTag?.name ?: ""),
-                confirmButtonLabel = stringResource(id = R.string.media_delete),
-                action = {
-                    viewModel.deleteTag(currentTag!!)
-                },
-                onDismiss = {
-                    showDialog = false
-                }
-            )
-        }
-
-        val selectedTags by viewModel.selectedTags.collectAsStateWithLifecycle()
-        val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
-        val searchMode by viewModel.searchMode.collectAsStateWithLifecycle()
-        val searchingForTags by viewModel.searchingForTags.collectAsStateWithLifecycle()
-
-        SearchTextField(
-            searchQuery = { searchQuery },
-            searchMode = searchMode,
-            searchingForTags = { searchingForTags },
-            tags = { tags },
-            selectedTags = { selectedTags },
-            modifier = Modifier
-                .fillMaxWidth(1f)
-                .height(56.dp)
-                .padding(horizontal = 8.dp),
-            onQueryChange = { text ->
-                coroutineScope.launch {
-                    viewModel.search(query = text)
-
-                    if (searchMode != SearchMode.Tag) {
-                        delay(PhotoGridConstants.UPDATE_TIME.milliseconds)
-                        gridState.scrollToItem(0)
-                    }
-                }
-            },
-            onSearchModeChange = { mode ->
-                viewModel.setSearchMode(mode)
-            },
-            onToggleTag = { tag ->
-                viewModel.toggleTagSelected(tag)
-            },
-            onTagRemove = {
-                currentTag = it
-                showDialog = true
-            },
-            setSearchingForTags = viewModel::setSearchingForTags,
-            onClearTags = viewModel::clearSelectedTags
-        )
     }
 }
