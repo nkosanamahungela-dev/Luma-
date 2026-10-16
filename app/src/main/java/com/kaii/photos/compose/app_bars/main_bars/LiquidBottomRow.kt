@@ -178,6 +178,7 @@ fun LiquidBottomRow(
                     Spacer(Modifier.width(8.dp))
                     BasicTextField(
                         value = query,
+                        enabled = searchOpen,
                         onValueChange = onQueryChange,
                         singleLine = true,
                         textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
