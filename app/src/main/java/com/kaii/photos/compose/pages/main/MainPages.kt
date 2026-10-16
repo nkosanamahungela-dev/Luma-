@@ -158,6 +158,9 @@ fun MainPages(
 
     val isSelecting by viewModel.selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
     var isBottomBarPressed by remember { mutableStateOf(false) }
+    val onBottomBarPressedChanged: (Boolean) -> Unit = remember {
+        { pressed -> isBottomBarPressed = pressed }
+    }
 
     // Only the Photos page participates in the floating bar's vertical scroll behavior.
     val photoGridScrollConnection = remember(scrollBehaviour, isSelecting, isBottomBarPressed) {
@@ -272,7 +275,7 @@ fun MainPages(
                     runAction = viewModel::runAction,
                     scrollBehaviour = scrollBehaviour,
                     liquidGlassBackdrop = liquidGlassBackdrop,
-                    onBarPressedChanged = { isBottomBarPressed = it }
+                    onBarPressedChanged = onBottomBarPressedChanged
                 )
             }
         },
