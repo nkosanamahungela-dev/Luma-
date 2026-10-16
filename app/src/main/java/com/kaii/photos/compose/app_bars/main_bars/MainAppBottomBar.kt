@@ -492,7 +492,7 @@ private fun SearchGlassButton(
 }
 
 /** Lock scroll-driven hiding for the full lifetime of a touch on the bar. */
-private fun Modifier.consumeAllPointerChanges(
+internal fun Modifier.consumeAllPointerChanges(
     onBarPressedChanged: (Boolean) -> Unit
 ): Modifier = pointerInput(onBarPressedChanged) {
     awaitEachGesture {
