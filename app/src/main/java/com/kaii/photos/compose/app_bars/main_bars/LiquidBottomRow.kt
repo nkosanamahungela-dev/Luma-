@@ -125,9 +125,7 @@ fun LiquidBottomRow(
                         innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.16f) },
                         onDrawSurface = { drawRect(SEARCH_GLASS_TINT) }
                     )
-                    .clickable {
-                        if (p > 0.5f) onCollapsedTabClick()
-                    },
+                    .clickable(enabled = searchOpen && p > 0.5f) { onCollapsedTabClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Row(
