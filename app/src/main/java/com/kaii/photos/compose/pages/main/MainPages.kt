@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -156,6 +157,24 @@ fun MainPages(
     )
 
     val isSelecting by viewModel.selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
+
+    // Only the Photos page participates in the floating bar's vertical scroll behavior.
+    val photoGridScrollConnection = remember(scrollBehaviour, isSelecting) {
+        object : NestedScrollConnection {
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
+                if (isSelecting) Offset.Zero else scrollBehaviour.onPostScroll(consumed, available, source)
+
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset =
+                if (isSelecting) Offset.Zero else scrollBehaviour.onPreScroll(available, source)
+
+            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity =
+                if (isSelecting) Velocity.Zero else scrollBehaviour.onPostFling(consumed, available)
+
+            override suspend fun onPreFling(available: Velocity): Velocity =
+                if (isSelecting) Velocity.Zero else scrollBehaviour.onPreFling(available)
+        }
+    }
+
     var showTagDialog by remember { mutableStateOf(false) }
 
     val tagViewModel = viewModel<TagViewModel>(
@@ -258,35 +277,6 @@ fun MainPages(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
             .fillMaxSize()
-            .nestedScroll(
-                object : NestedScrollConnection {
-                    override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
-                        if (isSelecting) Offset.Zero
-                        else scrollBehaviour.onPostScroll(
-                            consumed,
-                            available,
-                            source
-                        )
-
-                    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset =
-                        if (isSelecting) Offset.Zero
-                        else scrollBehaviour.onPreScroll(
-                            available,
-                            source
-                        )
-
-                    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity =
-                        if (isSelecting) Velocity.Zero
-                        else scrollBehaviour.onPostFling(
-                            consumed,
-                            available
-                        )
-
-                    override suspend fun onPreFling(available: Velocity): Velocity =
-                        if (isSelecting) Velocity.Zero
-                        else scrollBehaviour.onPreFling(available)
-                }
-            )
             // handle keyboard/controller inputs
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
@@ -381,8 +371,7 @@ fun MainPages(
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             // TODO: find a cleaner way
             val searchMode by searchViewModel.searchMode.collectAsStateWithLifecycle()
@@ -418,17 +407,29 @@ fun MainPages(
                 }
             }
 
-            HorizontalPager(
-                state = pagerState,
-                userScrollEnabled = !isSelecting,
-                beyondViewportPageCount = 1,
+            // Shared backdrop records the whole active tab host, not just the Photos grid.
+            Box(
                 modifier = Modifier
-                    .padding(
-                        start = safeDrawingPadding.first,
-                        end = safeDrawingPadding.second,
-                        bottom = 0.dp
-                    )
-            ) { index ->
+                    .fillMaxSize()
+                    .layerBackdrop(liquidGlassBackdrop)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFF0B0E1A))
+                )
+
+                HorizontalPager(
+                    state = pagerState,
+                    userScrollEnabled = !isSelecting,
+                    beyondViewportPageCount = 1,
+                    modifier = Modifier
+                        .padding(
+                            start = safeDrawingPadding.first,
+                            end = safeDrawingPadding.second,
+                            bottom = 0.dp
+                        )
+                ) { index ->
                 val tab = tabList[index]
 
                 Box(
@@ -436,7 +437,7 @@ fun MainPages(
                         .fillMaxSize()
                         .then(
                             if (tab == DefaultTabs.TabTypes.photos && incomingIntent == null) {
-                                Modifier.layerBackdrop(liquidGlassBackdrop)
+                                Modifier.nestedScroll(photoGridScrollConnection)
                             } else {
                                 Modifier.padding(top = padding.calculateTopPadding())
                             }
@@ -534,6 +535,7 @@ fun MainPages(
                             backgroundColor = Color.Transparent
                         )
                     }
+                }
                 }
                 }
             }
