@@ -146,6 +146,7 @@ fun MainAppBottomBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .consumeAllPointerChanges(onBarPressedChanged) // Own touches across the full bar row.
                 .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(start = 16.dp, end = 16.dp, bottom = 30.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -489,21 +490,35 @@ private fun SearchGlassButton(
     }
 }
 
-/** Keep the bar touch-owned until every pointer lifts. */
+/** Set the guard before scroll dispatch; stop vertical drags at the Initial pass. */
 private fun Modifier.consumeAllPointerChanges(
     onBarPressedChanged: (Boolean) -> Unit
 ): Modifier = pointerInput(onBarPressedChanged) {
     awaitEachGesture {
-        val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Final)
+        awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
         onBarPressedChanged(true)
+        var total = Offset.Zero
         try {
-            down.consume()
             do {
-                val event = awaitPointerEvent(PointerEventPass.Final)
-                event.changes.forEach { it.consume() }
+                val event = awaitPointerEvent(PointerEventPass.Initial)
+                event.changes.forEach { change ->
+                    total += change.position - change.previousPosition
+                    if (abs(total.y) > viewConfiguration.touchSlop && abs(total.y) > abs(total.x)) {
+                        change.consume()
+                    }
+                }
             } while (event.changes.any { it.pressed })
         } finally {
             onBarPressedChanged(false)
         }
+    }
+}.pointerInput(Unit) {
+    awaitEachGesture {
+        val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Final)
+        down.consume()
+        do {
+            val event = awaitPointerEvent(PointerEventPass.Final)
+            event.changes.forEach { it.consume() }
+        } while (event.changes.any { it.pressed })
     }
 }
