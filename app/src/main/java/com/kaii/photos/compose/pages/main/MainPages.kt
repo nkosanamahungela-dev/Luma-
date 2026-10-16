@@ -113,7 +113,6 @@ fun MainPages(
         }
     }
 
-    val immichInfo by viewModel.immichInfo.collectAsStateWithLifecycle()
     val exitImmediately by viewModel.exitImmediately.collectAsStateWithLifecycle()
     val mainPhotosPaths by viewModel.mainPhotosAlbums.collectAsStateWithLifecycle()
     val confirmToDelete by viewModel.confirmToDelete.collectAsStateWithLifecycle()
@@ -237,14 +236,11 @@ fun MainPages(
             MainAppTopBar(
                 alternate = { isSelecting },
                 selectionManager = viewModel.selectionManager,
-                immichInfo = { immichInfo },
                 showAddAlbumButton = {
                     tabList.isNotEmpty() && tabList[pagerState.settledPage] == DefaultTabs.TabTypes.albums
                 },
                 showTagDialog = { showTagDialog },
                 isFromMediaPicker = incomingIntent != null,
-                isHome = tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.photos &&
-                    incomingIntent == null,
                 liquidGlassBackdrop = liquidGlassBackdrop,
                 groups = { groups },
                 setShowTagDialog = {
@@ -444,7 +440,7 @@ fun MainPages(
                             if (tab == DefaultTabs.TabTypes.photos && incomingIntent == null) {
                                 Modifier.nestedScroll(photoGridScrollConnection)
                             } else {
-                                Modifier.padding(top = padding.calculateTopPadding())
+                                Modifier
                             }
                         )
                 ) {
