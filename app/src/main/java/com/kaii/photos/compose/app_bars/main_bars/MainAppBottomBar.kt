@@ -113,8 +113,7 @@ fun MainAppBottomBar(
     doNotTrash: () -> Boolean,
     runAction: (action: FileOperationAction) -> Unit,
     liquidGlassBackdrop: Backdrop,
-    onBarPressedChanged: (Boolean) -> Unit,
-    onSearchOpen: () -> Unit = {}
+    onBarPressedChanged: (Boolean) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
@@ -427,7 +426,7 @@ fun MainAppBottomBar(
             if (!isSelecting) {
                 SearchGlassButton(
                     backdrop = liquidGlassBackdrop,
-                    onClick = { onSearchOpen(); navigateToTab(searchIndex) },
+                    onClick = { navigateToTab(searchIndex) },
                     onBarPressedChanged = onBarPressedChanged
                 )
             }
@@ -492,7 +491,7 @@ private fun SearchGlassButton(
 }
 
 /** Lock scroll-driven hiding for the full lifetime of a touch on the bar. */
-internal fun Modifier.consumeAllPointerChanges(
+private fun Modifier.consumeAllPointerChanges(
     onBarPressedChanged: (Boolean) -> Unit
 ): Modifier = pointerInput(onBarPressedChanged) {
     awaitEachGesture {
