@@ -571,7 +571,7 @@ fun MainPages(
                                 runAction = viewModel::runAction,
                                 scrollBehaviour = scrollBehaviour,
                                 liquidGlassBackdrop = liquidGlassBackdrop,
-                                onBarPressedChanged = { isBottomBarPressed = it }
+                                onBarPressedChanged = onBottomBarPressedChanged
                             )
                         }
                     } else {
