@@ -113,7 +113,8 @@ fun MainAppBottomBar(
     doNotTrash: () -> Boolean,
     runAction: (action: FileOperationAction) -> Unit,
     liquidGlassBackdrop: Backdrop,
-    onBarPressedChanged: (Boolean) -> Unit
+    onBarPressedChanged: (Boolean) -> Unit,
+    onSearchOpen: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
@@ -426,7 +427,7 @@ fun MainAppBottomBar(
             if (!isSelecting) {
                 SearchGlassButton(
                     backdrop = liquidGlassBackdrop,
-                    onClick = { navigateToTab(searchIndex) },
+                    onClick = { onSearchOpen(); navigateToTab(searchIndex) },
                     onBarPressedChanged = onBarPressedChanged
                 )
             }
