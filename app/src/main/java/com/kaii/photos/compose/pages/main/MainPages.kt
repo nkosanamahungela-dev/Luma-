@@ -157,21 +157,22 @@ fun MainPages(
     )
 
     val isSelecting by viewModel.selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
+    var isBottomBarPressed by remember { mutableStateOf(false) }
 
     // Only the Photos page participates in the floating bar's vertical scroll behavior.
-    val photoGridScrollConnection = remember(scrollBehaviour, isSelecting) {
+    val photoGridScrollConnection = remember(scrollBehaviour, isSelecting, isBottomBarPressed) {
         object : NestedScrollConnection {
             override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
-                if (isSelecting) Offset.Zero else scrollBehaviour.onPostScroll(consumed, available, source)
+                if (isSelecting || isBottomBarPressed) Offset.Zero else scrollBehaviour.onPostScroll(consumed, available, source)
 
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset =
-                if (isSelecting) Offset.Zero else scrollBehaviour.onPreScroll(available, source)
+                if (isSelecting || isBottomBarPressed) Offset.Zero else scrollBehaviour.onPreScroll(available, source)
 
             override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity =
-                if (isSelecting) Velocity.Zero else scrollBehaviour.onPostFling(consumed, available)
+                if (isSelecting || isBottomBarPressed) Velocity.Zero else scrollBehaviour.onPostFling(consumed, available)
 
             override suspend fun onPreFling(available: Velocity): Velocity =
-                if (isSelecting) Velocity.Zero else scrollBehaviour.onPreFling(available)
+                if (isSelecting || isBottomBarPressed) Velocity.Zero else scrollBehaviour.onPreFling(available)
         }
     }
 
@@ -270,7 +271,8 @@ fun MainPages(
                     doNotTrash = { doNotTrash },
                     runAction = viewModel::runAction,
                     scrollBehaviour = scrollBehaviour,
-                    liquidGlassBackdrop = liquidGlassBackdrop
+                    liquidGlassBackdrop = liquidGlassBackdrop,
+                    onBarPressedChanged = { isBottomBarPressed = it }
                 )
             }
         },
@@ -565,7 +567,8 @@ fun MainPages(
                                 doNotTrash = { doNotTrash },
                                 runAction = viewModel::runAction,
                                 scrollBehaviour = scrollBehaviour,
-                                liquidGlassBackdrop = liquidGlassBackdrop
+                                liquidGlassBackdrop = liquidGlassBackdrop,
+                                onBarPressedChanged = { isBottomBarPressed = it }
                             )
                         }
                     } else {
