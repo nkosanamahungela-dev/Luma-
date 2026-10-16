@@ -131,18 +131,6 @@ fun MainPages(
     var previousSearchTab by rememberSaveable { mutableIntStateOf(0) }
     val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
 
-    fun closeSearch() {
-        searchOpen = false
-        coroutineScope.launch {
-            val target = previousSearchTab.coerceIn(0, (pagerState.pageCount - 1).coerceAtLeast(0))
-            pagerState.animateScrollToPage(target, animationSpec = AnimationConstants.defaultSpring())
-        }
-    }
-
-    BackHandler(enabled = searchOpen) {
-        closeSearch()
-    }
-
     val pagerState = rememberPagerState(
         initialPage = tabList.indices.first
     ) { tabList.size }
@@ -159,6 +147,18 @@ fun MainPages(
     }
 
     val coroutineScope = rememberCoroutineScope()
+    fun closeSearch() {
+        searchOpen = false
+        coroutineScope.launch {
+            val target = previousSearchTab.coerceIn(0, (pagerState.pageCount - 1).coerceAtLeast(0))
+            pagerState.animateScrollToPage(target, animationSpec = AnimationConstants.defaultSpring())
+        }
+    }
+
+    BackHandler(enabled = searchOpen) {
+        closeSearch()
+    }
+
     val windowWidth = LocalWindowInfo.current.containerSize.width.toFloat()
 
     BackHandler(
