@@ -498,9 +498,11 @@ private fun Modifier.consumeAllPointerChanges(
         awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
         onBarPressedChanged(true)
         try {
-            do {
-                awaitPointerEvent(PointerEventPass.Initial)
-            } while (awaitPointerEvent(PointerEventPass.Initial).changes.any { it.pressed })
+            var pressed = true
+            while (pressed) {
+                val event = awaitPointerEvent(PointerEventPass.Initial)
+                pressed = event.changes.any { it.pressed }
+            }
         } finally {
             onBarPressedChanged(false)
         }
