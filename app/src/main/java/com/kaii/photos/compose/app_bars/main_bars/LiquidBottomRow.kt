@@ -72,7 +72,7 @@ fun LiquidBottomRow(
     onSearchOpen: () -> Unit,
     onSearchClose: () -> Unit,
     onCollapsedTabClick: () -> Unit,
-    onBarPressedChanged: (Boolean) -> Unit,
+    onBarPressedChanged: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val progress = remember { Animatable(if (searchOpen) 1f else 0f) }
