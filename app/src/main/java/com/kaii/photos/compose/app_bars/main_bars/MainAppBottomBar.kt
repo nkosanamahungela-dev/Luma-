@@ -305,7 +305,7 @@ fun MainAppBottomBar(
                                         shape = { RoundedCornerShape(percent = 50) },
                                         effects = {
                                             blur(3.dp.toPx())
-                                            lens(16.dp.toPx(), 32.dp.toPx(), depthEffect = true)
+                                            lens(16.dp.toPx(), 32.dp.toPx())
                                         },
                                         highlight = { Highlight.Default.copy(alpha = 0.72f) },
                                         shadow = { Shadow(alpha = 0.28f) },
@@ -335,14 +335,13 @@ fun MainAppBottomBar(
                                     .graphicsLayer { translationX = panelOffset }
                                     .drawBackdrop(
                                         backdrop = liquidGlassBackdrop,
-                                        shape = { CircleShape },
+                                        shape = { RoundedCornerShape(percent = 50) },
                                         effects = {
                                             val progress = dragAnimation.pressProgress
                                             blur(3.dp.toPx())
                                             lens(
                                                 16.dp.toPx() * progress,
-                                                32.dp.toPx() * progress,
-                                                depthEffect = true
+                                                32.dp.toPx() * progress
                                             )
                                         },
                                         highlight = {
@@ -378,13 +377,12 @@ fun MainAppBottomBar(
                             .then(dragAnimation.modifier)
                             .drawBackdrop(
                                 backdrop = rememberCombinedBackdrop(liquidGlassBackdrop, tabsBackdrop),
-                                shape = { CircleShape },
+                                shape = { RoundedCornerShape(percent = 50) },
                                 effects = {
                                     val progress = dragAnimation.pressProgress
                                     lens(
-                                        16.dp.toPx() * progress,
-                                        32.dp.toPx() * progress,
-                                        depthEffect = true,
+                                        10.dp.toPx() * progress,
+                                        14.dp.toPx() * progress,
                                         chromaticAberration = true
                                     )
                                 },
