@@ -117,7 +117,7 @@ fun SelectingBottomBarItems(
 
     val selectedItemsList by selectionManager.selection.collectAsStateWithLifecycle(initialValue = emptyList())
 
-    IconButton(
+    SelectionGlassActionButton(
         onClick = {
             coroutineScope.launch(Dispatchers.IO) {
                 runAction(
@@ -161,7 +161,7 @@ fun SelectingBottomBarItems(
         }
     )
 
-    IconButton(
+    SelectionGlassActionButton(
         onClick = {
             popupChooserState.isMoving = true
             show.value = true
@@ -174,7 +174,7 @@ fun SelectingBottomBarItems(
         )
     }
 
-    IconButton(
+    SelectionGlassActionButton(
         onClick = {
             popupChooserState.isMoving = false
             show.value = true
@@ -239,7 +239,7 @@ fun SelectingBottomBarItems(
         }
     }
 
-    IconButton(
+    SelectionGlassActionButton(
         onClick = {
             if (confirmToDelete()) {
                 showDeleteDialog = true
@@ -306,7 +306,7 @@ fun SelectingBottomBarItems(
         )
     }
 
-    IconButton(
+    SelectionGlassActionButton(
         onClick = {
             showMoveToSecureFolderDialog = true
         },
