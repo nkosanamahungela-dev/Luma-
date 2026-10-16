@@ -1,5 +1,6 @@
 package com.kaii.photos.compose.widgets.albums
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -84,7 +85,7 @@ private fun CategoryGlassPill(
                 innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.16f) },
                 onDrawSurface = { drawRect(CategoryGlassTint) }
             )
-            .androidxComposeClickable(onClick),
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -108,8 +109,3 @@ private fun CategoryGlassPill(
     }
 }
 
-private fun Modifier.androidxComposeClickable(onClick: () -> Unit): Modifier =
-    this.then(Modifier.clickableCompat(onClick))
-
-private fun Modifier.clickableCompat(onClick: () -> Unit): Modifier =
-    androidx.compose.foundation.clickable(onClick = onClick)
