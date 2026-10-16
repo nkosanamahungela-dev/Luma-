@@ -4,8 +4,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -35,8 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -76,6 +72,7 @@ fun LiquidBottomRow(
     onSearchOpen: () -> Unit,
     onSearchClose: () -> Unit,
     onCollapsedTabClick: () -> Unit,
+    onBarPressedChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val progress = remember { Animatable(if (searchOpen) 1f else 0f) }
@@ -98,15 +95,8 @@ fun LiquidBottomRow(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = SEARCH_ROW_MARGIN)
-            .pointerInput(Unit) {
-                awaitEachGesture {
-                    awaitFirstDown(requireUnconsumed = false).consume()
-                    do {
-                        val event = awaitPointerEvent()
-                        event.changes.forEach { it.consume() }
-                    } while (event.changes.any { it.pressed })
-                }
-            }
+            .graphicsLayer { alpha = if (searchOpen || progress.value > 0.001f) 1f else 0f }
+            .then(if (searchOpen) Modifier.consumeAllPointerChanges(onBarPressedChanged) else Modifier)
     ) {
         val p = progress.value
         val tabWidth = SEARCH_TAB_WIDTH + (SEARCH_ROW_HEIGHT - SEARCH_TAB_WIDTH) * p
