@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -70,10 +71,13 @@ import com.kaii.photos.compose.MediaPickerConfirmButton
 import com.kaii.photos.compose.app_bars.getAppBarContentTransition
 import com.kaii.photos.compose.app_bars.main_bars.MainAppBottomBar
 import com.kaii.photos.compose.app_bars.main_bars.MainAppTopBar
+import com.kaii.photos.compose.app_bars.SelectionActionBar
+import com.kaii.photos.compose.app_bars.SelectionTopBar
 import com.kaii.photos.compose.side_effects.FileOperationProgressEffect
 import com.kaii.photos.compose.side_effects.SharePhotoEffect
 import com.kaii.photos.compose.widgets.rememberDeviceOrientation
 import com.kaii.photos.compose.widgets.tags.AnimatedMediaTagManager
+import com.kaii.photos.datastore.AlbumType
 import com.kaii.photos.datastore.DefaultTabs
 import com.kaii.photos.datastore.state.AlbumGridState
 import com.kaii.photos.domain.files.FileOperationAction
@@ -235,22 +239,29 @@ fun MainPages(
         topBar = {
             val groups by viewModel.groups.collectAsStateWithLifecycle()
 
-            MainAppTopBar(
-                alternate = { isSelecting },
-                selectionManager = viewModel.selectionManager,
-                showAddAlbumButton = {
-                    tabList.isNotEmpty() && tabList[pagerState.settledPage] == DefaultTabs.TabTypes.albums
-                },
-                showTagDialog = { showTagDialog },
-                isFromMediaPicker = incomingIntent != null,
-                liquidGlassBackdrop = liquidGlassBackdrop,
-                groups = { groups },
-                setShowTagDialog = {
-                    showTagDialog = true
-                },
-                addAlbum = viewModel::addAlbum,
-                addGroup = viewModel::addGroup
-            )
+            if (isSelecting && incomingIntent == null) {
+                SelectionTopBar(
+                    backdrop = liquidGlassBackdrop,
+                    selectionManager = viewModel.selectionManager,
+                    showTagDialog = { showTagDialog },
+                    setShowTagDialog = { showTagDialog = it }
+                )
+            } else {
+                MainAppTopBar(
+                    alternate = { isSelecting },
+                    selectionManager = viewModel.selectionManager,
+                    showAddAlbumButton = {
+                        tabList.isNotEmpty() && tabList[pagerState.settledPage] == DefaultTabs.TabTypes.albums
+                    },
+                    showTagDialog = { showTagDialog },
+                    isFromMediaPicker = incomingIntent != null,
+                    liquidGlassBackdrop = liquidGlassBackdrop,
+                    groups = { groups },
+                    setShowTagDialog = { showTagDialog = true },
+                    addAlbum = viewModel::addAlbum,
+                    addGroup = viewModel::addGroup
+                )
+            }
         },
         bottomBar = {
             LaunchedEffect(Unit) {
@@ -259,22 +270,55 @@ fun MainPages(
                 delayOver = true
             }
 
-            AnimatedVisibility(
-                visible = tabList.isNotEmpty() && incomingIntent == null && delayOver,
-                enter = fadeIn() + slideInVertically(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()) { it },
-                exit = fadeOut() + slideOutVertically(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()) { it }
-            ) {
-                MainAppBottomBar(
-                    pagerState = pagerState,
-                    selectionManager = viewModel.selectionManager,
-                    tabs = tabList,
-                    confirmToDelete = { confirmToDelete },
-                    doNotTrash = { doNotTrash },
-                    runAction = viewModel::runAction,
-                    scrollBehaviour = scrollBehaviour,
-                    liquidGlassBackdrop = liquidGlassBackdrop,
-                    onBarPressedChanged = onBottomBarPressedChanged
-                )
+            AnimatedContent(
+                targetState = isSelecting && incomingIntent == null,
+                transitionSpec = {
+                    (fadeIn(animationSpec = AnimationConstants.expressiveSpring()) +
+                        slideInVertically(animationSpec = AnimationConstants.expressiveSpring()) { it })
+                        .togetherWith(
+                            fadeOut(animationSpec = AnimationConstants.expressiveSpring()) +
+                                slideOutVertically(animationSpec = AnimationConstants.expressiveSpring()) { it }
+                        )
+                },
+                label = "selection bottom bar swap"
+            ) { selectionMode ->
+                if (selectionMode) {
+                    val selectedTab = tabList.getOrNull(pagerState.currentPage) ?: tabList.firstOrNull()
+                    if (selectedTab != null) {
+                        SelectionActionBar(
+                            backdrop = liquidGlassBackdrop,
+                            albumInfo = AlbumType.Folder(
+                                id = selectedTab.id.toString(),
+                                name = selectedTab.name,
+                                paths = selectedTab.albumPaths,
+                                pinned = false,
+                                immichId = null
+                            ),
+                            selectionManager = viewModel.selectionManager,
+                            confirmToDelete = { confirmToDelete },
+                            doNotTrash = { doNotTrash },
+                            runAction = viewModel::runAction
+                        )
+                    }
+                } else {
+                    AnimatedVisibility(
+                        visible = tabList.isNotEmpty() && incomingIntent == null && delayOver,
+                        enter = fadeIn() + slideInVertically(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()) { it },
+                        exit = fadeOut() + slideOutVertically(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()) { it }
+                    ) {
+                        MainAppBottomBar(
+                            pagerState = pagerState,
+                            selectionManager = viewModel.selectionManager,
+                            tabs = tabList,
+                            confirmToDelete = { confirmToDelete },
+                            doNotTrash = { doNotTrash },
+                            runAction = viewModel::runAction,
+                            scrollBehaviour = scrollBehaviour,
+                            liquidGlassBackdrop = liquidGlassBackdrop,
+                            onBarPressedChanged = onBottomBarPressedChanged
+                        )
+                    }
+                }
             }
         },
         containerColor = MaterialTheme.colorScheme.background,
