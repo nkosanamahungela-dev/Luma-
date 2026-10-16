@@ -112,17 +112,7 @@ fun SelectionTopBar(
                     modifier = Modifier.size(22.dp)
                 )
             }
-            Box(
-                modifier = Modifier
-                    .width(1.dp)
-                    .height(22.dp)
-                    .alpha(0.3f)
-                    .drawBackdrop(
-                        backdrop = backdrop, // Shared tab-host backdrop.
-                        shape = { CircleShape },
-                        onDrawSurface = { drawRect(Color.White) }
-                    )
-            )
+            Spacer(modifier = Modifier.width(8.dp))
             AnimatedContent(
                 targetState = count,
                 transitionSpec = {
