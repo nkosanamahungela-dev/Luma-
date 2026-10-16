@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.pager.HorizontalPager
@@ -55,6 +56,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
@@ -72,6 +74,7 @@ import com.kaii.photos.compose.MediaPickerConfirmButton
 import com.kaii.photos.compose.app_bars.getAppBarContentTransition
 import com.kaii.photos.compose.app_bars.main_bars.MainAppBottomBar
 import com.kaii.photos.compose.app_bars.main_bars.MainAppTopBar
+import com.kaii.photos.compose.app_bars.main_bars.LiquidBottomRow
 import com.kaii.photos.compose.app_bars.SelectionActionBar
 import com.kaii.photos.compose.app_bars.SelectionTopBar
 import com.kaii.photos.compose.side_effects.FileOperationProgressEffect
@@ -124,6 +127,21 @@ fun MainPages(
     val doNotTrash by viewModel.doNotTrash.collectAsStateWithLifecycle()
 
     val liquidGlassBackdrop = rememberLayerBackdrop()
+    var searchOpen by rememberSaveable { mutableStateOf(false) }
+    var previousSearchTab by rememberSaveable { mutableIntStateOf(0) }
+    val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
+
+    fun closeSearch() {
+        searchOpen = false
+        coroutineScope.launch {
+            val target = previousSearchTab.coerceIn(0, (pagerState.pageCount - 1).coerceAtLeast(0))
+            pagerState.animateScrollToPage(target, animationSpec = AnimationConstants.defaultSpring())
+        }
+    }
+
+    BackHandler(enabled = searchOpen) {
+        closeSearch()
+    }
 
     val pagerState = rememberPagerState(
         initialPage = tabList.indices.first
@@ -316,7 +334,12 @@ fun MainPages(
                             runAction = viewModel::runAction,
                             scrollBehaviour = scrollBehaviour,
                             liquidGlassBackdrop = liquidGlassBackdrop,
-                            onBarPressedChanged = onBottomBarPressedChanged
+                            onBarPressedChanged = onBottomBarPressedChanged,
+                            onSearchOpen = {
+                                previousSearchTab = pagerState.currentPage
+                                searchOpen = true
+                                searchViewModel.setSearchMode(SearchMode.Name)
+                            }
                         )
                     }
                 }
@@ -587,6 +610,38 @@ fun MainPages(
                 }
                 }
                 }
+            }
+
+            if (incomingIntent == null && !isSelecting) {
+                val activeIndex = previousSearchTab.coerceIn(0, (tabList.size - 1).coerceAtLeast(0))
+                val activeTab = tabList.getOrNull(activeIndex) ?: DefaultTabs.TabTypes.photos
+                LiquidBottomRow(
+                    backdrop = liquidGlassBackdrop,
+                    searchOpen = searchOpen,
+                    activeTabIcon = painterResource(id = activeTab.icon.filled),
+                    activeTabName = activeTab.name,
+                    query = searchQuery,
+                    onQueryChange = { searchViewModel.search(query = it) },
+                    onSearchOpen = {
+                        previousSearchTab = pagerState.currentPage
+                        searchOpen = true
+                        searchViewModel.setSearchMode(SearchMode.Name)
+                        if (pagerState.currentPage != tabList.indexOf(DefaultTabs.TabTypes.search)) {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    tabList.indexOf(DefaultTabs.TabTypes.search),
+                                    animationSpec = AnimationConstants.defaultSpring()
+                                )
+                            }
+                        }
+                    },
+                    onSearchClose = { closeSearch() },
+                    onCollapsedTabClick = { closeSearch() },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .imePadding()
+                        .padding(bottom = 30.dp)
+                )
             }
 
             if (incomingIntent != null) {
