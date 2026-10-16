@@ -112,7 +112,8 @@ fun MainAppBottomBar(
     confirmToDelete: () -> Boolean,
     doNotTrash: () -> Boolean,
     runAction: (action: FileOperationAction) -> Unit,
-    liquidGlassBackdrop: Backdrop
+    liquidGlassBackdrop: Backdrop,
+    onBarPressedChanged: (Boolean) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
@@ -155,7 +156,7 @@ fun MainAppBottomBar(
                     .weight(1f)
                     .widthIn(max = 286.dp)
                     .height(64.dp)
-                    .consumeAllPointerChanges(),
+                    .consumeAllPointerChanges(onBarPressedChanged),
                 contentAlignment = Alignment.CenterStart
             ) {
                 val barWidthPx = constraints.maxWidth.toFloat().coerceAtLeast(1f)
@@ -380,6 +381,7 @@ fun MainAppBottomBar(
                             }
                             .then(interactiveHighlight.gestureModifier)
                             .then(dragAnimation.modifier)
+                            .consumeAllPointerChanges(onBarPressedChanged)
                             .drawBackdrop(
                                 backdrop = rememberCombinedBackdrop(liquidGlassBackdrop, tabsBackdrop),
                                 shape = { RoundedCornerShape(percent = 50) },
@@ -423,7 +425,8 @@ fun MainAppBottomBar(
             if (!isSelecting) {
                 SearchGlassButton(
                     backdrop = liquidGlassBackdrop,
-                    onClick = { navigateToTab(searchIndex) }
+                    onClick = { navigateToTab(searchIndex) },
+                    onBarPressedChanged = onBarPressedChanged
                 )
             }
         }
@@ -433,7 +436,8 @@ fun MainAppBottomBar(
 @Composable
 private fun SearchGlassButton(
     backdrop: Backdrop,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onBarPressedChanged: (Boolean) -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressedState by interactionSource.collectIsPressedAsState()
@@ -472,7 +476,8 @@ private fun SearchGlassButton(
             )
             .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
             .semantics { testTagsAsResourceId = true }
-            .testTag("main_search_button"),
+            .testTag("main_search_button")
+            .consumeAllPointerChanges(onBarPressedChanged),
         contentAlignment = Alignment.Center
     ) {
         Icon(
@@ -484,13 +489,21 @@ private fun SearchGlassButton(
     }
 }
 
-/** Consume the bar's pointer stream after Catalog gestures have processed it. */
-private fun Modifier.consumeAllPointerChanges(): Modifier = pointerInput(Unit) {
+/** Keep the bar touch-owned until every pointer lifts. */
+private fun Modifier.consumeAllPointerChanges(
+    onBarPressedChanged: (Boolean) -> Unit
+): Modifier = pointerInput(onBarPressedChanged) {
     awaitEachGesture {
-        awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-        do {
-            val event = awaitPointerEvent(PointerEventPass.Final)
-            event.changes.forEach { it.consume() }
-        } while (event.changes.any { it.pressed })
+        val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Final)
+        onBarPressedChanged(true)
+        try {
+            down.consume()
+            do {
+                val event = awaitPointerEvent(PointerEventPass.Final)
+                event.changes.forEach { it.consume() }
+            } while (event.changes.any { it.pressed })
+        } finally {
+            onBarPressedChanged(false)
+        }
     }
 }
