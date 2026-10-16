@@ -1,5 +1,6 @@
 package com.kaii.photos.compose.pages.main
 
+
 import android.content.Intent
 import android.view.Window
 import androidx.activity.compose.BackHandler
@@ -586,6 +587,9 @@ fun MainPages(
                 }
                 }
             }
+
+            // Edge overlays sit above the shared tab host and below floating controls.
+            ScrollEdgeEffects(backdrop = liquidGlassBackdrop, modifier = Modifier.fillMaxSize())
 
             if (incomingIntent != null) {
                 val isSelecting by viewModel.selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
