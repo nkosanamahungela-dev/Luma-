@@ -1,4 +1,19 @@
 package com.kaii.photos.compose.app_bars.main_bars
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.graphicsLayer
 
 import androidx.compose.foundation.border
 import androidx.compose.ui.Modifier
@@ -93,3 +108,61 @@ fun Modifier.lumaLiquidGlassSurface(
     ),
     shape = shape
 )
+
+
+@androidx.compose.runtime.Composable
+fun LiquidGlassIconButton(
+    backdrop: Backdrop,
+    icon: androidx.compose.ui.graphics.painter.Painter,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressedState by interactionSource.collectIsPressedAsState()
+    val pressed = remember { Animatable(0f) }
+
+    LaunchedEffect(pressedState) {
+        pressed.animateTo(
+            if (pressedState) 1f else 0f,
+            spring(dampingRatio = 0.6f, stiffness = 420f)
+        )
+    }
+
+    Box(
+        modifier = modifier
+            .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(46.dp)
+                .graphicsLayer {
+                    val scale = 1f + 0.1f * pressed.value
+                    scaleX = scale
+                    scaleY = scale
+                }
+                .drawBackdrop(
+                    backdrop = backdrop, // Shared tab-host backdrop.
+                    shape = { CircleShape },
+                    effects = {
+                        blur(2.dp.toPx())
+                        lens(10.dp.toPx(), 18.dp.toPx(), depthEffect = true)
+                    },
+                    onDrawSurface = { drawRect(Color.White.copy(alpha = 0.07f)) }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = icon,
+                contentDescription = "Settings",
+                tint = Color.White,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+    }
+}
