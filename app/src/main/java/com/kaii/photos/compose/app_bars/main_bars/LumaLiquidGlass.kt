@@ -153,6 +153,9 @@ fun LiquidGlassIconButton(
                         blur(2.dp.toPx())
                         lens(10.dp.toPx(), 18.dp.toPx(), depthEffect = true)
                     },
+                    highlight = { Highlight.Default },
+                    shadow = { Shadow(alpha = 0.3f) },
+                    innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.16f) },
                     onDrawSurface = { drawRect(Color.White.copy(alpha = 0.07f)) }
                 ),
             contentAlignment = Alignment.Center
