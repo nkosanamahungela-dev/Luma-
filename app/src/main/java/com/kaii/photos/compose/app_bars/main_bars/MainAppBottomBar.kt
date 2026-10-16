@@ -11,6 +11,8 @@ import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -54,6 +56,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -150,7 +154,8 @@ fun MainAppBottomBar(
                 modifier = Modifier
                     .weight(1f)
                     .widthIn(max = 286.dp)
-                    .height(64.dp),
+                    .height(64.dp)
+                    .consumeAllPointerChanges(),
                 contentAlignment = Alignment.CenterStart
             ) {
                 val barWidthPx = constraints.maxWidth.toFloat().coerceAtLeast(1f)
@@ -476,5 +481,16 @@ private fun SearchGlassButton(
             tint = Color.White.copy(alpha = 0.9f),
             modifier = Modifier.size(26.dp)
         )
+    }
+}
+
+/** Consume the bar's pointer stream after Catalog gestures have processed it. */
+private fun Modifier.consumeAllPointerChanges(): Modifier = pointerInput(Unit) {
+    awaitEachGesture {
+        awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+        do {
+            val event = awaitPointerEvent(PointerEventPass.Final)
+            event.changes.forEach { it.consume() }
+        } while (event.changes.any { it.pressed })
     }
 }
