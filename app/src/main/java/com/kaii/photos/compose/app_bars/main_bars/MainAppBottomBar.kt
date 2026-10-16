@@ -490,24 +490,17 @@ private fun SearchGlassButton(
     }
 }
 
-/** Set the guard before scroll dispatch; stop vertical drags at the Initial pass. */
+/** Lock scroll-driven hiding for the full lifetime of a touch on the bar. */
 private fun Modifier.consumeAllPointerChanges(
     onBarPressedChanged: (Boolean) -> Unit
 ): Modifier = pointerInput(onBarPressedChanged) {
     awaitEachGesture {
         awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
         onBarPressedChanged(true)
-        var total = Offset.Zero
         try {
             do {
-                val event = awaitPointerEvent(PointerEventPass.Initial)
-                event.changes.forEach { change ->
-                    total += change.position - change.previousPosition
-                    if (abs(total.y) > viewConfiguration.touchSlop && abs(total.y) > abs(total.x)) {
-                        change.consume()
-                    }
-                }
-            } while (event.changes.any { it.pressed })
+                awaitPointerEvent(PointerEventPass.Initial)
+            } while (awaitPointerEvent(PointerEventPass.Initial).changes.any { it.pressed })
         } finally {
             onBarPressedChanged(false)
         }
@@ -518,7 +511,9 @@ private fun Modifier.consumeAllPointerChanges(
         down.consume()
         do {
             val event = awaitPointerEvent(PointerEventPass.Final)
-            event.changes.forEach { it.consume() }
+            event.changes.forEach { change ->
+                change.consume()
+            }
         } while (event.changes.any { it.pressed })
     }
 }
