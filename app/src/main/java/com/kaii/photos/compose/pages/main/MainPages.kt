@@ -180,6 +180,8 @@ fun MainPages(
 
     var showTagDialog by remember { mutableStateOf(false) }
 
+    val immichInfo by viewModel.immichInfo.collectAsStateWithLifecycle()
+
     val tagViewModel = viewModel<TagViewModel>(
         factory = TagViewModelFactory(
             context = LocalContext.current
