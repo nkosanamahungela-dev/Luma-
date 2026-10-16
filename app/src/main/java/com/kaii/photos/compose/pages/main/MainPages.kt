@@ -551,6 +551,7 @@ fun MainPages(
                         val autoDetect by viewModel.autoDetect.collectAsStateWithLifecycle()
 
                         AlbumsGridView(
+                            backdrop = liquidGlassBackdrop,
                             deviceAlbums = deviceAlbums,
                             sortMode = { sortMode },
                             tabList = { tabList },
