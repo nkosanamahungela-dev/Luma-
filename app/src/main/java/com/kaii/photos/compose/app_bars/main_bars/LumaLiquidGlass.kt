@@ -115,7 +115,8 @@ fun LiquidGlassIconButton(
     backdrop: Backdrop,
     icon: androidx.compose.ui.graphics.painter.Painter,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentDescription: String = "Settings"
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressedState by interactionSource.collectIsPressedAsState()
@@ -162,7 +163,7 @@ fun LiquidGlassIconButton(
         ) {
             Icon(
                 painter = icon,
-                contentDescription = "Settings",
+                contentDescription = contentDescription,
                 tint = Color.White,
                 modifier = Modifier.size(22.dp)
             )
