@@ -162,7 +162,7 @@ fun LiquidBottomRow(
                         innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.16f) },
                         onDrawSurface = { drawRect(SEARCH_GLASS_TINT) }
                     )
-                    .clickable(enabled = p < 0.01f) { onSearchOpen() },
+                    .clickable(enabled = searchOpen && p < 0.01f) { onSearchOpen() },
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row(
