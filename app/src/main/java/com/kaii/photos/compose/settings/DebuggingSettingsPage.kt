@@ -309,6 +309,7 @@ private fun DebuggingSettingsPageImpl(
 
             if (BuildConfig.INTERNAL_DIAGNOSTICS) {
                 item {
+                    val context = LocalContext.current
                     var showReport by remember { mutableStateOf(false) }
                     var report by remember { mutableStateOf("") }
                     PreferencesRow(
