@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -114,9 +115,25 @@ fun SortableGrid(
     toggleAlbumPin: (album: AlbumGridState.Album) -> Unit,
     deleteAlbum: (album: AlbumGridState.Album) -> Unit
 ) {
-    var albums by remember { mutableStateOf(albumList()) }
-    LaunchedEffect(albumList()) {
-        albums = albumList()
+    var albumLoadError by remember { mutableStateOf<String?>(null) }
+    var albums by remember {
+        mutableStateOf(
+            runCatching { albumList() }.getOrElse {
+                albumLoadError = it.message ?: "Unknown album loading error"
+                emptyList()
+            }
+        )
+    }
+    LaunchedEffect(albumList) {
+        runCatching { albumList() }
+            .onSuccess {
+                albums = it
+                albumLoadError = null
+            }
+            .onFailure {
+                albumLoadError = it.message ?: "Unknown album loading error"
+                albums = emptyList()
+            }
     }
 
     Column(
@@ -224,6 +241,19 @@ fun SortableGrid(
                 prefix()
             }
 
+            if (albums.isEmpty()) {
+                item(
+                    key = "albums_empty_error_state",
+                    span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }
+                ) {
+                    Text(
+                        text = albumLoadError?.let { "Couldn't load albums: $it" }
+                            ?: "No albums found",
+                        modifier = Modifier.padding(vertical = 32.dp)
+                    )
+                }
+            }
+
             pinDeleteHeader(
                 sortableGridState = sortableGridState,
                 removeAlbumIcon = removeAlbumIcon
@@ -231,8 +261,9 @@ fun SortableGrid(
 
             items(
                 count = albums.size,
-                key = { key ->
-                    albums[key].id
+                key = { index ->
+                    // IDs can repeat across album sources/groups; include type and index to guarantee uniqueness.
+                    "${albums[index]::class.qualifiedName}:${albums[index].id}:$index"
                 },
                 contentType = { key ->
                     albums[key]::class
