@@ -10,6 +10,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.ExistingWorkPolicy
 import com.kaii.photos.data.logging.CrashHandler
+import com.kaii.photos.data.logging.CrashDiagnostics
 import com.kaii.photos.data.logging.LogWriter
 import com.kaii.photos.data.providers.NetworkShareCapabilityProvider
 import com.kaii.photos.database.sync.CloudSyncWorker
