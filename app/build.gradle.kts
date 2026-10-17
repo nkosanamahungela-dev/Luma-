@@ -50,10 +50,22 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "true")
+        }
+        create("internal") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".internal"
+            versionNameSuffix = "-internal"
+            isDebuggable = true
+            buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "true")
+            matchingFallbacks += listOf("debug")
+        }
         release {
             // Personal release build: use the local debug signing key until a private release keystore is configured.
             signingConfig = signingConfigs.getByName("debug")
             isDebuggable = false
+            buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "false")
             isMinifyEnabled = true
             isShrinkResources = true
 
