@@ -74,6 +74,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.shadow.InnerShadow
 import com.kyant.backdrop.shadow.Shadow
@@ -313,9 +316,23 @@ fun MainAppBottomBar(
                                         scaleX = scale
                                         scaleY = scale
                                     }
-                                    .background(
-                                        color = Color(0xE6202630),
-                                        shape = RoundedCornerShape(percent = 50)
+                                    .drawBackdrop(
+                                        backdrop = liquidGlassBackdrop,
+                                        shape = { RoundedCornerShape(percent = 50) },
+                                        effects = {
+                                            blur(3.dp.toPx())
+                                            lens(16.dp.toPx(), 32.dp.toPx())
+                                        },
+                                        highlight = { Highlight.Default.copy(alpha = 0.72f) },
+                                        shadow = { Shadow(alpha = 0.28f) },
+                                        innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.14f) },
+                                        layerBlock = {
+                                            val progress = dragAnimation.pressProgress
+                                            val scale = 1f + 16.dp.toPx() / size.width * progress
+                                            scaleX = scale
+                                            scaleY = scale
+                                        },
+                                        onDrawSurface = { drawRect(LumaGlassTint) }
                                     )
                                     .then(interactiveHighlight.modifier)
                                     .height(64.dp)
@@ -348,9 +365,39 @@ fun MainAppBottomBar(
                                 scaleX = dragAnimation.scaleX
                                 scaleY = dragAnimation.scaleY
                             }
-                            .background(
-                                color = Color.White.copy(alpha = 0.13f),
-                                shape = RoundedCornerShape(percent = 50)
+                            .drawBackdrop(
+                                backdrop = liquidGlassBackdrop,
+                                shape = { RoundedCornerShape(percent = 50) },
+                                effects = {
+                                    val progress = dragAnimation.pressProgress
+                                    lens(
+                                        10.dp.toPx() * progress,
+                                        14.dp.toPx() * progress,
+                                        chromaticAberration = true
+                                    )
+                                },
+                                highlight = {
+                                    Highlight.Default.copy(alpha = 0.22f + 0.78f * dragAnimation.pressProgress)
+                                },
+                                shadow = { Shadow(alpha = dragAnimation.pressProgress) },
+                                innerShadow = {
+                                    InnerShadow(
+                                        radius = 8.dp * dragAnimation.pressProgress,
+                                        alpha = dragAnimation.pressProgress
+                                    )
+                                },
+                                layerBlock = {
+                                    scaleX = dragAnimation.scaleX
+                                    scaleY = dragAnimation.scaleY
+                                    val velocity = dragAnimation.velocity / 10f
+                                    scaleX /= 1f - (velocity * 0.75f).coerceIn(-0.2f, 0.2f)
+                                    scaleY *= 1f - (velocity * 0.25f).coerceIn(-0.2f, 0.2f)
+                                },
+                                onDrawSurface = {
+                                    val progress = dragAnimation.pressProgress
+                                    drawRect(Color.Black.copy(alpha = 0.10f), alpha = 1f - progress)
+                                    drawRect(Color.Black.copy(alpha = 0.03f * progress))
+                                }
                             )
                             .height(56.dp)
                             .fillMaxWidth(1f / tabsCount)
@@ -393,13 +440,23 @@ private fun SearchGlassButton(
                 scaleX = scale
                 scaleY = scale
             }
-            .background(
-                color = Color(0xE6202630),
-                shape = CircleShape
+            .drawBackdrop(
+                backdrop = backdrop,
+                shape = { CircleShape },
+                effects = {
+                    blur(3.dp.toPx())
+                    lens(
+                        16.dp.toPx() * (1f + 0.25f * pressed.value),
+                        32.dp.toPx() * (1f + 0.25f * pressed.value),
+                        depthEffect = true,
+                        chromaticAberration = true
+                    )
+                },
+                highlight = { Highlight.Default.copy(alpha = 0.35f + 0.4f * pressed.value) },
+                shadow = { Shadow(alpha = 0.3f) },
+                innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.16f) },
+                onDrawSurface = { drawRect(LumaGlassTint) }
             )
-            .graphicsLayer {
-                alpha = 0.96f + 0.04f * pressed.value
-            }
             .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
             .semantics { testTagsAsResourceId = true }
             .testTag("main_search_button")
