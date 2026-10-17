@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +37,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.kaii.photos.LocalNavController
+import com.kaii.photos.BuildConfig
 import com.kaii.photos.PhotosApplication
+import com.kaii.photos.data.logging.CrashDiagnostics
+import android.content.Intent
 import com.kaii.photos.R
 import com.kaii.photos.compose.dialogs.user_action.TextEntryDialog
 import com.kaii.photos.compose.widgets.PreferencesRow
@@ -300,6 +305,48 @@ private fun DebuggingSettingsPageImpl(
                 PreferencesSeparatorText(
                     text = stringResource(id = R.string.debugging_internals)
                 )
+            }
+
+            if (BuildConfig.INTERNAL_DIAGNOSTICS) {
+                item {
+                    var showReport by remember { mutableStateOf(false) }
+                    var report by remember { mutableStateOf("") }
+                    PreferencesRow(
+                        title = "Debug report",
+                        summary = "Crash, ANR and freeze reports",
+                        iconResID = R.drawable.logs,
+                        position = RowPosition.Single,
+                        showBackground = false
+                    ) {
+                        report = CrashDiagnostics.read(context)
+                        showReport = true
+                    }
+                    if (showReport) {
+                        AlertDialog(
+                            onDismissRequest = { showReport = false },
+                            title = { Text("Debug report") },
+                            text = { Text(report) },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    val intent = Intent(Intent.ACTION_SEND).apply {
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_TEXT, report)
+                                    }
+                                    context.startActivity(Intent.createChooser(intent, "Share debug report"))
+                                }) { Text("Share") }
+                            },
+                            dismissButton = {
+                                androidx.compose.foundation.layout.Row {
+                                    TextButton(onClick = {
+                                        CrashDiagnostics.clear(context)
+                                        report = "Reports cleared."
+                                    }) { Text("Clear") }
+                                    TextButton(onClick = { showReport = false }) { Text("Close") }
+                                }
+                            }
+                        )
+                    }
+                }
             }
 
             item {
