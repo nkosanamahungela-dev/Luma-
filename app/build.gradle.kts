@@ -57,7 +57,7 @@ android {
             versionNameSuffix = "-internal"
             isDebuggable = true
             buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "true")
-            buildConfigField("boolean", "TAB_SWITCH_ISOLATION", "true")
+            buildConfigField("boolean", "TAB_SWITCH_ISOLATION", "false")
             matchingFallbacks += listOf("debug")
         }
         release {
