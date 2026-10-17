@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
@@ -74,6 +73,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
@@ -167,6 +169,7 @@ fun MainAppBottomBar(
             ) {
                 val barWidthPx = constraints.maxWidth.toFloat().coerceAtLeast(1f)
                 val tabsCount = visibleTabs.size.coerceAtLeast(1)
+                val tabsBackdrop = rememberLayerBackdrop()
                 val offsetAnimation = remember { Animatable(0f) }
                 val horizontalInsetPx = with(density) { 8.dp.toPx() }
                 val rawTabWidthPx = (barWidthPx - horizontalInsetPx) / tabsCount
@@ -193,7 +196,7 @@ fun MainAppBottomBar(
                         valueRange = 0f..(tabsCount - 1).toFloat(),
                         visibilityThreshold = 0.001f,
                         initialScale = 1f,
-                        pressedScale = 78f / 56f,
+                        pressedScale = 1.15f,
                         onDragStarted = {},
                         onDragStopped = {
                             val targetIndex = targetValue.roundToInt().coerceIn(0, tabsCount - 1)
@@ -247,7 +250,7 @@ fun MainAppBottomBar(
                                     indication = null
                                 ) { currentIndex = index }
                                 .graphicsLayer {
-                                    val scale = 1f + 0.2f * dragAnimation.pressProgress
+                                    val scale = 1f + 0.15f * dragAnimation.pressProgress
                                     scaleX = scale
                                     scaleY = scale
                                 },
@@ -310,12 +313,7 @@ fun MainAppBottomBar(
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
                             Row(
                                 modifier = Modifier
-                                    .graphicsLayer {
-                                        translationX = panelOffset
-                                        val scale = 1f + 0.035f * dragAnimation.pressProgress
-                                        scaleX = scale
-                                        scaleY = scale
-                                    }
+                                    .graphicsLayer { translationX = panelOffset }
                                     .drawBackdrop(
                                         backdrop = liquidGlassBackdrop,
                                         shape = { RoundedCornerShape(percent = 50) },
@@ -342,11 +340,42 @@ fun MainAppBottomBar(
                                 content = tabsContent
                             )
 
+                            // Hidden tab glyphs are recorded separately so the moving lens refracts one copy only.
+                            Row(
+                                modifier = Modifier
+                                    .clearAndSetSemantics {}
+                                    .alpha(0f)
+                                    .layerBackdrop(tabsBackdrop)
+                                    .graphicsLayer { translationX = panelOffset }
+                                    .drawBackdrop(
+                                        backdrop = liquidGlassBackdrop,
+                                        shape = { RoundedCornerShape(percent = 50) },
+                                        effects = {
+                                            val progress = dragAnimation.pressProgress
+                                            blur(3.dp.toPx())
+                                            lens(
+                                                16.dp.toPx() * progress,
+                                                32.dp.toPx() * progress
+                                            )
+                                        },
+                                        highlight = {
+                                            Highlight.Default.copy(alpha = dragAnimation.pressProgress)
+                                        },
+                                        onDrawSurface = { drawRect(LumaGlassTint) }
+                                    )
+                                    .then(interactiveHighlight.modifier)
+                                    .height(56.dp)
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 4.dp)
+                                    .graphicsLayer(colorFilter = ColorFilter.tint(LumaTabLayerTint)),
+                                verticalAlignment = Alignment.CenterVertically,
+                                content = tabsContent
+                            )
                         }
                     }
                 }
 
-                // Lightweight animated selection pill; no backdrop capture or refraction shader. 
+                // The lens is outside AnimatedContent so its pressed scale is not clipped by that transition.
                 if (!isSelecting && visibleTabs.isNotEmpty()) {
                     Box(
                         Modifier
@@ -361,12 +390,8 @@ fun MainAppBottomBar(
                             .then(interactiveHighlight.gestureModifier)
                             .then(dragAnimation.modifier)
                             .consumeAllPointerChanges(onBarPressedChanged)
-                            .graphicsLayer {
-                                scaleX = dragAnimation.scaleX
-                                scaleY = dragAnimation.scaleY
-                            }
                             .drawBackdrop(
-                                backdrop = liquidGlassBackdrop,
+                                backdrop = rememberCombinedBackdrop(liquidGlassBackdrop, tabsBackdrop),
                                 shape = { RoundedCornerShape(percent = 50) },
                                 effects = {
                                     val progress = dragAnimation.pressProgress
@@ -395,8 +420,7 @@ fun MainAppBottomBar(
                                 },
                                 onDrawSurface = {
                                     val progress = dragAnimation.pressProgress
-                                    drawRect(Color.Black.copy(alpha = 0.10f), alpha = 1f - progress)
-                                    drawRect(Color.Black.copy(alpha = 0.03f * progress))
+                                    drawRect(Color.Black.copy(alpha = 0.025f), alpha = 1f - progress)
                                 }
                             )
                             .height(56.dp)
