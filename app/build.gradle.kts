@@ -49,7 +49,7 @@ android {
     buildTypes {
         debug {
             buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "true")
-            buildConfigField("boolean", "TAB_SWITCH_ISOLATION", "true")
+            buildConfigField("boolean", "TAB_SWITCH_ISOLATION", "false")
         }
         create("internal") {
             initWith(getByName("debug"))
