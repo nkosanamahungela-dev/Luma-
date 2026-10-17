@@ -30,13 +30,13 @@ jobs:
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
 
-      - name: Build Debug APKs
-        run: ./gradlew assembleDebug
+      - name: Build Internal APKs
+        run: ./gradlew assembleInternal
 
-      - name: Upload Debug APKs
+      - name: Upload Internal APKs
         uses: actions/upload-artifact@v7
         with:
-          name: luma-0.1.1-debug-apks
-          path: app/build/outputs/apk/debug/*.apk
+          name: luma-internal-apks
+          path: app/build/outputs/apk/internal/*.apk
           if-no-files-found: error
           retention-days: 30
