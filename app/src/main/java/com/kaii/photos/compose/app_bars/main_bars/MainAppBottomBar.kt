@@ -113,12 +113,15 @@ fun MainAppBottomBar(
     doNotTrash: () -> Boolean,
     runAction: (action: FileOperationAction) -> Unit,
     liquidGlassBackdrop: Backdrop,
-    onBarPressedChanged: (Boolean) -> Unit
+    onBarPressedChanged: (Boolean) -> Unit,
+    selectedTabOverride: Int? = null,
+    onIsolatedTabSelected: (Int) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
     val windowWidth = LocalWindowInfo.current.containerSize.width.toFloat()
-    val currentTab = tabs.getOrNull(pagerState.currentPage)
+    val activeTabIndex = selectedTabOverride ?: pagerState.currentPage
+    val currentTab = tabs.getOrNull(activeTabIndex)
     val searchIndex = tabs.indexOf(DefaultTabs.TabTypes.search)
     val visibleTabs = tabs.filter { it != DefaultTabs.TabTypes.search }
     val currentVisibleIndex = visibleTabs.indexOf(currentTab).coerceAtLeast(0)
@@ -126,6 +129,10 @@ fun MainAppBottomBar(
 
     fun navigateToTab(index: Int) {
         if (index !in tabs.indices) return
+        if (selectedTabOverride != null) {
+            onIsolatedTabSelected(index)
+            return
+        }
         scope.launch {
             pagerState.animateScrollBy(
                 value = windowWidth * -(pagerState.currentPage - index) -
