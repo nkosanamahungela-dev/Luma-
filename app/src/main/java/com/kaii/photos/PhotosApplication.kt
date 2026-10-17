@@ -51,8 +51,10 @@ class PhotosApplication : Application(), Configuration.Provider {
 
         appModule = localAppModule
 
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(applicationContext, Thread.getDefaultUncaughtExceptionHandler()))
-        CrashDiagnostics.start(applicationContext, BuildConfig.INTERNAL_DIAGNOSTICS)
+        if (BuildConfig.INTERNAL_DIAGNOSTICS) {
+            Thread.setDefaultUncaughtExceptionHandler(CrashHandler(applicationContext, Thread.getDefaultUncaughtExceptionHandler()))
+            CrashDiagnostics.start(applicationContext, true)
+        }
 
         localAppModule.scope.launch(Dispatchers.IO) {
             LogWriter.init(applicationContext)
