@@ -27,7 +27,7 @@ android {
 
     defaultConfig {
         applicationId = "com.kaii.photos"
-        minSdk = 30
+        minSdk = 33
         targetSdk = 37
         versionCode = 2
         versionName = "0.1.1"
@@ -41,10 +41,7 @@ android {
         splits {
             abi {
                 isUniversalApk = false
-                isEnable = true
-
-                reset()
-                include(includes = arrayOf("armeabi-v7a", "arm64-v8a"))
+                isEnable = false
             }
         }
     }
@@ -52,6 +49,7 @@ android {
     buildTypes {
         debug {
             buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "true")
+            buildConfigField("boolean", "TAB_SWITCH_ISOLATION", "true")
         }
         create("internal") {
             initWith(getByName("debug"))
@@ -59,13 +57,15 @@ android {
             versionNameSuffix = "-internal"
             isDebuggable = true
             buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "true")
+            buildConfigField("boolean", "TAB_SWITCH_ISOLATION", "true")
             matchingFallbacks += listOf("debug")
         }
         release {
             // Personal release build: use the local debug signing key until a private release keystore is configured.
             signingConfig = signingConfigs.getByName("debug")
             isDebuggable = false
-            buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "false")
+            buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "true")
+            buildConfigField("boolean", "TAB_SWITCH_ISOLATION", "false")
             isMinifyEnabled = true
             isShrinkResources = true
 
@@ -78,6 +78,8 @@ android {
         create("benchmark") {
             initWith(getByName("release"))
             signingConfig = signingConfigs.getByName("debug")
+            buildConfigField("boolean", "INTERNAL_DIAGNOSTICS", "true")
+            buildConfigField("boolean", "TAB_SWITCH_ISOLATION", "false")
             matchingFallbacks += listOf("release")
         }
     }
