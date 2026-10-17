@@ -51,14 +51,10 @@ class PhotosApplication : Application(), Configuration.Provider {
 
         appModule = localAppModule
 
-        localAppModule.scope.launch(Dispatchers.IO) {
-            Thread.setDefaultUncaughtExceptionHandler(
-                CrashHandler(
-                    context = applicationContext,
-                    defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
-                )
-            )
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(applicationContext, Thread.getDefaultUncaughtExceptionHandler()))
+        CrashDiagnostics.start(applicationContext, BuildConfig.INTERNAL_DIAGNOSTICS)
 
+        localAppModule.scope.launch(Dispatchers.IO) {
             LogWriter.init(applicationContext)
 
             // try to migrate from an older datastore system on app startup
