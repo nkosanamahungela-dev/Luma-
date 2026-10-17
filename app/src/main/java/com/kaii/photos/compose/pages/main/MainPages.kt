@@ -473,12 +473,35 @@ fun MainPages(
                 )
 
                 if (BuildConfig.TAB_SWITCH_ISOLATION) {
-                    val labels = listOf("Photos", "Secure", "Albums", "Search")
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        androidx.compose.material3.Text(
-                            text = labels.getOrElse(isolationSelectedTab) { "Photos" },
-                            color = Color.White
+                    if (isolationSelectedTab == 0) {
+                        val columnSize by viewModel.columnSize.collectAsStateWithLifecycle()
+                        val openVideosExternally by viewModel.openVideosExternally.collectAsStateWithLifecycle()
+                        val cacheThumbnails by viewModel.cacheThumbnails.collectAsStateWithLifecycle()
+                        val thumbnailSize by viewModel.thumbnailSize.collectAsStateWithLifecycle()
+                        val useRoundedCorners by viewModel.useRoundedCorners.collectAsStateWithLifecycle()
+                        val vibrateOnClick by viewModel.vibrateOnClick.collectAsStateWithLifecycle()
+                        val items = viewModel.gridMediaFlow.collectAsLazyPagingItems()
+                        MainGridView(
+                            items = items,
+                            album = { DefaultTabs.TabTypes.photos.copy(albumPaths = mainPhotosPaths).toAlbum() },
+                            selectionManager = viewModel.selectionManager,
+                            isMediaPicker = incomingIntent != null,
+                            isMultiSelectMode = incomingIntent.isMultiSelect,
+                            columnSize = { columnSize },
+                            openVideosExternally = { openVideosExternally },
+                            cacheThumbnails = { cacheThumbnails },
+                            thumbnailSize = { thumbnailSize },
+                            useRoundedCorners = { useRoundedCorners },
+                            vibrateOnClick = { vibrateOnClick }
                         )
+                    } else {
+                        val labels = listOf("Photos", "Secure", "Albums", "Search")
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            androidx.compose.material3.Text(
+                                text = labels.getOrElse(isolationSelectedTab) { "Photos" },
+                                color = Color.White
+                            )
+                        }
                     }
                 } else {
                 HorizontalPager(
