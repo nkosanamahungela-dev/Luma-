@@ -258,6 +258,6 @@ fun ComponentActivity.lavenderEdgeToEdge(
             if (isDarkMode) SystemBarStyle.dark(navBarColor.toArgb())
             else SystemBarStyle.light(navBarColor.toArgb(), navBarColor.toArgb()),
         // Keep status icons white over the opaque Luma top-bar background.
-        statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT.toArgb())
+        statusBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb())
     )
 }
