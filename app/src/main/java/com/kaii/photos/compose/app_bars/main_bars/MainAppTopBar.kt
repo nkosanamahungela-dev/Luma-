@@ -6,6 +6,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,6 +32,13 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.colorControls
+import com.kyant.backdrop.effects.vibrancy
+import com.kyant.backdrop.highlight.Highlight
+import com.kyant.backdrop.shadow.InnerShadow
+import com.kyant.backdrop.shadow.Shadow
 import com.kaii.photos.LocalNavController
 import com.kaii.photos.R
 import com.kaii.photos.compose.app_bars.DualFunctionTopAppBar
@@ -154,6 +162,18 @@ fun MainAppTopBar(
             )
         },
         containerColor = Color.Transparent,
-        modifier = Modifier
+        modifier = Modifier.drawBackdrop(
+            backdrop = liquidGlassBackdrop,
+            shape = { RoundedCornerShape(bottomStart = 22.dp, bottomEnd = 22.dp) },
+            effects = {
+                vibrancy()
+                blur(18.dp.toPx())
+                colorControls(brightness = 0.08f, saturation = 1.25f)
+            },
+            highlight = { Highlight.Default },
+            shadow = { Shadow(radius = 18.dp, color = Color.Black.copy(alpha = 0.16f)) },
+            innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.12f) },
+            onDrawSurface = { drawRect(Color.White.copy(alpha = 0.075f)) }
+        )
     )
 }
