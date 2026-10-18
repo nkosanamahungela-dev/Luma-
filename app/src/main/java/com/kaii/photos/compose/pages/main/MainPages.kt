@@ -83,6 +83,8 @@ import com.kaii.photos.compose.app_bars.main_bars.LiquidGlassIconButton
 import com.kaii.photos.compose.app_bars.main_bars.LumaTopBar
 import com.kaii.photos.compose.app_bars.main_bars.lumaTopBarHeight
 import com.kaii.photos.compose.app_bars.SelectionActionBar
+import com.kaii.photos.compose.app_bars.SelectionGlassChip
+import com.kaii.photos.compose.app_bars.SelectionGlassTagButton
 import com.kaii.photos.compose.dialogs.user_action.AlbumAddChoiceDialog
 import com.kaii.photos.compose.widgets.SelectViewTopBarLeftButtons
 import com.kaii.photos.compose.widgets.SelectViewTopBarRightButtons
@@ -682,6 +684,34 @@ fun MainPages(
                 backdrop = liquidGlassBackdrop,
                 titleRowOffsetPx = { topBarOffsetPx },
                 leading = {
+                    AnimatedVisibility(
+                        visible = !(isSelecting && incomingIntent == null),
+                        enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { selectionSwapOffsetPx.toInt() },
+                        exit = fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() }
+                    ) {
+                        androidx.compose.material3.Text(
+                            text = "Luma",
+                            color = Color.White,
+                            fontSize = androidx.compose.ui.unit.TextUnit(30f, androidx.compose.ui.unit.TextUnitType.Sp),
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            modifier = Modifier.padding(start = 22.dp)
+                        )
+                    }
+                },
+                floatingLeading = {
+                    AnimatedVisibility(
+                        visible = isSelecting && incomingIntent == null,
+                        enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { selectionSwapOffsetPx.toInt() },
+                        exit = fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() },
+                        modifier = Modifier.padding(start = 16.dp)
+                    ) {
+                        SelectionGlassChip(
+                            backdrop = liquidGlassBackdrop,
+                            selectionManager = viewModel.selectionManager
+                        )
+                    }
+                },
+                floatingTrailing = {
                     AnimatedContent(
                         targetState = isSelecting && incomingIntent == null,
                         transitionSpec = {
@@ -693,87 +723,53 @@ fun MainPages(
                                     .togetherWith(slideOutVertically(tween(250)) { selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
                             }
                         },
-                        label = "Luma title selection swap"
+                        label = "floating actions selection swap"
                     ) { selectionMode ->
-                        if (selectionMode) {
-                            val selectedCount by viewModel.selectionManager.count.collectAsStateWithLifecycle(initialValue = 0)
-                            AnimatedContent(
-                                targetState = selectedCount,
-                                transitionSpec = {
-                                    (slideInVertically(tween(160)) { it / 3 } + fadeIn(tween(160)))
-                                        .togetherWith(slideOutVertically(tween(160)) { -it / 3 } + fadeOut(tween(160)))
-                                },
-                                label = "selection count change"
-                            ) {
-                                SelectViewTopBarLeftButtons(selectionManager = viewModel.selectionManager)
-                            }
-                        } else {
-                            androidx.compose.material3.Text(
-                                text = "Luma",
-                                color = Color.White,
-                                fontSize = androidx.compose.ui.unit.TextUnit(30f, androidx.compose.ui.unit.TextUnitType.Sp),
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                                modifier = Modifier.padding(start = 22.dp)
-                            )
-                        }
-                    }
-                },
-                trailing = {
-                    androidx.compose.foundation.layout.Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AnimatedContent(
-                            targetState = isSelecting && incomingIntent == null,
-                            transitionSpec = {
-                                if (targetState) {
-                                    (slideInVertically(tween(250)) { it / 3 } + fadeIn(tween(250)))
-                                        .togetherWith(slideOutVertically(tween(250)) { -it / 3 } + fadeOut(tween(250)))
-                                } else {
-                                    (slideInVertically(tween(250)) { -it / 3 } + fadeIn(tween(250)))
-                                        .togetherWith(slideOutVertically(tween(250)) { it / 3 } + fadeOut(tween(250)))
-                                }
-                            },
-                            label = "top bar action selection swap"
-                        ) { selectionMode ->
+                        androidx.compose.foundation.layout.Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             if (selectionMode) {
-                                SelectViewTopBarRightButtons(
-                                    showTagDialog = { showTagDialog },
-                                    setShowTagDialog = { showTagDialog = it }
-                                )
-                            } else if (
-                                incomingIntent == null &&
-                                tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.albums
-                            ) {
-                                if (showAlbumTypeDialog) {
-                                    val groups by viewModel.groups.collectAsStateWithLifecycle()
-                                    AlbumAddChoiceDialog(
-                                        groups = groups,
-                                        addAlbum = viewModel::addAlbum,
-                                        addGroup = viewModel::addGroup
-                                    ) { showAlbumTypeDialog = false }
-                                }
-                                LiquidGlassIconButton(
+                                SelectionGlassTagButton(
                                     backdrop = liquidGlassBackdrop,
-                                    icon = androidx.compose.ui.res.painterResource(R.drawable.add),
-                                    contentDescription = stringResource(R.string.album_add),
-                                    onClick = { showAlbumTypeDialog = true },
-                                    modifier = Modifier.padding(end = 10.dp)
+                                    showTagDialog = { showTagDialog },
+                                    setShowTagDialog = { showTagDialog = it },
+                                    modifier = Modifier.padding(end = 16.dp)
                                 )
-                            }
-                        }
-
-                        if (incomingIntent == null) {
-                            LiquidGlassIconButton(
-                                backdrop = liquidGlassBackdrop,
-                                icon = androidx.compose.ui.res.painterResource(R.drawable.settings),
-                                contentDescription = "Settings",
-                                onClick = {
-                                    navController.navigate(
-                                        com.kaii.photos.helpers.Screens.MainPages.MainGrid.SettingsDialog
+                            } else {
+                                if (
+                                    incomingIntent == null &&
+                                    tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.albums
+                                ) {
+                                    if (showAlbumTypeDialog) {
+                                        val groups by viewModel.groups.collectAsStateWithLifecycle()
+                                        AlbumAddChoiceDialog(
+                                            groups = groups,
+                                            addAlbum = viewModel::addAlbum,
+                                            addGroup = viewModel::addGroup
+                                        ) { showAlbumTypeDialog = false }
+                                    }
+                                    LiquidGlassIconButton(
+                                        backdrop = liquidGlassBackdrop,
+                                        icon = androidx.compose.ui.res.painterResource(R.drawable.add),
+                                        contentDescription = stringResource(R.string.album_add),
+                                        onClick = { showAlbumTypeDialog = true },
+                                        modifier = Modifier.padding(end = 10.dp)
                                     )
-                                },
-                                modifier = Modifier.padding(end = 16.dp)
-                            )
+                                }
+                                if (incomingIntent == null) {
+                                    LiquidGlassIconButton(
+                                        backdrop = liquidGlassBackdrop,
+                                        icon = androidx.compose.ui.res.painterResource(R.drawable.settings),
+                                        contentDescription = "Settings",
+                                        onClick = {
+                                            navController.navigate(
+                                                com.kaii.photos.helpers.Screens.MainPages.MainGrid.SettingsDialog
+                                            )
+                                        },
+                                        modifier = Modifier.padding(end = 16.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
