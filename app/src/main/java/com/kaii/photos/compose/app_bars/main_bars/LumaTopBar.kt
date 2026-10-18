@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -49,6 +51,7 @@ fun lumaTopBarHeight(): Dp {
 fun LumaTopBar(
     modifier: Modifier = Modifier,
     backdrop: Backdrop,
+    titleRowOffsetPx: Float = 0f,
     leading: @Composable () -> Unit = {
         Text(
             text = "Luma",
@@ -79,55 +82,77 @@ fun LumaTopBar(
             .height(topInset + LumaTitleRowHeight)
             .zIndex(10f)
     ) {
-        // Opaque status-bar and title area; only the final 10dp fades out.
+        // The status-bar strip and its fade stay fixed while the title row collapses.
+        Box(Modifier.fillMaxWidth().height(topInset).background(LumaBarColor))
         Box(
-            modifier = Modifier
+            Modifier
                 .fillMaxWidth()
-                .height(topInset + LumaTitleRowHeight - LumaBottomFadeHeight)
-                .background(LumaBarColor)
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(topInset + LumaTitleRowHeight - LumaBottomFadeHeight)
+                .height(LumaBottomFadeHeight)
+                .offset(y = topInset)
+                .drawWithContent {
+                    drawRect(Brush.verticalGradient(listOf(LumaBarColor, LumaBarColor.copy(alpha = 0f))))
+                }
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {}
                 )
         )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(topInset + LumaTitleRowHeight)
-        ) {
-            Box(Modifier.fillMaxWidth().height(topInset))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(LumaTitleRowHeight),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) { leading() }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
-                ) { trailing() }
-            }
-        }
         Box(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .height(LumaBottomFadeHeight)
-                .drawWithContent {
-                    drawRect(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(LumaBarColor, LumaBarColor.copy(alpha = 0f))
-                        )
-                    )
+                .height(LumaTitleRowHeight)
+                .offset(y = topInset)
+                .graphicsLayer {
+                    translationY = titleRowOffsetPx
+                    alpha = (1f + titleRowOffsetPx / with(density) { LumaTitleRowHeight.toPx() }).coerceIn(0f, 1f)
                 }
-        )
+        ) {
+            // The opaque title-row surface moves with its controls.
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(LumaTitleRowHeight - LumaBottomFadeHeight)
+                    .background(LumaBarColor)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(LumaTitleRowHeight - LumaBottomFadeHeight)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {}
+                    )
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(LumaTitleRowHeight)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(LumaTitleRowHeight),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) { leading() }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
+                    ) { trailing() }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(LumaBottomFadeHeight)
+                    .drawWithContent {
+                        drawRect(Brush.verticalGradient(listOf(LumaBarColor, LumaBarColor.copy(alpha = 0f))))
+                    }
+            )
+        }
     }
 }
