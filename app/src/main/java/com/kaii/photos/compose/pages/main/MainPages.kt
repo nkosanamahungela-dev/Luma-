@@ -143,6 +143,7 @@ fun MainPages(
     val topBarHeight = lumaTopBarHeight()
     val density = LocalDensity.current
     val topBarRowHeightPx = with(density) { 76.dp.toPx() }
+    val selectionSwapOffsetPx = with(density) { 24.dp.toPx() }
     var topBarOffsetPx by remember { mutableFloatStateOf(0f) }
     val topBarSettleJob = remember { AtomicReference<Job?>(null) }
 
@@ -673,17 +674,27 @@ fun MainPages(
                         targetState = isSelecting && incomingIntent == null,
                         transitionSpec = {
                             if (targetState) {
-                                (slideInVertically(tween(250)) { it / 3 } + fadeIn(tween(250)))
-                                    .togetherWith(slideOutVertically(tween(250)) { -it / 3 } + fadeOut(tween(250)))
+                                (slideInVertically(tween(250)) { selectionSwapOffsetPx.toInt() } + fadeIn(tween(250)))
+                                    .togetherWith(slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
                             } else {
-                                (slideInVertically(tween(250)) { -it / 3 } + fadeIn(tween(250)))
-                                    .togetherWith(slideOutVertically(tween(250)) { it / 3 } + fadeOut(tween(250)))
+                                (slideInVertically(tween(250)) { -selectionSwapOffsetPx.toInt() } + fadeIn(tween(250)))
+                                    .togetherWith(slideOutVertically(tween(250)) { selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
                             }
                         },
                         label = "Luma title selection swap"
                     ) { selectionMode ->
                         if (selectionMode) {
-                            SelectViewTopBarLeftButtons(selectionManager = viewModel.selectionManager)
+                            val selectedCount by viewModel.selectionManager.count.collectAsStateWithLifecycle(initialValue = 0)
+                            AnimatedContent(
+                                targetState = selectedCount,
+                                transitionSpec = {
+                                    (slideInVertically(tween(160)) { it / 3 } + fadeIn(tween(160)))
+                                        .togetherWith(slideOutVertically(tween(160)) { -it / 3 } + fadeOut(tween(160)))
+                                },
+                                label = "selection count change"
+                            ) {
+                                SelectViewTopBarLeftButtons(selectionManager = viewModel.selectionManager)
+                            }
                         } else {
                             androidx.compose.material3.Text(
                                 text = "Luma",
