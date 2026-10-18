@@ -61,14 +61,89 @@ import com.kaii.photos.domain.files.FileOperationAction
 import com.kaii.photos.helpers.grid_management.SelectionManager
 
 @Composable
+fun SelectionGlassChip(
+    backdrop: Backdrop,
+    selectionManager: SelectionManager,
+    modifier: Modifier = Modifier
+) {
+    val count by selectionManager.count.collectAsStateWithLifecycle(initialValue = 0)
+    Row(
+        modifier = modifier
+            .height(46.dp)
+            .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+            .drawBackdrop(
+                backdrop = backdrop,
+                shape = { RoundedCornerShape(percent = 50) },
+                effects = {
+                    blur(2.dp.toPx())
+                    lens(10.dp.toPx(), 18.dp.toPx(), depthEffect = true)
+                },
+                highlight = { Highlight.Default },
+                shadow = { Shadow(alpha = 0.3f) },
+                innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.16f) },
+                onDrawSurface = { drawRect(Color.White.copy(alpha = 0.07f)) }
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = selectionManager::clear
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.close),
+                contentDescription = "Clear selection",
+                tint = Color.White,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        AnimatedContent(
+            targetState = count,
+            transitionSpec = {
+                (scaleIn() + fadeIn()).togetherWith(scaleOut() + fadeOut())
+            },
+            label = "selection count"
+        ) { animatedCount ->
+            Text(
+                text = animatedCount.toString(),
+                color = Color.White,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun SelectionGlassTagButton(
+    backdrop: Backdrop,
+    showTagDialog: () -> Boolean,
+    setShowTagDialog: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LiquidGlassIconButton(
+        backdrop = backdrop,
+        icon = painterResource(R.drawable.sell),
+        onClick = { setShowTagDialog(!showTagDialog()) },
+        contentDescription = stringResource(R.string.tags),
+        modifier = modifier
+    )
+}
+
+@Composable
 fun SelectionTopBar(
     backdrop: Backdrop,
     selectionManager: SelectionManager,
     showTagDialog: () -> Boolean,
     setShowTagDialog: (Boolean) -> Unit
 ) {
-    val count by selectionManager.count.collectAsStateWithLifecycle(initialValue = 0)
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -77,64 +152,11 @@ fun SelectionTopBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .height(46.dp)
-                .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-                .drawBackdrop(
-                    backdrop = backdrop, // Shared tab-host backdrop.
-                    shape = { RoundedCornerShape(percent = 50) },
-                    effects = {
-                        blur(2.dp.toPx())
-                        lens(10.dp.toPx(), 18.dp.toPx(), depthEffect = true)
-                    },
-                    highlight = { Highlight.Default },
-                    shadow = { Shadow(alpha = 0.3f) },
-                    innerShadow = { InnerShadow(radius = 5.dp, alpha = 0.16f) },
-                    onDrawSurface = { drawRect(Color.White.copy(alpha = 0.07f)) }
-                ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = selectionManager::clear
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.close),
-                    contentDescription = "Clear selection",
-                    tint = Color.White,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            AnimatedContent(
-                targetState = count,
-                transitionSpec = {
-                    (scaleIn() + fadeIn()).togetherWith(scaleOut() + fadeOut())
-                },
-                label = "selection count"
-            ) { animatedCount ->
-                Text(
-                    text = animatedCount.toString(),
-                    color = Color.White,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
-            }
-        }
-
-        LiquidGlassIconButton(
+        SelectionGlassChip(backdrop = backdrop, selectionManager = selectionManager)
+        SelectionGlassTagButton(
             backdrop = backdrop,
-            icon = painterResource(R.drawable.sell),
-            onClick = { setShowTagDialog(!showTagDialog()) },
-            contentDescription = stringResource(R.string.tags)
+            showTagDialog = showTagDialog,
+            setShowTagDialog = setShowTagDialog
         )
     }
 }
