@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kaii.photos.R
@@ -43,7 +45,8 @@ fun SearchPage(
     viewModel: SearchViewModel,
     selectionManager: SelectionManager,
     isMediaPicker: Boolean,
-    isMultiSelectMode: Boolean
+    isMultiSelectMode: Boolean,
+    topBarHeight: Dp = 0.dp
 ) {
     val gridState = rememberLazyGridState()
 
@@ -82,6 +85,7 @@ fun SearchPage(
                 thumbnailSize = { thumbnailSize },
                 useRoundedCorners = { useRoundedCorners },
                 vibrateOnClick = { vibrateOnClick },
+                topContentPadding = topBarHeight + 56.dp,
                 modifier = Modifier
                     .align(Alignment.Center)
             )
@@ -121,6 +125,7 @@ fun SearchPage(
             modifier = Modifier
                 .fillMaxWidth(1f)
                 .height(56.dp)
+                .offset(y = topBarHeight)
                 .padding(horizontal = 8.dp),
             onQueryChange = { text ->
                 coroutineScope.launch {
