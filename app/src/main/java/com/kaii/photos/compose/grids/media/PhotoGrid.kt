@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -71,6 +72,7 @@ fun PhotoGrid(
     isMediaPicker: Boolean,
     isMultiSelectMode: Boolean,
     isMainPage: Boolean,
+    topContentPadding: androidx.compose.ui.unit.Dp = 0.dp,
     state: LazyGridState = rememberLazyGridState()
 ) {
     if (!pagingItems.loadState.source.append.endOfPaginationReached || pagingItems.itemCount != 0) {
@@ -124,7 +126,8 @@ private fun DeviceMedia(
     cacheThumbnails: () -> Boolean,
     thumbnailSize: () -> Int,
     useRoundedCorners: () -> Boolean,
-    vibrateOnClick: () -> Boolean
+    vibrateOnClick: () -> Boolean,
+    topContentPadding: androidx.compose.ui.unit.Dp
 ) {
     val isSelecting by selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
 
@@ -158,6 +161,7 @@ private fun DeviceMedia(
 
         LazyVerticalGrid(
             state = gridState,
+            contentPadding = PaddingValues(top = topContentPadding),
             columns = GridCells.Fixed(
                 if (isLandscape && columnSize() <= 3) {
                     columnSize() * 2
