@@ -243,15 +243,15 @@ fun SortableGrid(
                                             isLoading = false
                                         }
                                         .onFailure {
+                                            // Keep the last good list visible if a refresh fails.
                                             albumLoadError = it.message ?: "Unknown album loading error"
-                                            albums = emptyList()
                                             isLoading = false
                                         }
                                 } catch (cancelled: CancellationException) {
                                     throw cancelled
                                 } catch (error: Exception) {
+                                    // Preserve the last good list; an empty first load still shows the error state.
                                     albumLoadError = error.message ?: "Unknown album loading error"
-                                    albums = emptyList()
                                     isLoading = false
                                 } finally {
                                     isRefreshing = false
