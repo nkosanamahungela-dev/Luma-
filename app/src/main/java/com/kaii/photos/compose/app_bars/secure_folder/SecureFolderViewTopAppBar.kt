@@ -108,8 +108,8 @@ fun SecureFolderViewTopAppBar(
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
                             .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
                     } else {
-                        (fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
-                            .togetherWith(fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
                     }
                 },
                 label = "secure actions selection swap"
