@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -82,16 +80,26 @@ fun LumaTopBar(
             .zIndex(10f)
     ) {
         // Opaque status-bar and title area; only the final 10dp fades out.
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(topInset + LumaTitleRowHeight)
+                .height(topInset + LumaTitleRowHeight - LumaBottomFadeHeight)
                 .background(LumaBarColor)
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(topInset + LumaTitleRowHeight - LumaBottomFadeHeight)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {}
                 )
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(topInset + LumaTitleRowHeight)
         ) {
             Box(Modifier.fillMaxWidth().height(topInset))
             Row(
