@@ -122,8 +122,8 @@ fun SortableGrid(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(androidx.compose.ui.graphics.Color.Transparent)
-            .padding(horizontal = 16.dp),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 8.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -217,8 +217,8 @@ fun SortableGrid(
                         onDragEnd = sortableGridState::onDragEnd
                     )
                 },
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp)
+            horizontalArrangement = Arrangement.Start,
+            verticalArrangement = Arrangement.Top
         ) {
             if (prefix != null) {
                 prefix()
