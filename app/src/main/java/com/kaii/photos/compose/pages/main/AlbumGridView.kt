@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.kyant.backdrop.Backdrop
 import androidx.compose.ui.unit.dp
 import com.kaii.photos.LocalNavController
 import com.kaii.photos.compose.grids.albums.SortableGrid
@@ -22,7 +21,6 @@ import com.kaii.photos.permissions.auth.rememberSecureFolderAuthManager
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlbumsGridView(
-    backdrop: Backdrop,
     deviceAlbums: () -> List<AlbumGridState.Album>,
     sortMode: () -> AlbumSortMode,
     tabList: () -> List<BottomBarTab>,
@@ -54,7 +52,6 @@ fun AlbumsGridView(
                 key = "FavAndTrash"
             ) {
                 CategoryList(
-                    backdrop = backdrop,
                     navigateToFavourites = {
                         navController.navigate(
                             if (migrateFav() && !isMediaPicker) Screens.Favourites.MigrationPage // TODO: handle media picker case
