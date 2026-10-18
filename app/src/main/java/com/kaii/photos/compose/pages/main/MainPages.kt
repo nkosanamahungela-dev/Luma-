@@ -258,6 +258,13 @@ fun MainPages(
         }
     }
 
+    LaunchedEffect(pagerState.currentPage, tabList) {
+        if (tabList.getOrNull(pagerState.currentPage) == DefaultTabs.TabTypes.secure) {
+            topBarSettleJob.getAndSet(null)?.cancel()
+            topBarOffsetPx = 0f
+        }
+    }
+
     var showTagDialog by remember { mutableStateOf(false) }
     var showAlbumTypeDialog by remember { mutableStateOf(false) }
 
