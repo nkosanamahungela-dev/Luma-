@@ -222,7 +222,7 @@ fun MainPages(
                 val bottomVelocity = if (!photosPage || isSelecting || isBottomBarPressed) Velocity.Zero
                 else scrollBehaviour.onPostFling(consumed, available)
 
-                val target = when {
+                val target = if (isSelecting) 0f else when {
                     abs(available.y) > 200f -> if (available.y < 0f) -topBarRowHeightPx else 0f
                     topBarOffsetPx <= -topBarRowHeightPx / 2f -> -topBarRowHeightPx
                     else -> 0f
