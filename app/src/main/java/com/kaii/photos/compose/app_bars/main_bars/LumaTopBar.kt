@@ -93,7 +93,7 @@ fun rememberLumaTopBarScrollState(isSelecting: Boolean): LumaTopBarScrollState {
                 }
                 settleJob.getAndSet(null)?.cancel()
                 settleJob.set(scope.launch {
-                    animate(offset, target, spring(stiffness = Spring.StiffnessMediumLow)) { value, _ ->
+                    animate(initialValue = offset, targetValue = target, animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) { value, _ ->
                         offset = value
                     }
                 })
