@@ -56,6 +56,7 @@ import com.kaii.photos.datastore.ImmichBasicInfo
 import com.kaii.photos.datastore.state.AlbumGridState
 import com.kaii.photos.helpers.Screens
 import com.kaii.photos.reorderable_lists.rememberSortableGridState
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 @Preview
@@ -245,6 +246,12 @@ fun SortableGrid(
                                             albums = emptyList()
                                             isLoading = false
                                         }
+                                } catch (cancelled: CancellationException) {
+                                    throw cancelled
+                                } catch (error: Exception) {
+                                    albumLoadError = error.message ?: "Unknown album loading error"
+                                    albums = emptyList()
+                                    isLoading = false
                                 } finally {
                                     isRefreshing = false
                                     lockHeader = false
