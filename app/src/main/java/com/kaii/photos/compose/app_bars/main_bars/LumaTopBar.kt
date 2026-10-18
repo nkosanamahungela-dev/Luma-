@@ -39,6 +39,7 @@ import com.kaii.photos.helpers.Screens
 private val LumaBarColor = Color(0xFF0B0E1A)
 private val LumaTitleRowHeight = 76.dp
 private val LumaBottomFadeHeight = 10.dp
+private val LumaStatusFadeHeight = 8.dp
 
 @Composable
 fun lumaTopBarHeight(): Dp {
@@ -87,16 +88,11 @@ fun LumaTopBar(
         Box(
             Modifier
                 .fillMaxWidth()
-                .height(LumaBottomFadeHeight)
+                .height(LumaStatusFadeHeight)
                 .offset(y = topInset)
                 .drawWithContent {
                     drawRect(Brush.verticalGradient(listOf(LumaBarColor, LumaBarColor.copy(alpha = 0f))))
                 }
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = {}
-                )
         )
         Box(
             modifier = Modifier
