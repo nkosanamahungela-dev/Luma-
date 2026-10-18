@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import com.kaii.photos.LocalNavController
 import com.kaii.photos.compose.grids.albums.SortableGrid
 import com.kaii.photos.compose.widgets.albums.CategoryList
@@ -29,6 +30,7 @@ fun AlbumsGridView(
     migrateFav: () -> Boolean,
     autoDetect: () -> Boolean,
     isMediaPicker: Boolean = false,
+    topBarHeight: Dp = 0.dp,
     setAlbumSortMode: (sortMode: AlbumSortMode) -> Unit,
     setAlbumOrder: (order: List<String>) -> Unit,
     addAlbumToGroup: (albumId: String, groupId: String) -> Unit,
@@ -43,6 +45,7 @@ fun AlbumsGridView(
         sortMode = sortMode,
         tabList = tabList,
         columnSize = columnSize,
+        topContentPadding = topBarHeight,
         immichInfo = immichInfo,
         navController = navController,
         autoDetect = autoDetect,
