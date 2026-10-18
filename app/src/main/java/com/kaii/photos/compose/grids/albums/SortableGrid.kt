@@ -5,8 +5,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -14,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.pullToRefresh
@@ -24,6 +27,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +57,8 @@ import com.kaii.photos.datastore.ImmichBasicInfo
 import com.kaii.photos.datastore.state.AlbumGridState
 import com.kaii.photos.helpers.Screens
 import com.kaii.photos.reorderable_lists.rememberSortableGridState
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -113,26 +119,29 @@ fun SortableGrid(
     addAlbumToGroup: (albumId: String, groupId: String) -> Unit,
     authenticateSecureFolder: () -> Unit,
     toggleAlbumPin: (album: AlbumGridState.Album) -> Unit,
-    deleteAlbum: (album: AlbumGridState.Album) -> Unit
+    deleteAlbum: (album: AlbumGridState.Album) -> Unit,
+    onRefresh: suspend () -> Unit = {}
 ) {
     var albumLoadError by remember { mutableStateOf<String?>(null) }
-    var albums by remember {
-        mutableStateOf(
-            runCatching { albumList() }.getOrElse {
-                albumLoadError = it.message ?: "Unknown album loading error"
-                emptyList()
-            }
-        )
-    }
-    LaunchedEffect(albumList) {
-        runCatching { albumList() }
+    var albums by remember { mutableStateOf(emptyList<AlbumGridState.Album>()) }
+    var isLoading by remember { mutableStateOf(true) }
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    // Read the current source snapshot during composition, but only copy it into
+    // the sortable local list when its contents actually change. This keeps
+    // periodic refreshes from repeatedly resetting a user's drag/reorder state.
+    val sourceAlbumsResult = runCatching { albumList() }
+    LaunchedEffect(sourceAlbumsResult) {
+        sourceAlbumsResult
             .onSuccess {
                 albums = it
                 albumLoadError = null
+                isLoading = false
             }
             .onFailure {
                 albumLoadError = it.message ?: "Unknown album loading error"
                 albums = emptyList()
+                isLoading = false
             }
     }
 
@@ -145,6 +154,7 @@ fun SortableGrid(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val pullToRefreshState = rememberPullToRefreshState()
+        val refreshScope = rememberCoroutineScope()
         var lockHeader by remember { mutableStateOf(false) }
 
         if (!isAlbumGroup) {
@@ -219,7 +229,36 @@ fun SortableGrid(
                     isRefreshing = lockHeader,
                     state = pullToRefreshState,
                     onRefresh = {
-                        if (!isAlbumGroup) lockHeader = true
+                        if (!isAlbumGroup && !isRefreshing) {
+                            refreshScope.launch {
+                                isRefreshing = true
+                                lockHeader = true
+                                if (albums.isEmpty() && albumLoadError == null) isLoading = true
+                                try {
+                                    onRefresh()
+                                    runCatching { albumList() }
+                                        .onSuccess {
+                                            albums = it
+                                            albumLoadError = null
+                                            isLoading = false
+                                        }
+                                        .onFailure {
+                                            // Keep the last good list visible if a refresh fails.
+                                            albumLoadError = it.message ?: "Unknown album loading error"
+                                            isLoading = false
+                                        }
+                                } catch (cancelled: CancellationException) {
+                                    throw cancelled
+                                } catch (error: Exception) {
+                                    // Preserve the last good list; an empty first load still shows the error state.
+                                    albumLoadError = error.message ?: "Unknown album loading error"
+                                    isLoading = false
+                                } finally {
+                                    isRefreshing = false
+                                    lockHeader = false
+                                }
+                            }
+                        }
                     },
                     enabled = !isAlbumGroup
                 )
@@ -241,7 +280,21 @@ fun SortableGrid(
                 prefix()
             }
 
-            if (albums.isEmpty()) {
+            if (isLoading) {
+                item(
+                    key = "albums_loading_state",
+                    span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            } else if (albums.isEmpty()) {
                 item(
                     key = "albums_empty_error_state",
                     span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }

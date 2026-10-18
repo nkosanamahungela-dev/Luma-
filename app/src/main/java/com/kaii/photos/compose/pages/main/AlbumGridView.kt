@@ -35,7 +35,8 @@ fun AlbumsGridView(
     setAlbumOrder: (order: List<String>) -> Unit,
     addAlbumToGroup: (albumId: String, groupId: String) -> Unit,
     toggleAlbumPin: (album: AlbumGridState.Album) -> Unit,
-    deleteAlbum: (album: AlbumGridState.Album) -> Unit
+    deleteAlbum: (album: AlbumGridState.Album) -> Unit,
+    onRefresh: suspend () -> Unit = {}
 ) {
     val navController = LocalNavController.current
     val authManager = rememberSecureFolderAuthManager()
@@ -87,6 +88,7 @@ fun AlbumsGridView(
         authenticateSecureFolder = { authManager.authenticate() },
         toggleAlbumPin = toggleAlbumPin,
         deleteAlbum = deleteAlbum,
+        onRefresh = onRefresh,
     )
 }
 
