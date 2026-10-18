@@ -200,7 +200,7 @@ fun MainPages(
             }
 
             override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
-                if (available.y > 0f && consumed.y == 0f) {
+                if (isSelecting || (available.y > 0f && consumed.y == 0f)) {
                     updateTopBar(0f, forceShown = true)
                 } else if (consumed.y != 0f) {
                     updateTopBar(consumed.y)
