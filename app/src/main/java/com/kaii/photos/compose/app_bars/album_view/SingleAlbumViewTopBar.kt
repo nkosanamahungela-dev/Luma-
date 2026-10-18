@@ -74,8 +74,8 @@ fun SingleAlbumViewTopBar(
                 targetState = show,
                 transitionSpec = {
                     if (targetState) {
-                        (fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
-                            .togetherWith(fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
                     } else {
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
                             .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
@@ -104,8 +104,8 @@ fun SingleAlbumViewTopBar(
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
                             .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
                     } else {
-                        (fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
-                            .togetherWith(fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
                     }
                 },
                 label = "folder back selection swap"
@@ -131,8 +131,8 @@ fun SingleAlbumViewTopBar(
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
                             .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
                     } else {
-                        (fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
-                            .togetherWith(fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
                     }
                 },
                 label = "folder actions selection swap"
@@ -141,7 +141,7 @@ fun SingleAlbumViewTopBar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (selecting) {
-                        if (album() !is AlbumType.SAFFolder) {
+                        if (albumInfo() !is AlbumType.SAFFolder) {
                             SelectionGlassTagButton(
                                 backdrop = backdrop,
                                 showTagDialog = showTagDialog,
