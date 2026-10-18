@@ -84,7 +84,17 @@ fun LumaTopBar(
             .zIndex(10f)
     ) {
         // The status-bar strip and its fade stay fixed while the title row collapses.
-        Box(Modifier.fillMaxWidth().height(topInset).background(LumaBarColor))
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(topInset)
+                .background(LumaBarColor)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {}
+                )
+        )
         Box(
             Modifier
                 .fillMaxWidth()
