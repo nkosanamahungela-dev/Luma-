@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import com.kaii.photos.PhotosApplication
 import com.kaii.photos.R
 import com.kaii.photos.compose.dialogs.LoadingDialog
@@ -53,7 +54,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SecureFolderEntryPage() {
+fun SecureFolderEntryPage(topBarHeight: Dp = 0.dp) {
     val context = LocalContext.current
 
     // moves media from old dir to new dir for secure folder
@@ -173,6 +174,7 @@ fun SecureFolderEntryPage() {
         Row(
             modifier = Modifier
                 .fillMaxSize(1f)
+                .padding(top = topBarHeight)
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
