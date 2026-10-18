@@ -7,12 +7,14 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -39,10 +42,14 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kaii.photos.LocalNavController
 import com.kaii.photos.compose.ViewProperties
-import com.kaii.photos.compose.app_bars.album_view.SingleAlbumViewBottomBar
+import com.kaii.photos.compose.app_bars.SelectionActionBar
 import com.kaii.photos.compose.app_bars.album_view.SingleAlbumViewTopBar
+import com.kaii.photos.compose.app_bars.main_bars.lumaTopBarHeight
+import com.kaii.photos.compose.app_bars.main_bars.rememberLumaTopBarScrollState
 import com.kaii.photos.compose.dialogs.album_info.AlbumInfoDialog
 import com.kaii.photos.compose.grids.media.PhotoGrid
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kaii.photos.compose.side_effects.FileOperationProgressEffect
 import com.kaii.photos.compose.side_effects.SharePhotoEffect
 import com.kaii.photos.compose.widgets.rememberDeviceOrientation
@@ -538,10 +545,50 @@ private fun SingleAlbumViewCommon(
     )
 
     var showTagDialog by remember { mutableStateOf(false) }
-    Scaffold(
-        modifier = modifier
-            .fillMaxSize(1f),
-        topBar = {
+    val backdrop = rememberLayerBackdrop()
+    val isSelecting by selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
+    val topBarHeight = lumaTopBarHeight()
+    val topBarScroll = rememberLumaTopBarScrollState(isSelecting)
+
+    Scaffold(modifier = modifier.fillMaxSize(1f)) { padding ->
+        Box(Modifier.fillMaxSize()) {
+            AnimatedMediaTagManager(
+                showTagDialog = showTagDialog,
+                padding = padding,
+                tags = tags,
+                selectedTags = selectedTags,
+                onTagAdd = onTagAdd,
+                onTagClick = onTagClick,
+                onTagDelete = onTagDelete,
+                onClose = { showTagDialog = false }
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .nestedScroll(topBarScroll.connection),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                PhotoGrid(
+                    pagingItems = pagingItems,
+                    album = album,
+                    selectionManager = selectionManager,
+                    viewProperties = viewProperties,
+                    isMediaPicker = incomingIntent != null,
+                    isMultiSelectMode = incomingIntent.isMultiSelect,
+                    isMainPage = false,
+                    columnSize = columnSize,
+                    openVideosExternally = openVideosExternally,
+                    cacheThumbnails = cacheThumbnails,
+                    thumbnailSize = thumbnailSize,
+                    useRoundedCorners = useRoundedCorners,
+                    vibrateOnClick = vibrateOnClick,
+                    topContentPadding = topBarHeight,
+                    modifier = Modifier.layerBackdrop(backdrop)
+                )
+            }
+
             SingleAlbumViewTopBar(
                 albumInfo = album,
                 selectionManager = selectionManager,
@@ -554,87 +601,26 @@ private fun SingleAlbumViewCommon(
                         delay(50.milliseconds)
                         sheetState.expand()
                     }
-                }
+                },
+                backdrop = backdrop,
+                topBarOffsetPx = topBarScroll.offsetPx
             )
-        },
-        bottomBar = {
-            val isSelecting by selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
 
             AnimatedVisibility(
-                visible = isSelecting,
-                enter = fadeIn() + slideInHorizontally(
-                    animationSpec = AnimationConstants.expressiveSpring()
-                ),
-                exit = fadeOut() + slideOutHorizontally(
-                    animationSpec = AnimationConstants.expressiveTween()
-                )
+                visible = isSelecting && incomingIntent == null,
+                enter = fadeIn() + slideInVertically(animationSpec = AnimationConstants.expressiveSpring()) { it },
+                exit = fadeOut() + slideOutVertically(animationSpec = AnimationConstants.expressiveTween()) { it },
+                modifier = Modifier.align(Alignment.BottomCenter)
             ) {
-                SingleAlbumViewBottomBar(
-                    albumInfo = album,
+                SelectionActionBar(
+                    backdrop = backdrop,
+                    albumInfo = album(),
                     selectionManager = selectionManager,
-                    incomingIntent = incomingIntent,
                     confirmToDelete = confirmToDelete,
                     doNotTrash = doNotTrash,
-                    process = runAction
+                    runAction = runAction
                 )
             }
-        }
-    ) { padding ->
-        AnimatedMediaTagManager(
-            showTagDialog = showTagDialog,
-            padding = padding,
-            tags = tags,
-            selectedTags = selectedTags,
-            onTagAdd = onTagAdd,
-            onTagClick = onTagClick,
-            onTagDelete = onTagDelete,
-            onClose = {
-                showTagDialog = false
-            }
-        )
-
-        val isLandscape by rememberDeviceOrientation()
-        val safeDrawingPadding = if (isLandscape) {
-            val safeDrawing = WindowInsets.safeDrawing.asPaddingValues()
-
-            val layoutDirection = LocalLayoutDirection.current
-            val left = safeDrawing.calculateStartPadding(layoutDirection)
-            val right = safeDrawing.calculateEndPadding(layoutDirection)
-
-            Pair(left, right)
-        } else {
-            Pair(0.dp, 0.dp)
-        }
-
-        Column(
-            modifier = Modifier
-                .padding(
-                    start = safeDrawingPadding.first,
-                    top = padding.calculateTopPadding(),
-                    end = safeDrawingPadding.second,
-                    bottom = 0.dp
-                )
-                .fillMaxSize(1f),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            PhotoGrid(
-                pagingItems = pagingItems,
-                album = album,
-                selectionManager = selectionManager,
-                viewProperties = viewProperties,
-                isMediaPicker = incomingIntent != null,
-                isMultiSelectMode = incomingIntent.isMultiSelect,
-                isMainPage = false,
-                columnSize = columnSize,
-                openVideosExternally = openVideosExternally,
-                cacheThumbnails = cacheThumbnails,
-                thumbnailSize = thumbnailSize,
-                useRoundedCorners = useRoundedCorners,
-                vibrateOnClick = vibrateOnClick
-            )
         }
     }
 }
-
-
