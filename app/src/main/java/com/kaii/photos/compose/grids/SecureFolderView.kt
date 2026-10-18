@@ -8,12 +8,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -40,11 +43,21 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.kaii.photos.LocalNavController
 import com.kaii.photos.PhotosApplication
 import com.kaii.photos.compose.ViewProperties
-import com.kaii.photos.compose.app_bars.secure_folder.SecureFolderViewBottomAppBar
+import com.kaii.photos.compose.app_bars.SelectionActionBar
+import com.kaii.photos.compose.app_bars.main_bars.lumaTopBarHeight
+import com.kaii.photos.compose.app_bars.main_bars.rememberLumaTopBarScrollState
 import com.kaii.photos.compose.app_bars.secure_folder.SecureFolderViewTopAppBar
 import com.kaii.photos.compose.grids.media.PhotoGrid
 import com.kaii.photos.compose.side_effects.FileOperationProgressEffect
 import com.kaii.photos.compose.side_effects.SharePhotoEffect
+import com.kaii.photos.compose.widgets.tags.AnimatedMediaTagManager
+import com.kaii.photos.database.entities.Tag
+import com.kaii.photos.models.tag_page.TagViewModel
+import com.kaii.photos.models.tag_page.TagViewModelFactory
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalContext
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kaii.photos.compose.widgets.rememberDeviceOrientation
 import com.kaii.photos.datastore.AlbumType
 import com.kaii.photos.domain.files.FileOperationAction
@@ -53,6 +66,13 @@ import com.kaii.photos.helpers.Screens
 import com.kaii.photos.models.SecureFolderViewModel
 import com.kaii.photos.permissions.files.rememberDynamicActivityResultLauncher
 import com.kaii.photos.presentation.selection.SelectionManagerEventEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
+import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.ui.util.fastMap
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,93 +156,109 @@ fun SecureFolderView(
 
     val items = viewModel.gridMediaFlow.collectAsLazyPagingItems()
 
-    Scaffold(
-        topBar = {
-            val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val backdrop = rememberLayerBackdrop()
+    val isSelecting by viewModel.selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
+    val topBarHeight = lumaTopBarHeight()
+    val topBarScroll = rememberLumaTopBarScrollState(isSelecting)
+    var showTagDialog by remember { mutableStateOf(false) }
 
+    val tagViewModel = viewModel<TagViewModel>(
+        factory = TagViewModelFactory(context = LocalContext.current)
+    )
+    val tags by tagViewModel.tags.collectAsStateWithLifecycle()
+    val selectedTags by tagViewModel.appliedTags.collectAsStateWithLifecycle()
+    LaunchedEffect(viewModel.selectionManager) {
+        viewModel.selectionManager.selection.collectLatest { selectedItems ->
+            tagViewModel.setMediaIds(ids = selectedItems.fastMap { it.id })
+        }
+    }
+
+    Scaffold(modifier = Modifier.fillMaxSize(1f)) { padding ->
+        Box(Modifier.fillMaxSize()) {
+            AnimatedMediaTagManager(
+                showTagDialog = showTagDialog,
+                padding = padding,
+                tags = { tags },
+                selectedTags = { selectedTags },
+                onTagAdd = tagViewModel::insertTag,
+                onTagClick = tagViewModel::toggleTag,
+                onTagDelete = tagViewModel::deleteTag,
+                onClose = { showTagDialog = false }
+            )
+
+            val isLandscape by rememberDeviceOrientation()
+            val safeDrawingPadding = if (isLandscape) {
+                val safeDrawing = WindowInsets.safeDrawing.asPaddingValues()
+                val layoutDirection = LocalLayoutDirection.current
+                Pair(
+                    safeDrawing.calculateStartPadding(layoutDirection),
+                    safeDrawing.calculateEndPadding(layoutDirection)
+                )
+            } else Pair(0.dp, 0.dp)
+
+            Column(
+                modifier = Modifier
+                    .padding(start = safeDrawingPadding.first, end = safeDrawingPadding.second)
+                    .fillMaxSize(1f)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .nestedScroll(topBarScroll.connection),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val columnSize by viewModel.columnSize.collectAsStateWithLifecycle()
+                val openVideosExternally by viewModel.openVideosExternally.collectAsStateWithLifecycle()
+                val cacheThumbnails by viewModel.cacheThumbnails.collectAsStateWithLifecycle()
+                val thumbnailSize by viewModel.thumbnailSize.collectAsStateWithLifecycle()
+                val useRoundedCorners by viewModel.useRoundedCorners.collectAsStateWithLifecycle()
+                val vibrateOnClick by viewModel.vibrateOnClick.collectAsStateWithLifecycle()
+                val hasItems by viewModel.hasItems.collectAsStateWithLifecycle()
+
+                PhotoGrid(
+                    pagingItems = items,
+                    album = { AlbumType.PlaceHolder },
+                    selectionManager = viewModel.selectionManager,
+                    viewProperties = if (hasItems) ViewProperties.SecureFolderLoading else ViewProperties.SecureFolder,
+                    columnSize = { columnSize },
+                    openVideosExternally = { openVideosExternally },
+                    cacheThumbnails = { cacheThumbnails },
+                    thumbnailSize = { thumbnailSize },
+                    useRoundedCorners = { useRoundedCorners },
+                    vibrateOnClick = { vibrateOnClick },
+                    isMediaPicker = false,
+                    isMultiSelectMode = true,
+                    isMainPage = false,
+                    topContentPadding = topBarHeight,
+                    modifier = Modifier.layerBackdrop(backdrop)
+                )
+            }
+
+            val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
             SecureFolderViewTopAppBar(
                 isLoading = { isLoading },
                 selectionManager = viewModel.selectionManager,
-                onBackClicked = navController::popBackStack
+                onBackClicked = navController::popBackStack,
+                backdrop = backdrop,
+                showTagDialog = { showTagDialog },
+                setShowTagDialog = { showTagDialog = it },
+                topBarOffsetPx = topBarScroll.offsetPx
             )
-        },
-        bottomBar = {
-            val isSelecting by viewModel.selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
 
             AnimatedVisibility(
                 visible = isSelecting,
-                enter = fadeIn() + slideInHorizontally(
-                    animationSpec = AnimationConstants.expressiveSpring()
-                ),
-                exit = fadeOut() + slideOutHorizontally(
-                    animationSpec = AnimationConstants.expressiveTween()
-                )
+                enter = fadeIn() + slideInHorizontally(animationSpec = AnimationConstants.expressiveSpring()) { it },
+                exit = fadeOut() + slideOutHorizontally(animationSpec = AnimationConstants.expressiveTween()) { it },
+                modifier = Modifier.align(Alignment.BottomCenter)
             ) {
-                SecureFolderViewBottomAppBar(
+                SelectionActionBar(
+                    backdrop = backdrop,
+                    albumInfo = AlbumType.PlaceHolder,
                     selectionManager = viewModel.selectionManager,
-                    isGettingPermissions = isGettingPermissions,
+                    confirmToDelete = { false },
+                    doNotTrash = { false },
                     runAction = viewModel::runAction
                 )
             }
-        },
-        modifier = Modifier
-            .fillMaxSize(1f),
-    ) { padding ->
-        val isLandscape by rememberDeviceOrientation()
-
-        val safeDrawingPadding = if (isLandscape) {
-            val safeDrawing = WindowInsets.safeDrawing.asPaddingValues()
-
-            val layoutDirection = LocalLayoutDirection.current
-            val left = safeDrawing.calculateStartPadding(layoutDirection)
-            val right = safeDrawing.calculateEndPadding(layoutDirection)
-
-            Pair(left, right)
-        } else {
-            Pair(0.dp, 0.dp)
-        }
-
-        Column(
-            modifier = Modifier
-                .padding(
-                    start = safeDrawingPadding.first,
-                    top = padding.calculateTopPadding(),
-                    end = safeDrawingPadding.second,
-                    bottom = 0.dp
-                )
-                .fillMaxSize(1f)
-                .windowInsetsPadding(
-                    WindowInsets.navigationBars
-                ),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val columnSize by viewModel.columnSize.collectAsStateWithLifecycle()
-            val openVideosExternally by viewModel.openVideosExternally.collectAsStateWithLifecycle()
-            val cacheThumbnails by viewModel.cacheThumbnails.collectAsStateWithLifecycle()
-            val thumbnailSize by viewModel.thumbnailSize.collectAsStateWithLifecycle()
-            val useRoundedCorners by viewModel.useRoundedCorners.collectAsStateWithLifecycle()
-            val vibrateOnClick by viewModel.vibrateOnClick.collectAsStateWithLifecycle()
-            val hasItems by viewModel.hasItems.collectAsStateWithLifecycle()
-
-            PhotoGrid(
-                pagingItems = items,
-                album = { AlbumType.PlaceHolder },
-                selectionManager = viewModel.selectionManager,
-                viewProperties =
-                    if (hasItems) ViewProperties.SecureFolderLoading
-                    else ViewProperties.SecureFolder,
-                columnSize = { columnSize },
-                openVideosExternally = { openVideosExternally },
-                cacheThumbnails = { cacheThumbnails },
-                thumbnailSize = { thumbnailSize },
-                useRoundedCorners = { useRoundedCorners },
-                vibrateOnClick = { vibrateOnClick },
-                isMediaPicker = false,
-                isMultiSelectMode = true,
-                isMainPage = false
-            )
         }
     }
 }
-
+}
