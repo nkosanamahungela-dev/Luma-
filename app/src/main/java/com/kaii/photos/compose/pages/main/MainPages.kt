@@ -71,9 +71,7 @@ import com.kaii.photos.compose.FolderIsEmpty
 import com.kaii.photos.compose.MediaPickerConfirmButton
 import com.kaii.photos.compose.app_bars.getAppBarContentTransition
 import com.kaii.photos.compose.app_bars.main_bars.MainAppBottomBar
-import com.kaii.photos.compose.app_bars.main_bars.MainAppTopBar
 import com.kaii.photos.compose.app_bars.SelectionActionBar
-import com.kaii.photos.compose.app_bars.SelectionTopBar
 import com.kaii.photos.compose.side_effects.FileOperationProgressEffect
 import com.kaii.photos.compose.side_effects.SharePhotoEffect
 import com.kaii.photos.compose.widgets.rememberDeviceOrientation
@@ -237,33 +235,6 @@ fun MainPages(
     )
 
     Scaffold(
-        topBar = {
-            val groups by viewModel.groups.collectAsStateWithLifecycle()
-
-            if (isSelecting && incomingIntent == null) {
-                SelectionTopBar(
-                    backdrop = liquidGlassBackdrop,
-                    selectionManager = viewModel.selectionManager,
-                    showTagDialog = { showTagDialog },
-                    setShowTagDialog = { showTagDialog = it }
-                )
-            } else {
-                MainAppTopBar(
-                    alternate = { isSelecting },
-                    selectionManager = viewModel.selectionManager,
-                    showAddAlbumButton = {
-                        tabList.isNotEmpty() && tabList[pagerState.settledPage] == DefaultTabs.TabTypes.albums
-                    },
-                    showTagDialog = { showTagDialog },
-                    isFromMediaPicker = incomingIntent != null,
-                    liquidGlassBackdrop = liquidGlassBackdrop,
-                    groups = { groups },
-                    setShowTagDialog = { showTagDialog = true },
-                    addAlbum = viewModel::addAlbum,
-                    addGroup = viewModel::addGroup
-                )
-            }
-        },
         bottomBar = {
             LaunchedEffect(Unit) {
                 floatingBarState.offset = 0f
