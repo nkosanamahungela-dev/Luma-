@@ -66,7 +66,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kyant.backdrop.backdrops.layerBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.kaii.photos.BuildConfig
 import com.kaii.photos.R
 import com.kaii.photos.compose.FolderIsEmpty
 import com.kaii.photos.compose.MediaPickerConfirmButton
@@ -126,7 +125,6 @@ fun MainPages(
 
     val liquidGlassBackdrop = rememberLayerBackdrop()
 
-    var isolationSelectedTab by rememberSaveable { mutableIntStateOf(0) }
     val pagerState = rememberPagerState(
         initialPage = tabList.indices.first
     ) { tabList.size }
@@ -134,7 +132,6 @@ fun MainPages(
     // TODO: find a better way to do this
     var alreadySetStartupTab by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(tabList) {
-        if (BuildConfig.TAB_SWITCH_ISOLATION) return@LaunchedEffect
         if (alreadySetStartupTab) return@LaunchedEffect
 
         if (defaultTab in tabList) {
@@ -147,7 +144,7 @@ fun MainPages(
     val windowWidth = LocalWindowInfo.current.containerSize.width.toFloat()
 
     BackHandler(
-        enabled = !BuildConfig.TAB_SWITCH_ISOLATION && !exitImmediately && pagerState.settledPage != tabList.indexOf(defaultTab)
+        enabled = !exitImmediately && pagerState.settledPage != tabList.indexOf(defaultTab)
     ) {
         coroutineScope.launch {
             pagerState.animateScrollBy(
@@ -312,8 +309,6 @@ fun MainPages(
                     ) {
                         MainAppBottomBar(
                             pagerState = pagerState,
-                            selectedTabOverride = if (BuildConfig.TAB_SWITCH_ISOLATION) isolationSelectedTab else null,
-                            onIsolatedTabSelected = { isolationSelectedTab = it },
                             selectionManager = viewModel.selectionManager,
                             tabs = tabList,
                             confirmToDelete = { confirmToDelete },
@@ -472,42 +467,10 @@ fun MainPages(
                         .background(Color(0xFF0B0E1A))
                 )
 
-                if (BuildConfig.TAB_SWITCH_ISOLATION) {
-                    if (isolationSelectedTab == 0) {
-                        val columnSize by viewModel.columnSize.collectAsStateWithLifecycle()
-                        val openVideosExternally by viewModel.openVideosExternally.collectAsStateWithLifecycle()
-                        val cacheThumbnails by viewModel.cacheThumbnails.collectAsStateWithLifecycle()
-                        val thumbnailSize by viewModel.thumbnailSize.collectAsStateWithLifecycle()
-                        val useRoundedCorners by viewModel.useRoundedCorners.collectAsStateWithLifecycle()
-                        val vibrateOnClick by viewModel.vibrateOnClick.collectAsStateWithLifecycle()
-                        val items = viewModel.gridMediaFlow.collectAsLazyPagingItems()
-                        MainGridView(
-                            items = items,
-                            album = { DefaultTabs.TabTypes.photos.copy(albumPaths = mainPhotosPaths).toAlbum() },
-                            selectionManager = viewModel.selectionManager,
-                            isMediaPicker = incomingIntent != null,
-                            isMultiSelectMode = incomingIntent.isMultiSelect,
-                            columnSize = { columnSize },
-                            openVideosExternally = { openVideosExternally },
-                            cacheThumbnails = { cacheThumbnails },
-                            thumbnailSize = { thumbnailSize },
-                            useRoundedCorners = { useRoundedCorners },
-                            vibrateOnClick = { vibrateOnClick }
-                        )
-                    } else {
-                        val labels = listOf("Photos", "Secure", "Albums", "Search")
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            androidx.compose.material3.Text(
-                                text = labels.getOrElse(isolationSelectedTab) { "Photos" },
-                                color = Color.White
-                            )
-                        }
-                    }
-                } else {
                 HorizontalPager(
                     state = pagerState,
                     userScrollEnabled = !isSelecting,
-                    beyondViewportPageCount = 0,
+                    beyondViewportPageCount = 1,
                     modifier = Modifier
                         .padding(
                             start = safeDrawingPadding.first,
@@ -601,8 +564,7 @@ fun MainPages(
                             setAlbumOrder = viewModel::setAlbumOrder,
                             addAlbumToGroup = viewModel::addAlbumToGroup,
                             toggleAlbumPin = viewModel::toggleAlbumPin,
-                            deleteAlbum = viewModel::deleteAlbum,
-                            onRefresh = refreshAlbums
+                            deleteAlbum = viewModel::deleteAlbum
                         )
                     }
 
@@ -622,7 +584,6 @@ fun MainPages(
                             backgroundColor = Color.Transparent
                         )
                     }
-                }
                 }
                 }
                 }
