@@ -506,6 +506,7 @@ fun MainPages(
                         val items = viewModel.gridMediaFlow.collectAsLazyPagingItems()
                         MainGridView(
                             items = items,
+                            topContentPadding = topBarHeight,
                             album = { tab.copy(albumPaths = mainPhotosPaths).toAlbum() },
                             selectionManager = viewModel.selectionManager,
                             isMediaPicker = incomingIntent != null,
