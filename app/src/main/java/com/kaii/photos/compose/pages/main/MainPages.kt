@@ -6,6 +6,10 @@ import android.view.Window
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -33,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +49,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -97,7 +104,10 @@ import com.kaii.photos.presentation.selection.SelectionManagerEventEffect
 import com.kaii.photos.repositories.SearchMode
 import com.kaii.photos.screens.isMultiSelect
 import com.kaii.photos.setupNextScreen
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.abs
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -131,6 +141,10 @@ fun MainPages(
 
     val liquidGlassBackdrop = rememberLayerBackdrop()
     val topBarHeight = lumaTopBarHeight()
+    val density = LocalDensity.current
+    val topBarRowHeightPx = with(density) { 76.dp.toPx() }
+    var topBarOffsetPx by remember { mutableFloatStateOf(0f) }
+    val topBarSettleJob = remember { AtomicReference<Job?>(null) }
 
     val pagerState = rememberPagerState(
         initialPage = tabList.indices.first
@@ -173,20 +187,66 @@ fun MainPages(
         { pressed -> isBottomBarPressed = pressed }
     }
 
-    // Only the Photos page participates in the floating bar's vertical scroll behavior.
-    val photoGridScrollConnection = remember(scrollBehaviour, isSelecting, isBottomBarPressed) {
+    // One connection drives the top row and preserves the existing Photos-only bottom-bar behavior.
+    val photoGridScrollConnection = remember(scrollBehaviour, isSelecting, isBottomBarPressed, pagerState, tabList, topBarRowHeightPx) {
         object : NestedScrollConnection {
-            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
-                if (isSelecting || isBottomBarPressed) Offset.Zero else scrollBehaviour.onPostScroll(consumed, available, source)
+            private fun updateTopBar(deltaY: Float, forceShown: Boolean = false) {
+                topBarSettleJob.getAndSet(null)?.cancel()
+                topBarOffsetPx = if (forceShown) 0f
+                else (topBarOffsetPx + deltaY).coerceIn(-topBarRowHeightPx, 0f)
+            }
 
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset =
-                if (isSelecting || isBottomBarPressed) Offset.Zero else scrollBehaviour.onPreScroll(available, source)
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                if (available.y > 0f && consumed.y == 0f) {
+                    updateTopBar(0f, forceShown = true)
+                } else if (consumed.y != 0f) {
+                    updateTopBar(consumed.y)
+                }
 
-            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity =
-                if (isSelecting || isBottomBarPressed) Velocity.Zero else scrollBehaviour.onPostFling(consumed, available)
+                val photosPage = tabList.getOrNull(pagerState.currentPage) == DefaultTabs.TabTypes.photos
+                return if (!photosPage || isSelecting || isBottomBarPressed) Offset.Zero
+                else scrollBehaviour.onPostScroll(consumed, available, source)
+            }
 
-            override suspend fun onPreFling(available: Velocity): Velocity =
-                if (isSelecting || isBottomBarPressed) Velocity.Zero else scrollBehaviour.onPreFling(available)
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val photosPage = tabList.getOrNull(pagerState.currentPage) == DefaultTabs.TabTypes.photos
+                return if (!photosPage || isSelecting || isBottomBarPressed) Offset.Zero
+                else scrollBehaviour.onPreScroll(available, source)
+            }
+
+            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                val photosPage = tabList.getOrNull(pagerState.currentPage) == DefaultTabs.TabTypes.photos
+                val bottomVelocity = if (!photosPage || isSelecting || isBottomBarPressed) Velocity.Zero
+                else scrollBehaviour.onPostFling(consumed, available)
+
+                val target = when {
+                    abs(available.y) > 200f -> if (available.y < 0f) -topBarRowHeightPx else 0f
+                    topBarOffsetPx <= -topBarRowHeightPx / 2f -> -topBarRowHeightPx
+                    else -> 0f
+                }
+                topBarSettleJob.getAndSet(null)?.cancel()
+                topBarSettleJob.set(coroutineScope.launch {
+                    animate(
+                        initialValue = topBarOffsetPx,
+                        targetValue = target,
+                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                    ) { value, _ -> topBarOffsetPx = value }
+                })
+                return bottomVelocity
+            }
+
+            override suspend fun onPreFling(available: Velocity): Velocity {
+                val photosPage = tabList.getOrNull(pagerState.currentPage) == DefaultTabs.TabTypes.photos
+                return if (!photosPage || isSelecting || isBottomBarPressed) Velocity.Zero
+                else scrollBehaviour.onPreFling(available)
+            }
+        }
+    }
+
+    LaunchedEffect(isSelecting) {
+        if (isSelecting) {
+            topBarSettleJob.getAndSet(null)?.cancel()
+            topBarOffsetPx = 0f
         }
     }
 
@@ -464,13 +524,7 @@ fun MainPages(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .then(
-                            if (tab == DefaultTabs.TabTypes.photos && incomingIntent == null) {
-                                Modifier.nestedScroll(photoGridScrollConnection)
-                            } else {
-                                Modifier
-                            }
-                        )
+.nestedScroll(photoGridScrollConnection)
                 ) {
                 when {
                     tab.isCustom -> {
@@ -613,47 +667,76 @@ fun MainPages(
             LumaTopBar(
                 modifier = Modifier.align(Alignment.TopCenter),
                 backdrop = liquidGlassBackdrop,
+                titleRowOffsetPx = topBarOffsetPx,
                 leading = {
-                    if (isSelecting && incomingIntent == null) {
-                        SelectViewTopBarLeftButtons(selectionManager = viewModel.selectionManager)
-                    } else {
-                        androidx.compose.material3.Text(
-                            text = "Luma",
-                            color = Color.White,
-                            fontSize = androidx.compose.ui.unit.TextUnit(30f, androidx.compose.ui.unit.TextUnitType.Sp),
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                            modifier = Modifier.padding(start = 22.dp)
-                        )
+                    AnimatedContent(
+                        targetState = isSelecting && incomingIntent == null,
+                        transitionSpec = {
+                            if (targetState) {
+                                (slideInVertically(tween(250)) { it / 3 } + fadeIn(tween(250)))
+                                    .togetherWith(slideOutVertically(tween(250)) { -it / 3 } + fadeOut(tween(250)))
+                            } else {
+                                (slideInVertically(tween(250)) { -it / 3 } + fadeIn(tween(250)))
+                                    .togetherWith(slideOutVertically(tween(250)) { it / 3 } + fadeOut(tween(250)))
+                            }
+                        },
+                        label = "Luma title selection swap"
+                    ) { selectionMode ->
+                        if (selectionMode) {
+                            SelectViewTopBarLeftButtons(selectionManager = viewModel.selectionManager)
+                        } else {
+                            androidx.compose.material3.Text(
+                                text = "Luma",
+                                color = Color.White,
+                                fontSize = androidx.compose.ui.unit.TextUnit(30f, androidx.compose.ui.unit.TextUnitType.Sp),
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                                modifier = Modifier.padding(start = 22.dp)
+                            )
+                        }
                     }
                 },
                 trailing = {
                     androidx.compose.foundation.layout.Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (isSelecting && incomingIntent == null) {
-                            SelectViewTopBarRightButtons(
-                                showTagDialog = { showTagDialog },
-                                setShowTagDialog = { showTagDialog = it }
-                            )
-                        } else if (
-                            incomingIntent == null &&
-                            tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.albums
-                        ) {
-                            if (showAlbumTypeDialog) {
-                                val groups by viewModel.groups.collectAsStateWithLifecycle()
-                                AlbumAddChoiceDialog(
-                                    groups = groups,
-                                    addAlbum = viewModel::addAlbum,
-                                    addGroup = viewModel::addGroup
-                                ) { showAlbumTypeDialog = false }
+                        AnimatedContent(
+                            targetState = isSelecting && incomingIntent == null,
+                            transitionSpec = {
+                                if (targetState) {
+                                    (slideInVertically(tween(250)) { it / 3 } + fadeIn(tween(250)))
+                                        .togetherWith(slideOutVertically(tween(250)) { -it / 3 } + fadeOut(tween(250)))
+                                } else {
+                                    (slideInVertically(tween(250)) { -it / 3 } + fadeIn(tween(250)))
+                                        .togetherWith(slideOutVertically(tween(250)) { it / 3 } + fadeOut(tween(250)))
+                                }
+                            },
+                            label = "top bar action selection swap"
+                        ) { selectionMode ->
+                            if (selectionMode) {
+                                SelectViewTopBarRightButtons(
+                                    showTagDialog = { showTagDialog },
+                                    setShowTagDialog = { showTagDialog = it }
+                                )
+                            } else if (
+                                incomingIntent == null &&
+                                tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.albums
+                            ) {
+                                if (showAlbumTypeDialog) {
+                                    val groups by viewModel.groups.collectAsStateWithLifecycle()
+                                    AlbumAddChoiceDialog(
+                                        groups = groups,
+                                        addAlbum = viewModel::addAlbum,
+                                        addGroup = viewModel::addGroup
+                                    ) { showAlbumTypeDialog = false }
+                                }
+                                LiquidGlassIconButton(
+                                    backdrop = liquidGlassBackdrop,
+                                    icon = androidx.compose.ui.res.painterResource(R.drawable.add),
+                                    contentDescription = stringResource(R.string.album_add),
+                                    onClick = { showAlbumTypeDialog = true },
+                                    modifier = Modifier.padding(end = 10.dp)
+                                )
                             }
-                            LiquidGlassIconButton(
-                                backdrop = liquidGlassBackdrop,
-                                icon = androidx.compose.ui.res.painterResource(R.drawable.add),
-                                contentDescription = stringResource(R.string.album_add),
-                                onClick = { showAlbumTypeDialog = true },
-                                modifier = Modifier.padding(end = 10.dp)
-                            )
                         }
 
                         if (incomingIntent == null) {
