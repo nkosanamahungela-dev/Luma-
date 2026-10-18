@@ -52,7 +52,7 @@ fun lumaTopBarHeight(): Dp {
 fun LumaTopBar(
     modifier: Modifier = Modifier,
     backdrop: Backdrop,
-    titleRowOffsetPx: Float = 0f,
+    titleRowOffsetPx: () -> Float = { 0f },
     leading: @Composable () -> Unit = {
         Text(
             text = "Luma",
@@ -110,8 +110,8 @@ fun LumaTopBar(
                 .height(LumaTitleRowHeight)
                 .offset(y = topInset)
                 .graphicsLayer {
-                    translationY = titleRowOffsetPx
-                    alpha = (1f + titleRowOffsetPx / with(density) { LumaTitleRowHeight.toPx() }).coerceIn(0f, 1f)
+                    translationY = titleRowOffsetPx()
+                    alpha = (1f + titleRowOffsetPx() / with(density) { LumaTitleRowHeight.toPx() }).coerceIn(0f, 1f)
                 }
         ) {
             // The opaque title-row surface moves with its controls.
