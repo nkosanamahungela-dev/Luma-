@@ -59,7 +59,6 @@ fun SearchPage(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(top = 64.dp)
         ) {
             val items = viewModel.gridMediaFlow.collectAsLazyPagingItems()
 
