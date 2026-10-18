@@ -2,6 +2,8 @@ package com.kaii.photos.compose.pages.main
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.kaii.photos.compose.ViewProperties
 import com.kaii.photos.compose.grids.media.PhotoGrid
@@ -23,6 +25,7 @@ fun MainGridView(
     useRoundedCorners: () -> Boolean,
     vibrateOnClick: () -> Boolean,
     modifier: Modifier = Modifier,
+    topContentPadding: Dp = 0.dp,
     viewProperties: ViewProperties = ViewProperties.Main
 ) {
     PhotoGrid(
@@ -39,6 +42,7 @@ fun MainGridView(
         thumbnailSize = thumbnailSize,
         useRoundedCorners = useRoundedCorners,
         vibrateOnClick = vibrateOnClick,
+        topContentPadding = topContentPadding,
         modifier = modifier
     )
 }
