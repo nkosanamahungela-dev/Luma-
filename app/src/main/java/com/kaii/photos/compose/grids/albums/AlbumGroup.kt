@@ -1,7 +1,9 @@
 package com.kaii.photos.compose.grids.albums
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
@@ -18,6 +20,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kaii.photos.LocalNavController
 import com.kaii.photos.R
 import com.kaii.photos.compose.app_bars.AlbumGroupTopBar
+import com.kaii.photos.compose.app_bars.main_bars.lumaTopBarHeight
+import com.kaii.photos.compose.app_bars.main_bars.rememberLumaTopBarScrollState
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kaii.photos.compose.dialogs.AlbumGroupInfoDialog
 import com.kaii.photos.datastore.state.AlbumGridState
 import com.kaii.photos.models.album_group.AlbumGroupViewModel
@@ -43,6 +49,9 @@ fun AlbumGroup(
     var showInfoDialog by remember { mutableStateOf(false) }
 
     val groups by viewModel.groups.collectAsStateWithLifecycle()
+    val backdrop = rememberLayerBackdrop()
+    val topBarHeight = lumaTopBarHeight()
+    val topBarScroll = rememberLumaTopBarScrollState(isSelecting = false)
     if (showInfoDialog) {
         AlbumGroupInfoDialog(
             sheetState = sheetState,
@@ -66,32 +75,8 @@ fun AlbumGroup(
         )
     }
 
-    Scaffold(
-        modifier = modifier
-            .fillMaxSize(),
-        topBar = {
-            AlbumGroupTopBar(
-                group = { viewModel.group },
-                groups = { groups },
-                navController = navController,
-                showInfoDialog = {
-                    if (viewModel.group != null) {
-                        coroutineScope.launch {
-                            showInfoDialog = true
-                            delay(50.milliseconds)
-                            sheetState.expand()
-                        }
-                    }
-                },
-                setAlbums = { ids ->
-                    viewModel.setGroupAlbums(
-                        id = id,
-                        albumIds = ids
-                    )
-                }
-            )
-        }
-    ) { paddingValues ->
+    Scaffold(modifier = modifier.fillMaxSize()) { _ ->
+        Box(Modifier.fillMaxSize()) {
         val authManager = rememberSecureFolderAuthManager()
         val immichInfo by viewModel.immichInfo.collectAsStateWithLifecycle()
         val columnSize by viewModel.albumColumnSize.collectAsStateWithLifecycle()
@@ -106,7 +91,8 @@ fun AlbumGroup(
             immichInfo = { immichInfo },
             navController = navController,
             autoDetect = { false },
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier.nestedScroll(topBarScroll.connection).layerBackdrop(backdrop),
+            topContentPadding = topBarHeight,
             isAlbumGroup = true,
             removeAlbumIcon = R.drawable.folder_off,
             setAlbumSortMode = viewModel::setAlbumSortMode,
@@ -125,5 +111,24 @@ fun AlbumGroup(
                 )
             }
         )
+
+        AlbumGroupTopBar(
+            group = { viewModel.group },
+            groups = { groups },
+            navController = navController,
+            showInfoDialog = {
+                if (viewModel.group != null) {
+                    coroutineScope.launch {
+                        showInfoDialog = true
+                        delay(50.milliseconds)
+                        sheetState.expand()
+                    }
+                }
+            },
+            setAlbums = { ids -> viewModel.setGroupAlbums(id = id, albumIds = ids) },
+            backdrop = backdrop,
+            topBarOffsetPx = topBarScroll.offsetPx
+        )
+        }
     }
 }
