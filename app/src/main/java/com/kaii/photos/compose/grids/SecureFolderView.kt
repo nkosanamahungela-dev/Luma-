@@ -66,9 +66,7 @@ import com.kaii.photos.helpers.Screens
 import com.kaii.photos.models.SecureFolderViewModel
 import com.kaii.photos.permissions.files.rememberDynamicActivityResultLauncher
 import com.kaii.photos.presentation.selection.SelectionManagerEventEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.flow.collectLatest
