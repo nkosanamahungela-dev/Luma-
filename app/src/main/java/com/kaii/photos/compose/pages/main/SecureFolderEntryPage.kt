@@ -240,6 +240,7 @@ fun SecureFolderEntryPage(topBarHeight: Dp = 0.dp) {
         Column(
             modifier = Modifier
                 .fillMaxSize(1f)
+                .padding(top = topBarHeight)
                 .padding(8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
