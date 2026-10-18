@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,6 +47,7 @@ fun SecureFolderViewTopAppBar(
 ) {
     val isSelecting by selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
     val navController = LocalNavController.current
+    val selectionOffsetPx = with(LocalDensity.current) { 24.dp.roundToPx() }
 
     LumaTopBar(
         backdrop = backdrop,
@@ -55,8 +57,8 @@ fun SecureFolderViewTopAppBar(
             AnimatedContent(
                 targetState = isSelecting,
                 transitionSpec = {
-                    (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                        .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
+                    (fadeIn(tween(250)) + slideInVertically(tween(250)) { selectionOffsetPx })
+                        .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionOffsetPx })
                 },
                 label = "secure title selection swap"
             ) { selecting ->
