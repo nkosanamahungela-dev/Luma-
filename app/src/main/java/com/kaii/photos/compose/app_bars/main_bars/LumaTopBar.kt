@@ -71,7 +71,9 @@ fun LumaTopBar(
             onClick = { navController.navigate(Screens.MainPages.MainGrid.SettingsDialog) },
             modifier = Modifier.padding(end = 16.dp)
         )
-    }
+    },
+    floatingLeading: @Composable () -> Unit = {},
+    floatingTrailing: @Composable () -> Unit = trailing
 ) {
     val density = LocalDensity.current
     val insets = WindowInsets.statusBars.union(WindowInsets.displayCutout)
@@ -104,6 +106,7 @@ fun LumaTopBar(
                     drawRect(Brush.verticalGradient(listOf(LumaBarColor, LumaBarColor.copy(alpha = 0f))))
                 }
         )
+        // Only the title and opaque header surface follow the scroll offset.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,7 +117,6 @@ fun LumaTopBar(
                     alpha = (1f + titleRowOffsetPx() / with(density) { LumaTitleRowHeight.toPx() }).coerceIn(0f, 1f)
                 }
         ) {
-            // The opaque title-row surface moves with its controls.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -131,25 +133,12 @@ fun LumaTopBar(
                         onClick = {}
                     )
             )
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(LumaTitleRowHeight)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(LumaTitleRowHeight),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) { leading() }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
-                    ) { trailing() }
-                }
-            }
+                    .height(LumaTitleRowHeight),
+                contentAlignment = Alignment.CenterStart
+            ) { leading() }
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -159,6 +148,23 @@ fun LumaTopBar(
                         drawRect(Brush.verticalGradient(listOf(LumaBarColor, LumaBarColor.copy(alpha = 0f))))
                     }
             )
+        }
+
+        // Glass controls remain pinned above the moving title/background layer.
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(LumaTitleRowHeight)
+                .offset(y = topInset)
+                .zIndex(2f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) { floatingLeading() }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) { floatingTrailing() }
         }
     }
 }
