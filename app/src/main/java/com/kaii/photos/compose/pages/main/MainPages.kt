@@ -72,6 +72,9 @@ import com.kaii.photos.compose.MediaPickerConfirmButton
 import com.kaii.photos.compose.app_bars.getAppBarContentTransition
 import com.kaii.photos.compose.app_bars.main_bars.MainAppBottomBar
 import com.kaii.photos.compose.app_bars.SelectionActionBar
+import com.kaii.photos.compose.dialogs.user_action.AlbumAddChoiceDialog
+import com.kaii.photos.compose.widgets.SelectViewTopBarLeftButtons
+import com.kaii.photos.compose.widgets.SelectViewTopBarRightButtons
 import com.kaii.photos.compose.side_effects.FileOperationProgressEffect
 import com.kaii.photos.compose.side_effects.SharePhotoEffect
 import com.kaii.photos.compose.widgets.rememberDeviceOrientation
@@ -122,6 +125,7 @@ fun MainPages(
     val doNotTrash by viewModel.doNotTrash.collectAsStateWithLifecycle()
 
     val liquidGlassBackdrop = rememberLayerBackdrop()
+    val topBarHeight = lumaTopBarHeight()
 
     val pagerState = rememberPagerState(
         initialPage = tabList.indices.first
@@ -182,6 +186,7 @@ fun MainPages(
     }
 
     var showTagDialog by remember { mutableStateOf(false) }
+    var showAlbumTypeDialog by remember { mutableStateOf(false) }
 
     val immichInfo by viewModel.immichInfo.collectAsStateWithLifecycle()
 
@@ -474,6 +479,7 @@ fun MainPages(
                         val items = viewModel.gridMediaFlow.collectAsLazyPagingItems()
                         MainGridView(
                             items = items,
+                            topContentPadding = topBarHeight,
                             album = { tab.toAlbum() },
                             selectionManager = viewModel.selectionManager,
                             isMediaPicker = incomingIntent != null,
@@ -512,7 +518,7 @@ fun MainPages(
                     }
 
                     tab == DefaultTabs.TabTypes.secure -> {
-                        SecureFolderEntryPage()
+                        SecureFolderEntryPage(topBarHeight = topBarHeight)
                     }
 
                     tab == DefaultTabs.TabTypes.albums -> {
@@ -530,6 +536,7 @@ fun MainPages(
                             migrateFav = { migrateFav },
                             autoDetect = { autoDetect },
                             isMediaPicker = incomingIntent != null,
+                            topBarHeight = topBarHeight,
                             setAlbumSortMode = viewModel::setAlbumSortMode,
                             setAlbumOrder = viewModel::setAlbumOrder,
                             addAlbumToGroup = viewModel::addAlbumToGroup,
@@ -543,7 +550,8 @@ fun MainPages(
                             viewModel = searchViewModel,
                             selectionManager = viewModel.selectionManager,
                             isMediaPicker = incomingIntent != null,
-                            isMultiSelectMode = incomingIntent.isMultiSelect
+                            isMultiSelectMode = incomingIntent.isMultiSelect,
+                            topBarHeight = topBarHeight
                         )
                     }
 
@@ -596,6 +604,68 @@ fun MainPages(
                     }
                 }
             }
+            LumaTopBar(
+                modifier = Modifier.align(Alignment.TopCenter),
+                backdrop = liquidGlassBackdrop,
+                leading = {
+                    if (isSelecting && incomingIntent == null) {
+                        SelectViewTopBarLeftButtons(selectionManager = viewModel.selectionManager)
+                    } else {
+                        androidx.compose.material3.Text(
+                            text = "Luma",
+                            color = Color.White,
+                            fontSize = androidx.compose.ui.unit.TextUnit(30f, androidx.compose.ui.unit.TextUnitType.Sp),
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            modifier = Modifier.padding(start = 22.dp)
+                        )
+                    }
+                },
+                trailing = {
+                    androidx.compose.foundation.layout.Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (isSelecting && incomingIntent == null) {
+                            SelectViewTopBarRightButtons(
+                                showTagDialog = { showTagDialog },
+                                setShowTagDialog = { showTagDialog = it }
+                            )
+                        } else if (
+                            incomingIntent == null &&
+                            tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.albums
+                        ) {
+                            if (showAlbumTypeDialog) {
+                                val groups by viewModel.groups.collectAsStateWithLifecycle()
+                                AlbumAddChoiceDialog(
+                                    groups = groups,
+                                    addAlbum = viewModel::addAlbum,
+                                    addGroup = viewModel::addGroup
+                                ) { showAlbumTypeDialog = false }
+                            }
+                            LiquidGlassIconButton(
+                                backdrop = liquidGlassBackdrop,
+                                icon = androidx.compose.ui.res.painterResource(R.drawable.add),
+                                contentDescription = stringResource(R.string.album_add),
+                                onClick = { showAlbumTypeDialog = true },
+                                modifier = Modifier.padding(end = 10.dp)
+                            )
+                        }
+
+                        if (incomingIntent == null) {
+                            LiquidGlassIconButton(
+                                backdrop = liquidGlassBackdrop,
+                                icon = androidx.compose.ui.res.painterResource(R.drawable.settings),
+                                contentDescription = "Settings",
+                                onClick = {
+                                    com.kaii.photos.LocalNavController.current.navigate(
+                                        com.kaii.photos.helpers.Screens.MainPages.MainGrid.SettingsDialog
+                                    )
+                                },
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+                        }
+                    }
+                }
+            )
         }
     }
 }
