@@ -601,7 +601,8 @@ fun MainPages(
                             setAlbumOrder = viewModel::setAlbumOrder,
                             addAlbumToGroup = viewModel::addAlbumToGroup,
                             toggleAlbumPin = viewModel::toggleAlbumPin,
-                            deleteAlbum = viewModel::deleteAlbum
+                            deleteAlbum = viewModel::deleteAlbum,
+                            onRefresh = refreshAlbums
                         )
                     }
 
