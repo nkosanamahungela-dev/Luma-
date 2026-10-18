@@ -1,5 +1,6 @@
 package com.kaii.photos.compose.app_bars.main_bars
 
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
