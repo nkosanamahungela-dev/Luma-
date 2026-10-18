@@ -1,5 +1,7 @@
 package com.kaii.photos.compose.app_bars.main_bars
 
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -17,11 +19,20 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -35,11 +46,70 @@ import com.kyant.backdrop.Backdrop
 import com.kaii.photos.LocalNavController
 import com.kaii.photos.R
 import com.kaii.photos.helpers.Screens
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.abs
 
 private val LumaBarColor = Color(0xFF0B0E1A)
 private val LumaTitleRowHeight = 76.dp
 private val LumaBottomFadeHeight = 10.dp
 private val LumaStatusFadeHeight = 8.dp
+
+private val LumaTitleRowHeightPxDp = 76.dp
+
+class LumaTopBarScrollState internal constructor(
+    val offsetPx: () -> Float,
+    val connection: NestedScrollConnection
+)
+
+@Composable
+fun rememberLumaTopBarScrollState(isSelecting: Boolean): LumaTopBarScrollState {
+    val density = LocalDensity.current
+    val maxOffset = with(density) { LumaTitleRowHeightPxDp.toPx() }
+    val scope = rememberCoroutineScope()
+    var offset by remember { mutableFloatStateOf(0f) }
+    val settleJob = remember { AtomicReference<Job?>(null) }
+
+    val connection = remember(maxOffset) {
+        object : NestedScrollConnection {
+            private fun update(delta: Float, forceShown: Boolean = false) {
+                settleJob.getAndSet(null)?.cancel()
+                offset = if (forceShown) 0f else (offset + delta).coerceIn(-maxOffset, 0f)
+            }
+
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                if (available.y > 0f && consumed.y == 0f) update(0f, forceShown = true)
+                else if (consumed.y != 0f) update(consumed.y)
+                return Offset.Zero
+            }
+
+            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                val target = when {
+                    abs(available.y) > 200f -> if (available.y < 0f) -maxOffset else 0f
+                    offset <= -maxOffset / 2f -> -maxOffset
+                    else -> 0f
+                }
+                settleJob.getAndSet(null)?.cancel()
+                settleJob.set(scope.launch {
+                    animate(offset, target, spring(stiffness = Spring.StiffnessMediumLow)) { value, _ ->
+                        offset = value
+                    }
+                })
+                return Velocity.Zero
+            }
+        }
+    }
+
+    LaunchedEffect(isSelecting) {
+        if (isSelecting) {
+            settleJob.getAndSet(null)?.cancel()
+            offset = 0f
+        }
+    }
+
+    return remember(connection) { LumaTopBarScrollState({ offset }, connection) }
+}
 
 @Composable
 fun lumaTopBarHeight(): Dp {
