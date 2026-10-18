@@ -86,7 +86,7 @@ fun rememberLumaTopBarScrollState(isSelecting: Boolean): LumaTopBarScrollState {
             }
 
             override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-                val target = when {
+                val target = if (isSelecting) 0f else when {
                     abs(available.y) > 200f -> if (available.y < 0f) -maxOffset else 0f
                     offset <= -maxOffset / 2f -> -maxOffset
                     else -> 0f
