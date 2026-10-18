@@ -251,11 +251,9 @@ fun MainPages(
         }
     }
 
-    LaunchedEffect(pagerState.currentPage, tabList) {
-        if (tabList.getOrNull(pagerState.currentPage) == DefaultTabs.TabTypes.secure) {
-            topBarSettleJob.getAndSet(null)?.cancel()
-            topBarOffsetPx = 0f
-        }
+    LaunchedEffect(pagerState.currentPage) {
+        topBarSettleJob.getAndSet(null)?.cancel()
+        topBarOffsetPx = 0f
     }
 
     LaunchedEffect(pagerState.currentPage, tabList) {
