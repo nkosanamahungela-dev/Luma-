@@ -72,7 +72,7 @@ fun rememberLumaTopBarScrollState(isSelecting: Boolean): LumaTopBarScrollState {
     var offset by remember { mutableFloatStateOf(0f) }
     val settleJob = remember { AtomicReference<Job?>(null) }
 
-    val connection = remember(maxOffset) {
+    val connection = remember(maxOffset, isSelecting) {
         object : NestedScrollConnection {
             private fun update(delta: Float, forceShown: Boolean = false) {
                 settleJob.getAndSet(null)?.cancel()
@@ -80,7 +80,7 @@ fun rememberLumaTopBarScrollState(isSelecting: Boolean): LumaTopBarScrollState {
             }
 
             override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
-                if (available.y > 0f && consumed.y == 0f) update(0f, forceShown = true)
+                if (isSelecting || (available.y > 0f && consumed.y == 0f)) update(0f, forceShown = true)
                 else if (consumed.y != 0f) update(consumed.y)
                 return Offset.Zero
             }
