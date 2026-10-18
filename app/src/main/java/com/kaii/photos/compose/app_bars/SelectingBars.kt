@@ -313,8 +313,8 @@ fun SelectingBottomBarItems(
         enabled = selectedItemsList.isNotEmpty() && albumInfo !is AlbumType.Cloud && albumInfo !is AlbumType.SAFFolder
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.secure_folder),
-            contentDescription = "Secure this media"
+            painter = painterResource(id = R.drawable.mobile_lock),
+            contentDescription = "Lock this media"
         )
     }
 }
