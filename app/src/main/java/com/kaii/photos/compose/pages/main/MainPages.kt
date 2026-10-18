@@ -67,6 +67,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.kyant.backdrop.backdrops.layerBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kaii.photos.R
+import com.kaii.photos.LocalNavController
 import com.kaii.photos.compose.FolderIsEmpty
 import com.kaii.photos.compose.MediaPickerConfirmButton
 import com.kaii.photos.compose.app_bars.getAppBarContentTransition
@@ -108,6 +109,7 @@ fun MainPages(
     incomingIntent: Intent?,
     refreshAlbums: suspend () -> Unit
 ) {
+    val navController = LocalNavController.current
     val defaultTab by viewModel.defaultTab.collectAsStateWithLifecycle()
     val originalTabList by viewModel.tabList.collectAsStateWithLifecycle()
 
@@ -656,7 +658,7 @@ fun MainPages(
                                 icon = androidx.compose.ui.res.painterResource(R.drawable.settings),
                                 contentDescription = "Settings",
                                 onClick = {
-                                    com.kaii.photos.LocalNavController.current.navigate(
+                                    navController.navigate(
                                         com.kaii.photos.helpers.Screens.MainPages.MainGrid.SettingsDialog
                                     )
                                 },
