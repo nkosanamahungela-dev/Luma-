@@ -34,6 +34,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -103,6 +105,7 @@ fun SortableGrid(
     navController: NavController,
     autoDetect: () -> Boolean,
     modifier: Modifier = Modifier,
+    topContentPadding: Dp = 0.dp,
     isAlbumGroup: Boolean = false,
     removeAlbumIcon: Int = R.drawable.delete,
     prefix: (LazyGridScope.() -> Unit)? = null,
@@ -186,6 +189,7 @@ fun SortableGrid(
         val isLandscape by rememberDeviceOrientation()
         LazyVerticalGrid(
             state = lazyGridState,
+            contentPadding = PaddingValues(top = topContentPadding),
             columns = GridCells.Fixed(
                 if (!isLandscape) {
                     columnSize
