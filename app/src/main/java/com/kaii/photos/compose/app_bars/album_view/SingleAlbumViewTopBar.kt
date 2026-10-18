@@ -20,6 +20,7 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -60,6 +61,7 @@ fun SingleAlbumViewTopBar(
 ) {
     val show by selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
     val navController = LocalNavController.current
+    val selectionOffsetPx = with(LocalDensity.current) { 24.dp.roundToPx() }
 
     LaunchedEffect(show) {
         if (!show) setShowTagDialog(false)
@@ -74,8 +76,8 @@ fun SingleAlbumViewTopBar(
                 targetState = show,
                 transitionSpec = {
                     if (targetState) {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionOffsetPx })
                     } else {
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
                             .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
