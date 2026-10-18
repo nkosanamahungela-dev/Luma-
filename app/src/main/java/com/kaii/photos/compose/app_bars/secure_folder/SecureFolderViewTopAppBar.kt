@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,13 +53,8 @@ fun SecureFolderViewTopAppBar(
             AnimatedContent(
                 targetState = isSelecting,
                 transitionSpec = {
-                    if (targetState) {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
-                    } else {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
-                    }
+                    (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
+                        .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
                 },
                 label = "secure title selection swap"
             ) { selecting ->
