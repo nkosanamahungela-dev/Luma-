@@ -99,6 +99,7 @@ fun PhotoGrid(
                 thumbnailSize = thumbnailSize,
                 useRoundedCorners = useRoundedCorners,
                 vibrateOnClick = vibrateOnClick,
+                topContentPadding = topContentPadding
             )
         }
     } else {
