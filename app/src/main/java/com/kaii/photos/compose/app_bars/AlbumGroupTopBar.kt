@@ -1,6 +1,8 @@
 package com.kaii.photos.compose.app_bars
 
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,8 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
+import com.kyant.backdrop.Backdrop
+import com.kaii.photos.compose.app_bars.main_bars.LiquidGlassIconButton
+import com.kaii.photos.compose.app_bars.main_bars.LumaTopBar
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kaii.photos.R
@@ -47,7 +51,9 @@ fun AlbumGroupTopBar(
     groups: () -> List<AlbumGroup>,
     navController: NavController,
     showInfoDialog: () -> Unit,
-    setAlbums: (ids: List<String>) -> Unit
+    setAlbums: (ids: List<String>) -> Unit,
+    backdrop: Backdrop,
+    topBarOffsetPx: () -> Float = { 0f }
 ) {
     val coroutineScope = rememberCoroutineScope()
     var showAddAlbumsDialog by remember { mutableStateOf(false) }
@@ -115,58 +121,48 @@ fun AlbumGroupTopBar(
         )
     }
 
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    navController.popBackStack()
-                }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.back_arrow),
-                    contentDescription = "Go back to previous page",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        },
-        title = {
+    LumaTopBar(
+        backdrop = backdrop,
+        titleRowOffsetPx = topBarOffsetPx,
+        trailing = {},
+        leading = {
             Text(
                 text = group()?.name ?: stringResource(id = R.string.album_group),
-                fontSize = TextStylingConstants.LARGE_TEXT_SIZE.sp,
-                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .width(160.dp)
+                modifier = Modifier.padding(start = 72.dp, end = 8.dp)
             )
         },
-        actions = {
-            IconButton(
-                onClick = {
-                    coroutineScope.launch {
-                        showAddAlbumsDialog = true
-                    }
-                }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.add),
+        floatingLeading = {
+            LiquidGlassIconButton(
+                backdrop = backdrop,
+                icon = painterResource(id = R.drawable.back_arrow),
+                contentDescription = "Go back to previous page",
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        },
+        floatingTrailing = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                LiquidGlassIconButton(
+                    backdrop = backdrop,
+                    icon = painterResource(id = R.drawable.add),
                     contentDescription = stringResource(id = R.string.album_group_show_add_dialog),
-                    tint = MaterialTheme.colorScheme.onBackground
+                    onClick = {
+                        coroutineScope.launch { showAddAlbumsDialog = true }
+                    },
+                    modifier = Modifier.padding(end = 8.dp)
                 )
-            }
-
-            IconButton(
-                onClick = showInfoDialog
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.settings),
+                LiquidGlassIconButton(
+                    backdrop = backdrop,
+                    icon = painterResource(id = R.drawable.settings),
                     contentDescription = stringResource(id = R.string.album_group_info),
-                    tint = MaterialTheme.colorScheme.onBackground
+                    onClick = showInfoDialog,
+                    modifier = Modifier.padding(end = 16.dp)
                 )
             }
         }
-    )
-}
+    )}
