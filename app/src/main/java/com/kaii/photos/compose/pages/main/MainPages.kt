@@ -1,6 +1,5 @@
 package com.kaii.photos.compose.pages.main
 
-
 import android.content.Intent
 import android.view.Window
 import androidx.activity.compose.BackHandler
@@ -10,9 +9,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.animateScrollBy
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -64,21 +61,16 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kaii.photos.R
 import com.kaii.photos.compose.FolderIsEmpty
 import com.kaii.photos.compose.MediaPickerConfirmButton
 import com.kaii.photos.compose.app_bars.getAppBarContentTransition
 import com.kaii.photos.compose.app_bars.main_bars.MainAppBottomBar
 import com.kaii.photos.compose.app_bars.main_bars.MainAppTopBar
-import com.kaii.photos.compose.app_bars.SelectionActionBar
-import com.kaii.photos.compose.app_bars.SelectionTopBar
 import com.kaii.photos.compose.side_effects.FileOperationProgressEffect
 import com.kaii.photos.compose.side_effects.SharePhotoEffect
 import com.kaii.photos.compose.widgets.rememberDeviceOrientation
 import com.kaii.photos.compose.widgets.tags.AnimatedMediaTagManager
-import com.kaii.photos.datastore.AlbumType
 import com.kaii.photos.datastore.DefaultTabs
 import com.kaii.photos.datastore.state.AlbumGridState
 import com.kaii.photos.domain.files.FileOperationAction
@@ -118,12 +110,11 @@ fun MainPages(
         }
     }
 
+    val immichInfo by viewModel.immichInfo.collectAsStateWithLifecycle()
     val exitImmediately by viewModel.exitImmediately.collectAsStateWithLifecycle()
     val mainPhotosPaths by viewModel.mainPhotosAlbums.collectAsStateWithLifecycle()
     val confirmToDelete by viewModel.confirmToDelete.collectAsStateWithLifecycle()
     val doNotTrash by viewModel.doNotTrash.collectAsStateWithLifecycle()
-
-    val liquidGlassBackdrop = rememberLayerBackdrop()
 
     val pagerState = rememberPagerState(
         initialPage = tabList.indices.first
@@ -161,31 +152,7 @@ fun MainPages(
     )
 
     val isSelecting by viewModel.selectionManager.enabled.collectAsStateWithLifecycle(initialValue = false)
-    var isBottomBarPressed by remember { mutableStateOf(false) }
-    val onBottomBarPressedChanged: (Boolean) -> Unit = remember {
-        { pressed -> isBottomBarPressed = pressed }
-    }
-
-    // Only the Photos page participates in the floating bar's vertical scroll behavior.
-    val photoGridScrollConnection = remember(scrollBehaviour, isSelecting, isBottomBarPressed) {
-        object : NestedScrollConnection {
-            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
-                if (isSelecting || isBottomBarPressed) Offset.Zero else scrollBehaviour.onPostScroll(consumed, available, source)
-
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset =
-                if (isSelecting || isBottomBarPressed) Offset.Zero else scrollBehaviour.onPreScroll(available, source)
-
-            override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity =
-                if (isSelecting || isBottomBarPressed) Velocity.Zero else scrollBehaviour.onPostFling(consumed, available)
-
-            override suspend fun onPreFling(available: Velocity): Velocity =
-                if (isSelecting || isBottomBarPressed) Velocity.Zero else scrollBehaviour.onPreFling(available)
-        }
-    }
-
     var showTagDialog by remember { mutableStateOf(false) }
-
-    val immichInfo by viewModel.immichInfo.collectAsStateWithLifecycle()
 
     val tagViewModel = viewModel<TagViewModel>(
         factory = TagViewModelFactory(
@@ -240,29 +207,22 @@ fun MainPages(
         topBar = {
             val groups by viewModel.groups.collectAsStateWithLifecycle()
 
-            if (isSelecting && incomingIntent == null) {
-                SelectionTopBar(
-                    backdrop = liquidGlassBackdrop,
-                    selectionManager = viewModel.selectionManager,
-                    showTagDialog = { showTagDialog },
-                    setShowTagDialog = { showTagDialog = it }
-                )
-            } else {
-                MainAppTopBar(
-                    alternate = { isSelecting },
-                    selectionManager = viewModel.selectionManager,
-                    showAddAlbumButton = {
-                        tabList.isNotEmpty() && tabList[pagerState.settledPage] == DefaultTabs.TabTypes.albums
-                    },
-                    showTagDialog = { showTagDialog },
-                    isFromMediaPicker = incomingIntent != null,
-                    liquidGlassBackdrop = liquidGlassBackdrop,
-                    groups = { groups },
-                    setShowTagDialog = { showTagDialog = true },
-                    addAlbum = viewModel::addAlbum,
-                    addGroup = viewModel::addGroup
-                )
-            }
+            MainAppTopBar(
+                alternate = { isSelecting },
+                selectionManager = viewModel.selectionManager,
+                immichInfo = { immichInfo },
+                showAddAlbumButton = {
+                    tabList.isNotEmpty() && tabList[pagerState.settledPage] == DefaultTabs.TabTypes.albums
+                },
+                showTagDialog = { showTagDialog },
+                isFromMediaPicker = incomingIntent != null,
+                groups = { groups },
+                setShowTagDialog = {
+                    showTagDialog = true
+                },
+                addAlbum = viewModel::addAlbum,
+                addGroup = viewModel::addGroup
+            )
         },
         bottomBar = {
             LaunchedEffect(Unit) {
@@ -271,60 +231,54 @@ fun MainPages(
                 delayOver = true
             }
 
-            AnimatedContent(
-                targetState = isSelecting && incomingIntent == null,
-                transitionSpec = {
-                    (fadeIn(animationSpec = AnimationConstants.expressiveSpring()) +
-                        slideInVertically(animationSpec = AnimationConstants.expressiveSpring()) { it })
-                        .togetherWith(
-                            fadeOut(animationSpec = AnimationConstants.expressiveSpring()) +
-                                slideOutVertically(animationSpec = AnimationConstants.expressiveSpring()) { it }
-                        )
-                },
-                label = "selection bottom bar swap"
-            ) { selectionMode ->
-                if (selectionMode) {
-                    val selectedTab = tabList.getOrNull(pagerState.currentPage) ?: tabList.firstOrNull()
-                    if (selectedTab != null) {
-                        SelectionActionBar(
-                            backdrop = liquidGlassBackdrop,
-                            albumInfo = AlbumType.Folder(
-                                id = selectedTab.id.toString(),
-                                name = selectedTab.name,
-                                paths = selectedTab.albumPaths,
-                                pinned = false,
-                                immichId = null
-                            ),
-                            selectionManager = viewModel.selectionManager,
-                            confirmToDelete = { confirmToDelete },
-                            doNotTrash = { doNotTrash },
-                            runAction = viewModel::runAction
-                        )
-                    }
-                } else {
-                    AnimatedVisibility(
-                        visible = tabList.isNotEmpty() && incomingIntent == null && delayOver,
-                        enter = fadeIn() + slideInVertically(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()) { it },
-                        exit = fadeOut() + slideOutVertically(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()) { it }
-                    ) {
-                        MainAppBottomBar(
-                            pagerState = pagerState,
-                            selectionManager = viewModel.selectionManager,
-                            tabs = tabList,
-                            confirmToDelete = { confirmToDelete },
-                            doNotTrash = { doNotTrash },
-                            runAction = viewModel::runAction,
-                            scrollBehaviour = scrollBehaviour,
-                            liquidGlassBackdrop = liquidGlassBackdrop,
-                            onBarPressedChanged = onBottomBarPressedChanged
-                        )
-                    }
-                }
+            AnimatedVisibility(
+                visible = tabList.isNotEmpty() && incomingIntent == null && delayOver,
+                enter = fadeIn() + slideInVertically(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()) { it },
+                exit = fadeOut() + slideOutVertically(animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()) { it }
+            ) {
+                MainAppBottomBar(
+                    pagerState = pagerState,
+                    selectionManager = viewModel.selectionManager,
+                    tabs = tabList,
+                    scrollBehaviour = scrollBehaviour,
+                    confirmToDelete = { confirmToDelete },
+                    doNotTrash = { doNotTrash },
+                    runAction = viewModel::runAction
+                )
             }
         },
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
             .fillMaxSize()
+            .nestedScroll(
+                object : NestedScrollConnection {
+                    override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
+                        if (isSelecting) Offset.Zero
+                        else scrollBehaviour.onPostScroll(
+                            consumed,
+                            available,
+                            source
+                        )
+
+                    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset =
+                        if (isSelecting) Offset.Zero
+                        else scrollBehaviour.onPreScroll(
+                            available,
+                            source
+                        )
+
+                    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity =
+                        if (isSelecting) Velocity.Zero
+                        else scrollBehaviour.onPostFling(
+                            consumed,
+                            available
+                        )
+
+                    override suspend fun onPreFling(available: Velocity): Velocity =
+                        if (isSelecting) Velocity.Zero
+                        else scrollBehaviour.onPreFling(available)
+                }
+            )
             // handle keyboard/controller inputs
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
@@ -419,7 +373,8 @@ fun MainPages(
         }
 
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
             // TODO: find a cleaner way
             val searchMode by searchViewModel.searchMode.collectAsStateWithLifecycle()
@@ -455,42 +410,20 @@ fun MainPages(
                 }
             }
 
-            // Shared backdrop records the whole active tab host, not just the Photos grid.
-            Box(
+            HorizontalPager(
+                state = pagerState,
+                userScrollEnabled = !isSelecting,
+                beyondViewportPageCount = 1,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .layerBackdrop(liquidGlassBackdrop)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color(0xFF0B0E1A))
-                )
-
-                HorizontalPager(
-                    state = pagerState,
-                    userScrollEnabled = !isSelecting,
-                    beyondViewportPageCount = 1,
-                    modifier = Modifier
-                        .padding(
-                            start = safeDrawingPadding.first,
-                            end = safeDrawingPadding.second,
-                            bottom = 0.dp
-                        )
-                ) { index ->
+                    .padding(
+                        start = safeDrawingPadding.first,
+                        top = padding.calculateTopPadding(),
+                        end = safeDrawingPadding.second,
+                        bottom = 0.dp
+                    )
+            ) { index ->
                 val tab = tabList[index]
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .then(
-                            if (tab == DefaultTabs.TabTypes.photos && incomingIntent == null) {
-                                Modifier.nestedScroll(photoGridScrollConnection)
-                            } else {
-                                Modifier
-                            }
-                        )
-                ) {
                 when {
                     tab.isCustom -> {
                         val columnSize by viewModel.columnSize.collectAsStateWithLifecycle()
@@ -551,7 +484,6 @@ fun MainPages(
                         val autoDetect by viewModel.autoDetect.collectAsStateWithLifecycle()
 
                         AlbumsGridView(
-                            backdrop = liquidGlassBackdrop,
                             deviceAlbums = deviceAlbums,
                             sortMode = { sortMode },
                             tabList = { tabList },
@@ -585,8 +517,6 @@ fun MainPages(
                         )
                     }
                 }
-                }
-                }
             }
 
             if (incomingIntent != null) {
@@ -609,13 +539,11 @@ fun MainPages(
                             MainAppBottomBar(
                                 pagerState = pagerState,
                                 tabs = tabList,
+                                scrollBehaviour = scrollBehaviour,
                                 selectionManager = viewModel.selectionManager,
                                 confirmToDelete = { confirmToDelete },
                                 doNotTrash = { doNotTrash },
-                                runAction = viewModel::runAction,
-                                scrollBehaviour = scrollBehaviour,
-                                liquidGlassBackdrop = liquidGlassBackdrop,
-                                onBarPressedChanged = onBottomBarPressedChanged
+                                runAction = viewModel::runAction
                             )
                         }
                     } else {
