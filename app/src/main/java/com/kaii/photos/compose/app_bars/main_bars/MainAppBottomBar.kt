@@ -412,11 +412,17 @@ fun MainAppBottomBar(
                                     )
                                 },
                                 layerBlock = {
-                                    scaleX = dragAnimation.scaleX
-                                    scaleY = dragAnimation.scaleY
+                                    // Keep velocity-driven deformation, but never let the lens
+                                    // grow beyond the 1.15x pressed scale or collapse off the pill.
                                     val velocity = dragAnimation.velocity / 10f
-                                    scaleX /= 1f - (velocity * 0.75f).coerceIn(-0.2f, 0.2f)
-                                    scaleY *= 1f - (velocity * 0.25f).coerceIn(-0.2f, 0.2f)
+                                    scaleX = (
+                                        dragAnimation.scaleX /
+                                            (1f - (velocity * 0.75f).coerceIn(-0.2f, 0.2f))
+                                        ).coerceIn(0.8f, 1.15f)
+                                    scaleY = (
+                                        dragAnimation.scaleY *
+                                            (1f - (velocity * 0.25f).coerceIn(-0.2f, 0.2f))
+                                        ).coerceIn(0.8f, 1.15f)
                                 },
                                 onDrawSurface = {
                                     val progress = dragAnimation.pressProgress
