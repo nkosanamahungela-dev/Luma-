@@ -716,8 +716,8 @@ fun MainPages(
                         targetState = isSelecting && incomingIntent == null,
                         transitionSpec = {
                             if (targetState) {
-                                (slideInVertically(tween(250)) { selectionSwapOffsetPx.toInt() } + fadeIn(tween(250)))
-                                    .togetherWith(slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
+                                (slideInVertically(tween(250)) { -selectionSwapOffsetPx.toInt() } + fadeIn(tween(250)))
+                                    .togetherWith(slideOutVertically(tween(250)) { selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
                             } else {
                                 (slideInVertically(tween(250)) { -selectionSwapOffsetPx.toInt() } + fadeIn(tween(250)))
                                     .togetherWith(slideOutVertically(tween(250)) { selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
