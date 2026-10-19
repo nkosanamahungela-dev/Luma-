@@ -702,7 +702,7 @@ fun MainPages(
                     AnimatedVisibility(
                         visible = isSelecting && incomingIntent == null,
                         enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionSwapOffsetPx.toInt() },
-                        exit = fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionSwapOffsetPx.toInt() },
+                        exit = fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() },
                         modifier = Modifier.padding(start = 16.dp)
                     ) {
                         SelectionGlassChip(
@@ -717,10 +717,10 @@ fun MainPages(
                         transitionSpec = {
                             if (targetState) {
                                 (slideInVertically(tween(250)) { -selectionSwapOffsetPx.toInt() } + fadeIn(tween(250)))
-                                    .togetherWith(slideOutVertically(tween(250)) { selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
+                                    .togetherWith(slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
                             } else {
                                 (slideInVertically(tween(250)) { -selectionSwapOffsetPx.toInt() } + fadeIn(tween(250)))
-                                    .togetherWith(slideOutVertically(tween(250)) { selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
+                                    .togetherWith(slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() } + fadeOut(tween(250)))
                             }
                         },
                         label = "floating actions selection swap"
