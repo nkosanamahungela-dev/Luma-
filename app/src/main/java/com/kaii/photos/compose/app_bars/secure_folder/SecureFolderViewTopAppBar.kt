@@ -57,7 +57,7 @@ fun SecureFolderViewTopAppBar(
             AnimatedContent(
                 targetState = isSelecting,
                 transitionSpec = {
-                    (fadeIn(tween(250)) + slideInVertically(tween(250)) { selectionOffsetPx })
+                    (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
                         .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionOffsetPx })
                 },
                 label = "secure title selection swap"
@@ -79,10 +79,10 @@ fun SecureFolderViewTopAppBar(
                 transitionSpec = {
                     if (targetState) {
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { -24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { 24 })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionOffsetPx })
                     } else {
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionOffsetPx })
                     }
                 },
                 label = "secure back selection swap"
@@ -106,10 +106,10 @@ fun SecureFolderViewTopAppBar(
                 transitionSpec = {
                     if (targetState) {
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionOffsetPx })
                     } else {
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionOffsetPx })
                     }
                 },
                 label = "secure actions selection swap"
