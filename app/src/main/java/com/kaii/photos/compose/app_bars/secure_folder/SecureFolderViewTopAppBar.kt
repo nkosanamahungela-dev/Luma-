@@ -81,8 +81,8 @@ fun SecureFolderViewTopAppBar(
                         (fadeIn(tween(250)) + slideInVertically(tween(250)) { -24 })
                             .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { 24 })
                     } else {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
                     }
                 },
                 label = "secure back selection swap"
@@ -105,11 +105,11 @@ fun SecureFolderViewTopAppBar(
                 targetState = isSelecting,
                 transitionSpec = {
                     if (targetState) {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
                     } else {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
                     }
                 },
                 label = "secure actions selection swap"
