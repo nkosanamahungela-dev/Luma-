@@ -103,11 +103,11 @@ fun SingleAlbumViewTopBar(
                 targetState = show,
                 transitionSpec = {
                     if (targetState) {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
                     } else {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
                     }
                 },
                 label = "folder back selection swap"
@@ -130,11 +130,11 @@ fun SingleAlbumViewTopBar(
                 targetState = show,
                 transitionSpec = {
                     if (targetState) {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
                     } else {
-                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { 24 })
-                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { -24 })
+                        (fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionOffsetPx })
+                            .togetherWith(fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionOffsetPx })
                     }
                 },
                 label = "folder actions selection swap"
