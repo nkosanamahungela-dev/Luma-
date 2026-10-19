@@ -686,7 +686,7 @@ fun MainPages(
                 leading = {
                     AnimatedVisibility(
                         visible = !(isSelecting && incomingIntent == null),
-                        enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { selectionSwapOffsetPx.toInt() },
+                        enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionSwapOffsetPx.toInt() },
                         exit = fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() }
                     ) {
                         androidx.compose.material3.Text(
@@ -701,8 +701,8 @@ fun MainPages(
                 floatingLeading = {
                     AnimatedVisibility(
                         visible = isSelecting && incomingIntent == null,
-                        enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { selectionSwapOffsetPx.toInt() },
-                        exit = fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() },
+                        enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { -selectionSwapOffsetPx.toInt() },
+                        exit = fadeOut(tween(250)) + slideOutVertically(tween(250)) { selectionSwapOffsetPx.toInt() },
                         modifier = Modifier.padding(start = 16.dp)
                     ) {
                         SelectionGlassChip(
