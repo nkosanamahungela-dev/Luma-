@@ -59,6 +59,8 @@ import com.kaii.photos.mediastore.isRawImage
 import java.io.File
 import kotlin.time.Duration.Companion.seconds
 
+enum class PhotoTileLayout { HERO, PAIR, GRID }
+
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun MediaItem(
@@ -72,7 +74,8 @@ fun MediaItem(
     selected: () -> Boolean,
     toggleSelection: () -> Unit,
     navigateToItem: () -> Unit,
-    pixelPhotosStyle: Boolean = false
+    pixelPhotosStyle: Boolean = false,
+    tileLayout: PhotoTileLayout = PhotoTileLayout.GRID
 ) {
     val animatedItemCornerRadius by animateDpAsState(
         targetValue = if (selected()) 16.dp else 0.dp,
@@ -89,16 +92,22 @@ fun MediaItem(
         label = "animate scale of selected item"
     )
 
+    val tileRadius = when (tileLayout) {
+        PhotoTileLayout.HERO -> LumaTheme.PhotoHeroRadius
+        PhotoTileLayout.PAIR -> LumaTheme.PhotoPairRadius
+        PhotoTileLayout.GRID -> LumaTheme.PhotoGridRadius
+    }
+
     Box(
         modifier = Modifier
             .semantics {
                 testTagsAsResourceId = true
             }
             .testTag("main_lazy_column_item")
-            .aspectRatio(1f)
+             .then(if (pixelPhotosStyle && tileLayout == PhotoTileLayout.HERO) Modifier.height(LumaTheme.PhotoHeroHeight) else if (pixelPhotosStyle && tileLayout == PhotoTileLayout.PAIR) Modifier.height(LumaTheme.PhotoPairHeight) else Modifier.aspectRatio(1f))
             .padding(if (pixelPhotosStyle) LumaTheme.GridUnit else 2.dp)
-            .clip(RoundedCornerShape(if (pixelPhotosStyle) LumaTheme.PhotoGridRadius else if (useRoundedCorners()) 8.dp else 0.dp))
-            .then(if (pixelPhotosStyle && selected()) Modifier.border(3.dp, LumaTheme.Accent, RoundedCornerShape(LumaTheme.PhotoGridRadius)) else Modifier)
+            .clip(RoundedCornerShape(if (pixelPhotosStyle) tileRadius else if (useRoundedCorners()) 8.dp else 0.dp))
+            .then(if (pixelPhotosStyle && selected()) Modifier.border(3.dp, LumaTheme.Accent, RoundedCornerShape(tileRadius)) else Modifier)
             .background(if (pixelPhotosStyle) LumaTheme.Surface else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
             .clickable(
                 enabled = !isDragSelecting.value
@@ -149,7 +158,7 @@ fun MediaItem(
                 .fillMaxSize()
                 .align(Alignment.Center)
                 .scale(animatedItemScale)
-                .clip(RoundedCornerShape(if (pixelPhotosStyle) LumaTheme.PhotoGridRadius else animatedItemCornerRadius))
+                .clip(RoundedCornerShape(if (pixelPhotosStyle) tileRadius else animatedItemCornerRadius))
         ) {
             val baseRequest = it.signature(item.signature())
 
