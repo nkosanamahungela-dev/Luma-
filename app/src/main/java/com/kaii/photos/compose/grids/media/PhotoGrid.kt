@@ -285,7 +285,8 @@ private fun DeviceMedia(
                                             navController.navigate(viewProperties.navigate(album(), index))
                                         }
                                     }
-                                }
+                                },
+                                pixelPhotosStyle = isMainPage
                             )
                         }
                     }
