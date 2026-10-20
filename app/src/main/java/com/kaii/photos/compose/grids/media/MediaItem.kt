@@ -106,7 +106,7 @@ fun MediaItem(
             }
             .testTag("main_lazy_column_item")
              .then(if (pixelPhotosStyle && tileLayout == PhotoTileLayout.HERO) Modifier.height(LumaTheme.PhotoHeroHeight) else if (pixelPhotosStyle && tileLayout == PhotoTileLayout.PAIR) Modifier.height(LumaTheme.PhotoPairHeight) else Modifier.aspectRatio(1f))
-            .padding(if (pixelPhotosStyle) LumaTheme.GridUnit else 2.dp)
+            .padding(if (pixelPhotosStyle) 2.dp else 2.dp)
             .clip(RoundedCornerShape(if (pixelPhotosStyle) tileRadius else if (useRoundedCorners()) 8.dp else 0.dp))
             .then(if (pixelPhotosStyle && selected()) Modifier.border(3.dp, LumaTheme.Accent, RoundedCornerShape(tileRadius)) else Modifier)
             .background(if (pixelPhotosStyle) LumaTheme.Surface else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
