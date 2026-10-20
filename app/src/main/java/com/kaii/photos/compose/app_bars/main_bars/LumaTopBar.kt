@@ -1,11 +1,23 @@
 package com.kaii.photos.compose.app_bars.main_bars
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.highlight.Highlight
+import com.kyant.backdrop.shadow.InnerShadow
+import com.kyant.backdrop.shadow.Shadow
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +66,7 @@ import kotlin.math.abs
 
 private val LumaBarColor = Color(0xFF0B0E1A)
 private val LumaTitleRowHeight = 76.dp
-private val LumaBottomFadeHeight = 10.dp
+private val LumaBottomFadeHeight = 20.dp
 private val LumaStatusFadeHeight = 8.dp
 
 private val LumaTitleRowHeightPxDp = 76.dp
@@ -128,9 +140,9 @@ fun LumaTopBar(
         Text(
             text = "Luma",
             color = Color.White,
-            fontSize = 30.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(start = 22.dp)
+            fontSize = 34.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(start = 20.dp)
         )
     },
     trailing: @Composable () -> Unit = {
@@ -237,5 +249,56 @@ fun LumaTopBar(
                 horizontalArrangement = Arrangement.End
             ) { floatingTrailing() }
         }
+    }
+}
+
+
+@Composable
+fun LiquidGlassSelectButton(
+    backdrop: Backdrop,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val scale = remember { Animatable(1f) }
+    LaunchedEffect(pressed) {
+        scale.animateTo(
+            if (pressed) 1.06f else 1f,
+            animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = 0.62f)
+        )
+    }
+
+    Box(
+        modifier = modifier
+            .height(46.dp)
+            .graphicsLayer {
+                scaleX = scale.value
+                scaleY = scale.value
+            }
+            .drawBackdrop(
+                backdrop = backdrop,
+                shape = { RoundedCornerShape(percent = 50) },
+                effects = {
+                    blur(3.dp.toPx())
+                    lens(10.dp.toPx(), 18.dp.toPx())
+                },
+                highlight = { Highlight.Default.copy(alpha = 0.45f) },
+                shadow = { Shadow(alpha = 0.22f) },
+                innerShadow = { InnerShadow(radius = 3.dp, alpha = 0.12f) },
+                onDrawSurface = { drawRect(Color.White.copy(alpha = 0.07f)) }
+            )
+            .clip(RoundedCornerShape(percent = 50))
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
+            .padding(horizontal = 18.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Select",
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center
+        )
     }
 }
