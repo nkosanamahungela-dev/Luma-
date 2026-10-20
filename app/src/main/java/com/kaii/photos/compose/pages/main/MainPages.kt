@@ -690,9 +690,9 @@ fun MainPages(
                         exit = fadeOut(tween(250)) + slideOutVertically(tween(250)) { -selectionSwapOffsetPx.toInt() }
                     ) {
                         androidx.compose.material3.Text(
-                            text = "Luma",
-                            color = Color.White,
-                            fontSize = androidx.compose.ui.unit.TextUnit(30f, androidx.compose.ui.unit.TextUnitType.Sp),
+                            text = "Photos",
+                            color = com.kaii.photos.ui.theme.LumaTheme.TextPrimary,
+                            fontSize = com.kaii.photos.ui.theme.LumaTheme.LargeTitle,
                             fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                             modifier = Modifier.padding(start = 22.dp)
                         )
