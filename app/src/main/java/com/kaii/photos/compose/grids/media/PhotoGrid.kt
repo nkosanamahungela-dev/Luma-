@@ -164,7 +164,7 @@ private fun DeviceMedia(
             state = gridState,
             contentPadding = PaddingValues(top = topContentPadding),
             columns = GridCells.Fixed(
-                if (isLandscape && columnSize() <= 3) {
+                if (isMainPage) 6 else if (isLandscape && columnSize() <= 3) {
                     columnSize() * 2
                 } else {
                     columnSize()
@@ -201,6 +201,9 @@ private fun DeviceMedia(
 
                         if (item is PhotoLibraryUIModel.Section) {
                             GridItemSpan(maxLineSpan)
+                        } else if (isMainPage && item is PhotoLibraryUIModel.MediaImpl) {
+                            val groupCount = photoGroupCount(pagingItems, index)
+                            GridItemSpan(if (groupCount == 1) maxLineSpan else if (groupCount == 2) 3 else 2)
                         } else {
                             GridItemSpan(1)
                         }
@@ -286,7 +289,12 @@ private fun DeviceMedia(
                                         }
                                     }
                                 },
-                                pixelPhotosStyle = isMainPage
+                                pixelPhotosStyle = isMainPage,
+                                tileLayout = if (!isMainPage) PhotoTileLayout.GRID else when (photoGroupCount(pagingItems, i)) {
+                                    1 -> PhotoTileLayout.HERO
+                                    2 -> PhotoTileLayout.PAIR
+                                    else -> PhotoTileLayout.GRID
+                                }
                             )
                         }
                     }
@@ -336,4 +344,28 @@ private fun DeviceMedia(
             )
         }
     }
+}
+
+private fun photoGroupCount(
+    items: LazyPagingItems<PhotoLibraryUIModel>,
+    mediaIndex: Int
+): Int {
+    var start = mediaIndex
+    while (start > 0 && items[start - 1] !is PhotoLibraryUIModel.Section) start--
+    var count = 0
+    var index = start
+    while (index < items.itemCount && count < 3) {
+        val item = items[index] ?: break
+        if (item is PhotoLibraryUIModel.Section) {
+            if (index == start) {
+                index++
+                continue
+            } else {
+                break
+            }
+        }
+        count++
+        index++
+    }
+    return count.coerceAtLeast(1)
 }
