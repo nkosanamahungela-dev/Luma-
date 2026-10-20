@@ -162,7 +162,7 @@ private fun DeviceMedia(
 
         LazyVerticalGrid(
             state = gridState,
-            contentPadding = PaddingValues(top = topContentPadding),
+            contentPadding = PaddingValues(start = if (isMainPage) 14.dp else 0.dp, end = if (isMainPage) 14.dp else 0.dp, top = topContentPadding),
             columns = GridCells.Fixed(
                 if (isMainPage) 6 else if (isLandscape && columnSize() <= 3) {
                     columnSize() * 2
@@ -216,7 +216,7 @@ private fun DeviceMedia(
 
                 Box(
                     modifier = Modifier
-                        .wrapContentSize()
+                        .fillMaxWidth()
                         .animateItem()
                 ) {
                     when (item) {
