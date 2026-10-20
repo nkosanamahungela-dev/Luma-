@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.kaii.photos.compose.widgets.ShowSelectedState
 import com.kaii.photos.helpers.paging.PhotoLibraryUIModel
+import com.kaii.photos.ui.theme.LumaTheme
 
 @Composable
 fun SectionItem(
@@ -32,20 +33,20 @@ fun SectionItem(
     Box(
         modifier = Modifier
             .fillMaxWidth(1f)
-            .height(56.dp)
+            .height(64.dp)
             .background(Color.Transparent)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = toggleSelection
             )
-            .padding(16.dp, 8.dp),
+            .padding(start = 20.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
     ) {
         Text(
             text = prefix + item.title,
-            fontSize = TextUnit(16f, TextUnitType.Sp),
+            fontSize = LumaTheme.DateHeader,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = LumaTheme.TextPrimary,
             modifier = Modifier
                 .align(Alignment.CenterStart)
         )
