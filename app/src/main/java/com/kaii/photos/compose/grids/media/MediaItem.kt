@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kaii.photos.R
+import com.kaii.photos.ui.theme.LumaTheme
 import com.kaii.photos.compose.widgets.ShowSelectedState
 import com.kaii.photos.helpers.TextStylingConstants
 import com.kaii.photos.helpers.formatLikeANormalPerson
@@ -69,7 +71,8 @@ fun MediaItem(
     useRoundedCorners: () -> Boolean,
     selected: () -> Boolean,
     toggleSelection: () -> Unit,
-    navigateToItem: () -> Unit
+    navigateToItem: () -> Unit,
+    pixelPhotosStyle: Boolean = false
 ) {
     val animatedItemCornerRadius by animateDpAsState(
         targetValue = if (selected()) 16.dp else 0.dp,
@@ -93,9 +96,10 @@ fun MediaItem(
             }
             .testTag("main_lazy_column_item")
             .aspectRatio(1f)
-            .padding(2.dp)
-            .clip(RoundedCornerShape(if (useRoundedCorners()) 8.dp else 0.dp))
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+            .padding(if (pixelPhotosStyle) LumaTheme.GridUnit else 2.dp)
+            .clip(RoundedCornerShape(if (pixelPhotosStyle) LumaTheme.PhotoGridRadius else if (useRoundedCorners()) 8.dp else 0.dp))
+            .then(if (pixelPhotosStyle && selected()) Modifier.border(3.dp, LumaTheme.Accent, RoundedCornerShape(LumaTheme.PhotoGridRadius)) else Modifier)
+            .background(if (pixelPhotosStyle) LumaTheme.Surface else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
             .clickable(
                 enabled = !isDragSelecting.value
             ) {
@@ -145,7 +149,7 @@ fun MediaItem(
                 .fillMaxSize()
                 .align(Alignment.Center)
                 .scale(animatedItemScale)
-                .clip(RoundedCornerShape(animatedItemCornerRadius))
+                .clip(RoundedCornerShape(if (pixelPhotosStyle) LumaTheme.PhotoGridRadius else animatedItemCornerRadius))
         ) {
             val baseRequest = it.signature(item.signature())
 
@@ -181,13 +185,13 @@ fun MediaItem(
             if (item.item.type == MediaType.Video) {
                 Row(
                     modifier = Modifier
-                        .offset(x = 2.dp, y = (-2).dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.4f))
-                        .padding(start = 4.dp, top = 0.dp, end = 6.dp, bottom = 0.dp),
+                        .padding(start = if (pixelPhotosStyle) 10.dp else 2.dp, bottom = if (pixelPhotosStyle) 10.dp else 2.dp)
+                        .clip(if (pixelPhotosStyle) RoundedCornerShape(50) else CircleShape)
+                        .background(if (pixelPhotosStyle) LumaTheme.VideoScrim else Color.Black.copy(alpha = 0.4f))
+                        .padding(start = if (pixelPhotosStyle) 8.dp else 4.dp, top = 0.dp, end = if (pixelPhotosStyle) 10.dp else 6.dp, bottom = 0.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(
-                        space = 4.dp,
+                        space = if (pixelPhotosStyle) 4.dp else 4.dp,
                         alignment = Alignment.Start
                     )
                 ) {
@@ -196,7 +200,7 @@ fun MediaItem(
                         contentDescription = stringResource(id = R.string.file_is_a_video),
                         tint = Color.White,
                         modifier = Modifier
-                            .size(20.dp)
+                            .size(if (pixelPhotosStyle) 14.dp else 20.dp)
                     )
 
                     if (item.item.duration != null) {
@@ -205,11 +209,11 @@ fun MediaItem(
                             text = (item.item.duration as Long).seconds.formatLikeANormalPerson().first,
                             color = Color.White,
                             autoSize = TextAutoSize.StepBased(
-                                minFontSize = TextStylingConstants.EXTRA_EXTRA_SMALL_TEXT_SIZE.sp,
-                                maxFontSize = TextStylingConstants.EXTRA_SMALL_TEXT_SIZE.sp
+                                minFontSize = if (pixelPhotosStyle) LumaTheme.Small else TextStylingConstants.EXTRA_EXTRA_SMALL_TEXT_SIZE.sp,
+                                maxFontSize = if (pixelPhotosStyle) LumaTheme.Small else TextStylingConstants.EXTRA_SMALL_TEXT_SIZE.sp
                             ),
                             maxLines = 1,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = if (pixelPhotosStyle) FontWeight.SemiBold else FontWeight.Bold,
                             modifier = Modifier
                                 .offset(y = 1.dp)
                         )
