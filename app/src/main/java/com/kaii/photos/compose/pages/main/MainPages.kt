@@ -81,6 +81,7 @@ import com.kaii.photos.compose.app_bars.getAppBarContentTransition
 import com.kaii.photos.compose.app_bars.main_bars.MainAppBottomBar
 import com.kaii.photos.compose.app_bars.main_bars.LiquidGlassIconButton
 import com.kaii.photos.compose.app_bars.main_bars.LumaTopBar
+import com.kaii.photos.compose.app_bars.main_bars.LiquidGlassSelectButton
 import com.kaii.photos.compose.app_bars.main_bars.lumaTopBarHeight
 import com.kaii.photos.compose.app_bars.SelectionActionBar
 import com.kaii.photos.compose.app_bars.SelectionGlassChip
@@ -693,8 +694,8 @@ fun MainPages(
                             text = "Photos",
                             color = com.kaii.photos.ui.theme.LumaTheme.TextPrimary,
                             fontSize = com.kaii.photos.ui.theme.LumaTheme.LargeTitle,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                            modifier = Modifier.padding(start = 22.dp)
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                            modifier = Modifier.padding(start = 20.dp)
                         )
                     }
                 },
@@ -736,6 +737,16 @@ fun MainPages(
                                     modifier = Modifier.padding(end = 16.dp)
                                 )
                             } else {
+                                if (
+                                    incomingIntent == null &&
+                                    tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.photos
+                                ) {
+                                    LiquidGlassSelectButton(
+                                        backdrop = liquidGlassBackdrop,
+                                        onClick = { viewModel.selectionManager.enterSelectMode() },
+                                        modifier = Modifier.padding(end = 10.dp)
+                                    )
+                                }
                                 if (
                                     incomingIntent == null &&
                                     tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.albums
