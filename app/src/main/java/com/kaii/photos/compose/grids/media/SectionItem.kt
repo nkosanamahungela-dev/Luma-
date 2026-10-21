@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +32,7 @@ fun SectionItem(
     isSelecting: () -> Boolean,
     prefix: String,
     toggleSelection: () -> Unit,
+    featuredLabel: String? = null,
 ) {
     Box(
         modifier = Modifier
@@ -42,14 +46,31 @@ fun SectionItem(
             )
             .padding(start = 20.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
     ) {
-        Text(
-            text = prefix + item.title,
-            fontSize = LumaTheme.DateHeader,
-            fontWeight = FontWeight.Bold,
-            color = LumaTheme.TextPrimary,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-        )
+        Column(
+            modifier = Modifier.align(Alignment.CenterStart)
+        ) {
+            if (featuredLabel != null) {
+                Text(
+                    text = featuredLabel,
+                    fontSize = LumaTheme.DateHeader,
+                    fontWeight = FontWeight.SemiBold,
+                    color = LumaTheme.TextPrimary
+                )
+                Text(
+                    text = prefix + item.title,
+                    fontSize = LumaTheme.Caption,
+                    fontWeight = FontWeight.Normal,
+                    color = LumaTheme.TextSecondary
+                )
+            } else {
+                Text(
+                    text = prefix + item.title,
+                    fontSize = LumaTheme.DateHeader,
+                    fontWeight = FontWeight.SemiBold,
+                    color = LumaTheme.TextPrimary
+                )
+            }
+        }
 
         ShowSelectedState(
             isSelected = selected,
