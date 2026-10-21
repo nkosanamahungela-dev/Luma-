@@ -202,8 +202,9 @@ private fun DeviceMedia(
                         if (item is PhotoLibraryUIModel.Section) {
                             GridItemSpan(maxLineSpan)
                         } else if (isMainPage && item is PhotoLibraryUIModel.MediaImpl) {
-                            // Pixel Photos timeline uses consistent full-width photo cards.
-                            GridItemSpan(maxLineSpan)
+                            // Lead with one hero, then two medium cards; remaining media use a compact 3-column grid.
+                            val mediaPosition = mainPageMediaPosition(pagingItems, index)
+                            if (mediaPosition <= 2) GridItemSpan(maxLineSpan) else GridItemSpan(2)
                         } else {
                             GridItemSpan(1)
                         }
@@ -302,7 +303,11 @@ private fun DeviceMedia(
                                     }
                                 },
                                 pixelPhotosStyle = isMainPage,
-                                tileLayout = if (isMainPage) PhotoTileLayout.HERO else PhotoTileLayout.GRID
+                                tileLayout = if (!isMainPage) PhotoTileLayout.GRID else when (mainPageMediaPosition(pagingItems, i)) {
+                                    0 -> PhotoTileLayout.HERO
+                                    1, 2 -> PhotoTileLayout.PAIR
+                                    else -> PhotoTileLayout.GRID
+                                }
                             )
                         }
                     }
@@ -376,4 +381,16 @@ private fun photoGroupCount(
         index++
     }
     return count.coerceAtLeast(1)
+}
+
+
+private fun mainPageMediaPosition(
+    items: LazyPagingItems<PhotoLibraryUIModel>,
+    targetIndex: Int
+): Int {
+    var mediaPosition = 0
+    for (index in 0 until targetIndex) {
+        if (items[index] is PhotoLibraryUIModel.MediaImpl) mediaPosition++
+    }
+    return mediaPosition
 }
