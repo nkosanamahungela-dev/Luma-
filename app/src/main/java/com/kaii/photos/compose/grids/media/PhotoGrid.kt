@@ -202,8 +202,8 @@ private fun DeviceMedia(
                         if (item is PhotoLibraryUIModel.Section) {
                             GridItemSpan(maxLineSpan)
                         } else if (isMainPage && item is PhotoLibraryUIModel.MediaImpl) {
-                            val groupCount = photoGroupCount(pagingItems, index)
-                            GridItemSpan(if (groupCount == 1) maxLineSpan else if (groupCount == 2) 3 else 2)
+                            // Pixel Photos timeline uses consistent full-width photo cards.
+                            GridItemSpan(maxLineSpan)
                         } else {
                             GridItemSpan(1)
                         }
@@ -248,8 +248,7 @@ private fun DeviceMedia(
                                     isMainPage &&
                                     i == 0 &&
                                     i + 1 < pagingItems.itemCount &&
-                                    pagingItems[i + 1] is PhotoLibraryUIModel.MediaImpl &&
-                                    photoGroupCount(pagingItems, i + 1) == 1
+                                    pagingItems[i + 1] is PhotoLibraryUIModel.MediaImpl
                                 ) {
                                     if ((pagingItems[i + 1] as PhotoLibraryUIModel.MediaImpl).item.type == MediaType.Video) {
                                         "Latest video"
@@ -303,11 +302,7 @@ private fun DeviceMedia(
                                     }
                                 },
                                 pixelPhotosStyle = isMainPage,
-                                tileLayout = if (!isMainPage) PhotoTileLayout.GRID else when (photoGroupCount(pagingItems, i)) {
-                                    1 -> PhotoTileLayout.HERO
-                                    2 -> PhotoTileLayout.PAIR
-                                    else -> PhotoTileLayout.GRID
-                                }
+                                tileLayout = if (isMainPage) PhotoTileLayout.HERO else PhotoTileLayout.GRID
                             )
                         }
                     }
