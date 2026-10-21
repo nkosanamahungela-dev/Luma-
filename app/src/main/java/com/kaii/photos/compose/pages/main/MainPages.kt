@@ -739,7 +739,7 @@ fun MainPages(
                             } else {
                                 if (
                                     incomingIntent == null &&
-                                    tabList.getOrNull(pagerState.settledPage) == DefaultTabs.TabTypes.photos
+                                    tabList.getOrNull(pagerState.currentPage) == DefaultTabs.TabTypes.photos
                                 ) {
                                     LiquidGlassSelectButton(
                                         backdrop = liquidGlassBackdrop,
