@@ -246,10 +246,17 @@ private fun DeviceMedia(
                                 },
                                 featuredLabel = if (
                                     isMainPage &&
+                                    i == 0 &&
                                     i + 1 < pagingItems.itemCount &&
                                     pagingItems[i + 1] is PhotoLibraryUIModel.MediaImpl &&
                                     photoGroupCount(pagingItems, i + 1) == 1
-                                ) "October memories" else null
+                                ) {
+                                    if ((pagingItems[i + 1] as PhotoLibraryUIModel.MediaImpl).item.type == MediaType.Video) {
+                                        "Latest video"
+                                    } else {
+                                        "Latest picture"
+                                    }
+                                } else null
                             )
                         }
 
