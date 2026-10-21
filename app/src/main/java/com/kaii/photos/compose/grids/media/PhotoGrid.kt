@@ -243,7 +243,13 @@ private fun DeviceMedia(
                                         ?.vibrateLong()
 
                                     selectionManager.toggle(item)
-                                }
+                                },
+                                featuredLabel = if (
+                                    isMainPage &&
+                                    i + 1 < pagingItems.itemCount &&
+                                    pagingItems[i + 1] is PhotoLibraryUIModel.MediaImpl &&
+                                    photoGroupCount(pagingItems, i + 1) == 1
+                                ) "October memories" else null
                             )
                         }
 
