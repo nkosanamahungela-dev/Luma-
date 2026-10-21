@@ -32,6 +32,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +42,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.roundToPx
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -125,6 +128,17 @@ fun MediaItem(
             }
     ) {
         val context = LocalContext.current
+        val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+        val density = LocalDensity.current
+        val tileWidthPx = with(density) {
+            val contentWidth = (screenWidth - if (pixelPhotosStyle) 28.dp else 0.dp).coerceAtLeast(1.dp)
+            val columns = when (tileLayout) {
+                PhotoTileLayout.HERO -> 1
+                PhotoTileLayout.PAIR -> 2
+                PhotoTileLayout.GRID -> if (pixelPhotosStyle) 3 else 1
+            }
+            ((contentWidth - (LumaTheme.GridUnit * (columns - 1))) / columns).roundToPx().coerceAtLeast(1)
+        }
 
         GlideImage(
             model = when {
@@ -168,8 +182,14 @@ fun MediaItem(
                 // the requested size like the non-secure branch
                 val secureRequest = baseRequest.diskCacheStrategy(DiskCacheStrategy.NONE)
 
-                if (thumbnailSettings().second != 0) secureRequest.override(thumbnailSettings().second)
+                if (pixelPhotosStyle) secureRequest.override(tileWidthPx)
+                else if (thumbnailSettings().second != 0) secureRequest.override(thumbnailSettings().second)
                 else secureRequest
+            } else if (pixelPhotosStyle) {
+                baseRequest.diskCacheStrategy(
+                    if (thumbnailSettings().first) DiskCacheStrategy.ALL
+                    else DiskCacheStrategy.NONE
+                ).override(tileWidthPx)
             } else if (thumbnailSettings().second == 0) {
                 baseRequest.diskCacheStrategy(
                     if (thumbnailSettings().first) DiskCacheStrategy.ALL
