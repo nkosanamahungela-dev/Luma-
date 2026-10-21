@@ -204,7 +204,11 @@ private fun DeviceMedia(
                         } else if (isMainPage && item is PhotoLibraryUIModel.MediaImpl) {
                             // Lead with one hero, then two medium cards; remaining media use a compact 3-column grid.
                             val mediaPosition = mainPageMediaPosition(pagingItems, index)
-                            if (mediaPosition <= 2) GridItemSpan(maxLineSpan) else GridItemSpan(2)
+                            when (mediaPosition) {
+                                0 -> GridItemSpan(maxLineSpan)
+                                1, 2 -> GridItemSpan(3)
+                                else -> GridItemSpan(2)
+                            }
                         } else {
                             GridItemSpan(1)
                         }
