@@ -37,7 +37,8 @@ object LumaTheme {
     val Caption = 15.sp
     val Small = 13.sp
 
-    val PhotoHeroHeight = 210.dp
+    // Pixel Photos timeline: one wide hero, two medium tiles, then square thumbnails.
+    val PhotoHeroHeight = 220.dp
     val PhotoHeroRadius = 24.dp
     val PhotoPairHeight = 176.dp
     val PhotoPairRadius = 20.dp
